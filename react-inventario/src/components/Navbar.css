@@ -1,0 +1,27 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0D1B2A; /* Azul oscuro */
+  color: #E3F2FD; /* Azul claro casi blanco */
+  padding: 10px 30px;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button {
+  background-color: transparent;
+  border: 1px solid #1B6CA8; /* Azul medio */
+  color: #E3F2FD;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #1E88E5; /* Azul claro vibrante */
+  color: white;
+  border-color: #1E88E5;
+}

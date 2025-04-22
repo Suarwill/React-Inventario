@@ -1,0 +1,75 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .login-container {
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../../public/bg.jpg'); /* Si quieres usar una imagen */
+    background-size: cover;
+  }
+  
+  .login-box {
+    display: flex;
+    background: none;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 800px;
+    max-width: 90%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  }
+  
+  .login-left, .login-right {
+    padding: 40px;
+    flex: 1;
+  }
+  
+  .login-left {
+    background: #1E88E5;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  
+  .login-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #e1e3eb ;
+  }
+  
+  .login-right h2 {
+    color: #212121;
+    margin-bottom: 20px;
+  }
+  
+  .login-right input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .login-right button {
+    padding: 10px;
+    background: #1E88E5;
+    border: none;
+    color: #FFFFFF;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .login-right button:hover {
+    background: #1565C0;
+  }
+  
