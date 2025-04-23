@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 echo "📦 Instalando NGINX..."
@@ -9,7 +8,7 @@ sudo systemctl start nginx
 
 NGINX_CONF="/etc/nginx/conf.d/react_frontend.conf"
 
-echo "🛠️ Configurando NGINX para servir React..."
+echo "🛠️ Configurando NGINX..."
 sudo tee $NGINX_CONF > /dev/null <<EOF
 server {
     listen 80;
@@ -30,4 +29,4 @@ sudo nginx -t
 echo "🔄 Reiniciando NGINX..."
 sudo systemctl restart nginx
 
-echo "✅ NGINX listo para servir tu frontend React."
+echo "✅ NGINX está sirviendo tu frontend React."
