@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [mensaje, setMensaje] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Aquí podrías validar con backend o simplemente hacer una validación mock
-    if (username.trim() && password.trim()) {
+  const handleLogin = async () => {
+    if (!username.trim() || !password.trim()) {
+      setMensaje('Ingrese usuario y contraseña');
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/login', { username, password });
+
+      // Si todo OK, guardamos el usuario (puedes guardar token aquí también si usas JWT)
       localStorage.setItem('username', username);
-      navigate('/dashboard'); // redirige al dashboard
-    } else {
-      alert('Ingrese usuario y contraseña');
+      setMensaje('Login exitoso');
+      navigate('/dashboard');
+    } catch (error) {
+      setMensaje(error.response?.data?.error || 'Error al iniciar sesión');
     }
   };
 
@@ -26,7 +36,7 @@ const Login = () => {
         <div className="login-right">
           <h2>Ingresar a su Panel</h2>
           <input
-            type="email"
+            type="text"
             placeholder="Usuario"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -38,6 +48,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button onClick={handleLogin}>Entrar</button>
+          {mensaje && <p className="login-message">{mensaje}</p>}
         </div>
       </div>
     </div>
