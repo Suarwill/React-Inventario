@@ -12,7 +12,7 @@ npm install express cors dotenv pg bcrypt jsonwebtoken
 
 echo "🔐 Creando archivo .env..."
 cat > .env <<'EOF'
-PORT=5000
+PORT=3000
 DB_USER=tu_usuario
 DB_PASSWORD=tu_contraseña
 DB_HOST=localhost
