@@ -36,4 +36,11 @@ echo "🔄 Configurando reinicio automático con PM2..."
 STARTUP_CMD=$(pm2 startup | tail -1)
 eval "$STARTUP_CMD"
 
+sudo firewall-cmd --permanent --add-port=3000/tcp
+sudo firewall-cmd --reload
+sudo setsebool -P httpd_can_network_connect 1
+sudo systemctl restart nginx
+
+pm2 restart react-backend
+
 echo "✅ Todo listo. Backend corriendo y configurado con PM2 para arrancar al iniciar el sistema."
