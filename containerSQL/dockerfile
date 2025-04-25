@@ -1,0 +1,7 @@
+FROM postgres:latest
+
+ENV POSTGRES_USER=servidor
+ENV POSTGRES_PASSWORD=ServerSQL
+ENV POSTGRES_DB=inventario
+
+EXPOSE 5432

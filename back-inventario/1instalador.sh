@@ -13,12 +13,12 @@ npm install express cors dotenv pg bcrypt jsonwebtoken
 echo "🔐 Creando archivo .env..."
 cat > .env <<'EOF'
 PORT=3000
-DB_USER=tu_usuario
-DB_PASSWORD=tu_contraseña
+DB_USER=servidor
+DB_PASSWORD=ServerSQL
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=inventario
-JWT_SECRET=tu_clave_secreta
+JWT_SECRET=jwtservidorclave
 EOF
 
 echo "🚀 Instalando PM2 si no está presente..."

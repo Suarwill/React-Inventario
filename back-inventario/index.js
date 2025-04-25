@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // Ruta para login
-app.post('/api/login', async (req, res) => {
+app.post('/user/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -37,9 +37,48 @@ app.post('/api/login', async (req, res) => {
     if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
     // Generar token JWT si es necesario
-    const token = jwt.sign({ userId: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: usuario.id }, process.env.JWT_SECRET, { expiresIn: '8h' });
     
     res.json({ message: 'Login exitoso', token }); // puedes incluir el token JWT en la respuesta
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error de servidor' });
+  }
+});
+
+app.post('/user/register', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await pool.query('INSERT INTO usuarios (username, password) VALUES ($1, $2) RETURNING *', [username, hashedPassword]);
+    const usuario = result.rows[0];
+
+    res.json({ message: 'Registro exitoso', usuario });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error de servidor' });
+  }
+});
+
+app.get('/user/search', async (req, res) => {
+  const { username } = req.query;
+  try {
+    const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+    const usuarios = result.rows;
+    res.json(usuarios);
+  } catch (err) { 
+    console.error(err);
+    res.status(500).json({ error: 'Error de servidor' });
+  }
+});
+
+app.post('/userdelete', async (req, res) => {
+  const { username } = req.body;
+  try {
+    const result = await pool.query('DELETE FROM usuarios WHERE username = $1', [username]);
+    res.json({ message: 'Usuario eliminado' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error de servidor' });
