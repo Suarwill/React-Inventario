@@ -28,8 +28,6 @@ fi
 
 echo "🟢 Iniciando backend con PM2..."
 pm2 start index.js --name react-backend
-
-echo "💾 Guardando proceso PM2..."
 pm2 save
 
 echo "🔄 Configurando reinicio automático con PM2..."
