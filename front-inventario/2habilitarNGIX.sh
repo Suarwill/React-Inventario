@@ -2,7 +2,7 @@
 set -e
 
 echo "📦 Instalando NGINX..."
-sudo dnf install -y nginx
+sudo apt install -y nginx
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
