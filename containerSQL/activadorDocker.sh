@@ -9,8 +9,7 @@ sudo firewall-cmd --reload
 echo "Comenzando el servidor PostgreSQL..."
 docker run --name servidor_pg -d \
   --network inventario-red \
-  -e POSTGRES_USER=servidor \
-  -e POSTGRES_PASSWORD=ServerSQL \
+  -e POSTGRES_USER=postgres \
   -e POSTGRES_DB=inventario \
   -p 5432:5432 \
   -v almacenamiento_pg:/var/lib/postgresql/data \
