@@ -57,6 +57,7 @@ app.post('/user/register', async (req, res) => {
   if (!username || !password) {
       return res.status(400).json({ error: 'Usuario y contraseña son requeridos' });
   }
+  console.log(process.env.DB_USER)
 
   try {
     // Check if user already exists
