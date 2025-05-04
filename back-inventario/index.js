@@ -16,6 +16,7 @@ app.use(express.json());
 const pool = new Pool({
   host: process.env.DB_HOST,       // e.g., 'localhost' or IP address
   user: process.env.DB_USER,       // e.g., 'inventory_app_user'
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,   // e.g., 'inventory_db'
   port: process.env.DB_PORT,       // e.g., 5432
   // No 'password' field here, relying on passwordless DB auth setup
