@@ -54,30 +54,24 @@ app.post('/user/login', async (req, res) => {
 app.post('/user/register', async (req, res) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-      return res.status(400).json({ error: 'Usuario y contraseña son requeridos' });
-  }
-  console.log(process.env.DB_USER)
-
   try {
-    // Check if user already exists
-    const existingUser = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
-    if (existingUser.rows.length > 0) {
-        return res.status(409).json({ error: 'El nombre de usuario ya existe' }); // 409 Conflict
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await pool.query('INSERT INTO usuarios (username, password) VALUES ($1, $2) RETURNING id, username', [username, hashedPassword]);
-    const usuario = result.rows[0];
+    const result = await pool.query(
+      'INSERT INTO usuarios (username, password) VALUES ($1, $2) RETURNING *',
+      [username, hashedPassword]
+    );
 
-    res.status(201).json({ message: 'Registro exitoso', usuario }); // 201 Created
+    res.status(201).json({
+      message: 'Usuario registrado con éxito',
+      user: result.rows[0]
+    });
   } catch (err) {
-    console.error("Register error:", err); // Added more context to log
-    // Check for specific DB errors if needed, e.g., unique constraint violation
+    console.error(err);
     res.status(500).json({ error: 'Error de servidor al registrar usuario' });
   }
 });
+
 
 // Ruta para buscar usuarios (ejemplo, podría necesitar autenticación/autorización)
 app.get('/user/search', async (req, res) => {
