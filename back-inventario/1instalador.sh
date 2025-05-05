@@ -7,7 +7,7 @@ echo "📦 Inicializando proyecto Node.js..."
 npm init -y
 
 echo "📚 Instalando dependencias..."
-npm install express cors dotenv pg bcrypt jsonwebtoken
+npm install express cors dotenv pg bcrypt jsonwebtoken express-validator
 
 
 echo "🔐 Creando archivo .env..."

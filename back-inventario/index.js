@@ -10,10 +10,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Sanitizador
-const sanitizeInput = require('./middlewares/sanitize.middleware');
-app.use(sanitizeInput);
-
 // Ruta para pruebas
 app.get('/', (req, res) => {
   res.send('Servidor backend funcionando 👌');

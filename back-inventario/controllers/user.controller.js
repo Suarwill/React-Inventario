@@ -2,8 +2,14 @@ const pool = require('../db/pool');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const { validationResult } = require('express-validator');
+
+
 // Registrar usuario
 const registerUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   const { username, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,6 +26,9 @@ const registerUser = async (req, res) => {
 
 // Login usuario
 const loginUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   const { username, password } = req.body;
   try {
     const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);

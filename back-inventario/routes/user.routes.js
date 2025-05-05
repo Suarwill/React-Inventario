@@ -1,12 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const sanitizeInput = require('../middlewares/sanitize.middleware');
+const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
 
+// Middleware de validación
+const validateLogin = [
+  body('username').trim().escape().notEmpty().withMessage('El usuario es requerido'),
+  body('password').trim().escape().notEmpty().withMessage('La contraseña es requerida')
+];
 
-router.post('/register', sanitizeInput, userController.registerUser);
-router.post('/login', sanitizeInput, userController.loginUser);
-router.get('/search', sanitizeInput, userController.searchUsers);
-router.delete('/:username', sanitizeInput, userController.deleteUser);
+const validateRegister = [
+  body('username').trim().escape().notEmpty().withMessage('El usuario es requerido'),
+  body('password')
+    .trim()
+    .escape()
+    .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
+];
+
+// Rutas
+router.post('/login', validateLogin, userController.loginUser);
+router.post('/register', validateRegister, userController.registerUser);
+router.get('/search', userController.searchUsers);
+router.delete('/:username', userController.deleteUser);
 
 module.exports = router;
