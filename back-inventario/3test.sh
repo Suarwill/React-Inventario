@@ -6,4 +6,4 @@ curl -X POST http://localhost:3000/user/register -H "Content-Type: application/j
 
 # prueba de busqueda
 echo "Realizando prueba de búsqueda de usuario..."
-curl -X GET http://localhost:3000/user/search=?username=admin -H "Content-Type: application/json"
+curl -X GET http://localhost:3000/user/search?username=admin -H "Content-Type: application/json"
