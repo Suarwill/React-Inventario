@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './axiosConfig'; // Importa el axios configurado
 import './Login.css';
 
 const Login = () => {
@@ -16,10 +16,12 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('/user/login', { username, password });
+      const response = await axiosInstance.post('/user/login', { username, password });
 
-      // Si todo OK, guardamos el usuario (puedes guardar token aquí también si usas JWT)
+      // Si todo OK, guardamos el usuario y el token en el localStorage
       localStorage.setItem('username', username);
+      localStorage.setItem('token', response.data.token); // Guardando el token aquí
+
       setMensaje('Login exitoso');
       navigate('/dashboard');
     } catch (error) {
