@@ -1,25 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
 
-// Middleware de validación
-const validateLogin = [
-  body('username').trim().escape().notEmpty().withMessage('El usuario es requerido'),
-  body('password').trim().escape().notEmpty().withMessage('La contraseña es requerida')
-];
-
-const validateRegister = [
-  body('username').trim().escape().notEmpty().withMessage('El usuario es requerido'),
-  body('password')
-    .trim()
-    .escape()
-    .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-];
-
 // Rutas
-router.post('/login', validateLogin, userController.loginUser);
-router.post('/register', validateRegister, userController.registerUser);
+router.post('/login', userController.loginUser);
+router.post('/register', userController.registerUser);
 router.get('/search', userController.searchUsers);
 router.delete('/:username', userController.deleteUser);
 
