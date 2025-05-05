@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
+const authenticateToken = require('../middleware/auth.middleware'); // Importar middleware de autenticación
+const isAdmin = require('../middleware/admin.middleware'); // Importar middleware de autorización admin
 
 // Middleware de validación
 const validateLogin = [
@@ -20,7 +22,7 @@ const validateRegister = [
 // Rutas
 router.post('/login', validateLogin, userController.loginUser);
 router.post('/register', validateRegister, userController.registerUser);
-router.get('/search', userController.searchUsers);
-router.delete('/:username', userController.deleteUser);
+router.get('/search', authenticateToken, isAdmin, userController.searchUsers);
+router.delete('/:username', authenticateToken, isAdmin, userController.deleteUser);
 
 module.exports = router;
