@@ -7,3 +7,6 @@ sudo rm -rf /var/www/html/*
 sudo cp -r ./build/* /var/www/html/
 
 echo "✅ Archivos frontend copiados con éxito."
+
+sudo systemctl restart nginx
+sudo systemctl status nginx
