@@ -55,6 +55,14 @@ app.post('/user/login', async (req, res) => {
 app.post('/user/register', async (req, res) => {
   const { username, password } = req.body;
 
+  /* Prueba de lectura del env */
+  console.log("Database connection details:");
+  console.log("  Host:", process.env.DB_HOST);
+  console.log("  Port:", process.env.DB_PORT);
+  console.log("  User:", process.env.DB_USER);
+  console.log("  Database:", process.env.DB_NAME);
+  console.log("  Password Used:", process.env.DB_PASSWORD ? "Yes (from env)" : "No");
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
