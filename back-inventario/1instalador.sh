@@ -13,11 +13,11 @@ npm install express cors dotenv pg bcrypt jsonwebtoken
 echo "🔐 Creando archivo .env..."
 cat > .env <<'EOF'
 PORT=3000
-DB_USER=servidor
-DB_PASSWORD=ServerSQL
+DB_USER=nombre
+DB_PASSWORD=contrasena
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=inventario
+DB_NAME=nombreTABLA
 JWT_SECRET=jwtservidorclave
 EOF
 
@@ -36,9 +36,11 @@ eval "$STARTUP_CMD"
 
 sudo firewall-cmd --permanent --add-port=3000/tcp
 sudo firewall-cmd --reload
-sudo setsebool -P httpd_can_network_connect 1
-sudo systemctl restart nginx
 
+# En Rocky, autorizando SEbool
+# sudo setsebool -P httpd_can_network_connect 1
+
+sudo systemctl restart nginx
 pm2 restart react-backend
 
 echo "✅ Todo listo. Backend corriendo y configurado con PM2 para arrancar al iniciar el sistema."

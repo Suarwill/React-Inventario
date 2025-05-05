@@ -9,4 +9,4 @@ sudo cp -r ./build/* /var/www/html/
 echo "✅ Archivos frontend copiados con éxito."
 
 sudo systemctl restart nginx
-sudo systemctl status nginx
+echo "NGINX Reiniciado."
