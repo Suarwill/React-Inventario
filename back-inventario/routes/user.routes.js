@@ -6,6 +6,10 @@ const authenticateToken = require('../middlewares/auth.middleware'); // Importar
 const isAdmin = require('../middlewares/admin.middleware'); // Importar middleware de autorización admin
 
 // Middleware de validación
+const validateUser = [
+  body('username').trim().escape().notEmpty().withMessage('El usuario es requerido')
+];
+
 const validateLogin = [
   body('username').trim().escape().notEmpty().withMessage('El usuario es requerido'),
   body('password').trim().escape().notEmpty().withMessage('La contraseña es requerida')
@@ -21,8 +25,10 @@ const validateRegister = [
 
 // Rutas
 router.post('/login', validateLogin, userController.loginUser);
-router.post('/register', validateRegister, userController.registerUser);
-router.get('/search', authenticateToken, isAdmin, userController.searchUsers);
-router.delete('/:username', authenticateToken, isAdmin, userController.deleteUser);
+router.post('/register', validateRegister,isAdmin, userController.registerUser);
+router.get('/search', validateUser,authenticateToken, isAdmin, userController.searchUsers);
+router.delete('/:username', validateUser,authenticateToken, isAdmin, userController.deleteUser);
+router.put('/:username', validateUser,authenticateToken, isAdmin,userController.updateUser);
+
 
 module.exports = router;

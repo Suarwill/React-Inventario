@@ -59,6 +59,36 @@ const searchUsers = async (req, res) => {
   }
 };
 
+// Editar usuario
+export const updateUser = async (req, res) => {
+  const { username } = req.params;
+  const { newUsername, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    if (newUsername) {
+      user.username = newUsername;
+    }
+
+    if (newPassword) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+
+    res.json({ message: 'Usuario actualizado correctamente.' });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
 // Eliminar usuario
 const deleteUser = async (req, res) => {
   const { username } = req.params;
@@ -77,5 +107,6 @@ module.exports = {
   registerUser,
   loginUser,
   searchUsers,
+  updateUser,
   deleteUser
 };
