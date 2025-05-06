@@ -8,10 +8,7 @@ const userRoutes = require('./routes/user.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: 'http://localhost', // O el puerto donde corre tu frontend
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 // Ruta para pruebas
