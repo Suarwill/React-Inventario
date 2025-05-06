@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
-const authenticateToken = require('../middleware/auth.middleware'); // Importar middleware de autenticación
-const isAdmin = require('../middleware/admin.middleware'); // Importar middleware de autorización admin
+const authenticateToken = require('../middlewares/auth.middleware'); // Importar middleware de autenticación
+const isAdmin = require('../middlewares/admin.middleware'); // Importar middleware de autorización admin
 
 // Middleware de validación
 const validateLogin = [
