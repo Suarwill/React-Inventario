@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -22,7 +22,7 @@ const AdminPanel = () => {
     }
 
     try {
-      const response = await axios.post('/user/register', { username, password });
+      const response = await axiosInstance.post('/user/register', { username, password });
 
       setMessage(response.data.message || 'Usuario registrado con éxito.');
       setMessageType('success');
@@ -46,7 +46,7 @@ const AdminPanel = () => {
     }
 
     try {
-      const response = await axios.get('/user/search', { params: { username: searchQuery } });
+      const response = await axiosInstance.get('/user/search', { params: { username: searchQuery } });
       setSearchResults(response.data);
       setMessage('');
       setMessageType('');
