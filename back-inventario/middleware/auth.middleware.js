@@ -4,6 +4,7 @@ const authenticateToken = (req, res, next) => {
   // Busca el token en el header 'Authorization: Bearer TOKEN'
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extrae el token
+  console.log(token);
 
   if (token == null) {
     // No hay token
