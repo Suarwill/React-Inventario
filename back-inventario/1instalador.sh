@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Salir si algo falla
+# Salir si algo falla<
 set -e
 
 echo "📦 Inicializando proyecto Node.js..."
