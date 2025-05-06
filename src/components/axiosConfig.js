@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuración de axios para incluir el token en todas las solicitudes
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',  // Cambia esto a la URL de tu API
+  baseURL: 'http://localhost:3000',  // Cambia esto a la URL de tu API
 });
 
 // Si el token está disponible, agregarlo a las cabeceras
