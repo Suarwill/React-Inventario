@@ -14,5 +14,3 @@ pm2 start index.js --name react-backend --env production
 pm2 save
 
 curl http://localhost:3000
-
-echo "✅ Todo listo. Backend corriendo."

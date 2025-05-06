@@ -1,7 +1,7 @@
 #!bash
 
 # prueba de crear usuario
-echo "Realizando prueba de creación de usuario..."
+echo "Realizando prueba de login de usuario..."
 curl -X POST http://localhost:3000/user/login \
     -H "Content-Type: application/json" \
     -d '{"username":"admin", "password":"1234"}'
