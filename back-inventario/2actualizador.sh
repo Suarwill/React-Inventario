@@ -13,4 +13,6 @@ pm2 delete react-backend
 pm2 start index.js --name react-backend --env production
 pm2 save
 
+sudo systemctl restart nginx
+
 curl http://localhost:3000

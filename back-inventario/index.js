@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 // Rutas
 app.use('/user', userRoutes);  // todas las rutas de usuario: /user/login, /user/register, etc.
 
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1',() => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
   /*
   console.log('Database connection details:');

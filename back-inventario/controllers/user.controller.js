@@ -60,7 +60,7 @@ const searchUsers = async (req, res) => {
 };
 
 // Editar usuario
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   const { username } = req.params;
   const { newUsername, newPassword } = req.body;
 
