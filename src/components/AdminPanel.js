@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from './axiosConfig';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
   const usuario = localStorage.getItem('username');
   const [username, setUsername] = useState('');
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -14,11 +16,28 @@ const AdminPanel = () => {
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const promptShownRef = useRef(false); // Referencia para controlar el prompt
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
     setMessageType(type);
   };
+
+  useEffect(() => {
+    // Solo mostrar el prompt si aún no se ha mostrado
+    if (!promptShownRef.current) {
+      const secretKey = window.prompt('Ingrese la clave para acceder al panel de administración:');
+      if (secretKey === 'ingresar') {
+        setIsAuthorized(true);
+      } else {
+        alert('Clave incorrecta. Redirigiendo al dashboard.');
+        navigate('/dashboard');
+      }
+      promptShownRef.current = true; // Marcar que el prompt ya se mostró
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -77,6 +96,10 @@ const AdminPanel = () => {
       showMessage(error.response?.data?.error || 'Error al editar usuario.', 'error');
     }
   };
+
+  if (!isAuthorized) {
+    return null; // O un componente de carga, o simplemente nada hasta que se autorice o redirija
+  }
 
   return (
     <div className="admin-panel">

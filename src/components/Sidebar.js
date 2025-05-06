@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Sidebar = ({ onSelect }) => {
-  const options = [
-    'Verificación de EM',
-    'Diferencia de Inventario AV',
-    'Diferencia de Inventario Categoría',
-    'Depósitos'
-  ];
+  const [showInventarioSubmenu, setShowInventarioSubmenu] = useState(false);
 
   return (
     <div className="sidebar">
-      {options.map((opt, idx) => (
-        <button key={idx} onClick={() => onSelect(opt)}>
-          {opt}
-        </button>
-      ))}
+      <button onClick={() => onSelect('Verificación de EM')}>
+        Verificación de EM
+      </button>
+
+      <button onClick={() => setShowInventarioSubmenu(!showInventarioSubmenu)}>
+        Inventarios
+      </button>
+
+      {showInventarioSubmenu && (
+        <div className="submenu">
+          <button onClick={() => onSelect('Diferencia de Inventario AV')}>
+            Diferencias de AV
+          </button>
+          <button onClick={() => onSelect('Diferencia de Inventario Categoría')}>
+            Diferencias de Categoría
+          </button>
+        </div>
+      )}
+
+      <button onClick={() => onSelect('Depósitos')}>
+        Depósitos
+      </button>
     </div>
   );
 };

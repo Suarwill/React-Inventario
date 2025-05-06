@@ -2,15 +2,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0D1B2A; /* Azul oscuro */
+  background-color: transparent;
   color: #E3F2FD;
   padding: 10px 30px;
   font-size: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .logout-button {
-  background-color: transparent;
+  background-color: rgb(13, 13, 100);
   border: 1px solid #1B6CA8; /* Azul medio */
   color: #E3F2FD;
   padding: 8px 14px;
@@ -21,7 +20,7 @@
 }
 
 .logout-button:hover {
-  background-color: #1E88E5; /* Azul claro vibrante */
-  color: white;
+  background-color: skyblue; /* Azul claro vibrante */
+  color: black;
   border-color: #1E88E5;
 }

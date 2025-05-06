@@ -10,7 +10,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('../../public/bg.jpg'); /* Si quieres usar una imagen */
+    background-image: url('bg.jpg'); /* Si quieres usar una imagen */
     background-size: cover;
   }
   

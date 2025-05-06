@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Salir si algo falla<
+# Salir si algo falla
 set -e
 
 echo "📦 Inicializando proyecto Node.js..."
@@ -8,7 +8,6 @@ npm init -y
 
 echo "📚 Instalando dependencias..."
 npm install express cors dotenv pg bcrypt jsonwebtoken express-validator
-
 
 echo "🔐 Creando archivo .env..."
 cat > .env <<'EOF'
@@ -34,13 +33,39 @@ echo "🔄 Configurando reinicio automático con PM2..."
 STARTUP_CMD=$(pm2 startup | tail -1)
 eval "$STARTUP_CMD"
 
-sudo firewall-cmd --permanent --add-port=3000/tcp
+echo "🌐 Configurando Nginx como proxy..."
+
+sudo tee /etc/nginx/sites-available/default > /dev/null <<'NGINX_CONF'
+server {
+    listen 80;
+    server_name _;
+
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    location /user/ {
+        proxy_pass http://localhost:3000/user/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+NGINX_CONF
+
+echo "🔁 Reiniciando Nginx..."
+sudo systemctl restart nginx
+
+echo "🔥 Abriendo puerto 80 en el firewall..."
+sudo firewall-cmd --permanent --add-port=80/tcp
 sudo firewall-cmd --reload
 
-# En Rocky, autorizando SEbool
+# 🔐 En sistemas con SELinux (como Rocky Linux), habilitar conexión de red para Nginx
 # sudo setsebool -P httpd_can_network_connect 1
 
-sudo systemctl restart nginx
-pm2 restart react-backend
-
-echo "✅ Todo listo. Backend corriendo y configurado con PM2 para arrancar al iniciar el sistema."
+echo "✅ Todo listo. Backend corriendo en http://localhost:3000 y accesible públicamente vía Nginx en http://<tu-servidor>/user/"
