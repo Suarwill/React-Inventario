@@ -2,21 +2,19 @@ const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-  // El token debe venir en formato "Bearer token"
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token de autorización no proporcionado o malformado' });
+  if (!token) {
+    return res.status(401).json({ error: 'Token no proporcionado' });
   }
-
-  const token = authHeader.split(' ')[1];
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
+      console.error('Error al verificar token:', err.message);
       return res.status(403).json({ error: 'Token inválido o expirado' });
     }
 
-    // Agrega la información del token al objeto req
-    req.user = decoded;
+    req.user = decoded; // guarda { userId, username, iat, exp }
     next();
   });
 };
