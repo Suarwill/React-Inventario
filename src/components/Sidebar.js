@@ -1,30 +1,58 @@
 import React, { useState } from 'react';
 
 const Sidebar = ({ onSelect }) => {
-  const [showInventarioSubmenu, setShowInventarioSubmenu] = useState(false);
+  const [active, setActive] = useState({
+    envio: false,
+    recepcion: false,
+    inventario: false
+  });
+
+  const toggle = (section) => {
+    setActive((prev) => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   return (
     <div className="sidebar">
-      <button onClick={() => onSelect('Verificación de EM')}>
-        Verificación de EM
-      </button>
+      <div className="section">
+        <button className="main-button" onClick={() => toggle('envio')}>
+          Envío de Mercadería
+        </button>
+        {active.envio && (
+          <div className="submenu">
+            <button className="sub-button" onClick={() => onSelect('Mermas - NC - Eliminados')}>Mermas - NC - Eliminados</button>
+            <button className="sub-button" onClick={() => onSelect('Sobrestock')}>Sobrestock</button>
+          </div>
+        )}
+      </div>
 
-      <button onClick={() => setShowInventarioSubmenu(!showInventarioSubmenu)}>
-        Inventarios
-      </button>
+      <div className="section">
+        <button className="main-button" onClick={() => toggle('recepcion')}>
+          Recepción de Mercadería
+        </button>
+        {active.recepcion && (
+          <div className="submenu">
+            <button className="sub-button" onClick={() => onSelect('Envío desde Matriz')}>Envío desde Matriz</button>
+            <button className="sub-button" onClick={() => onSelect('Verificación')}>Verificación</button>
+          </div>
+        )}
+      </div>
 
-      {showInventarioSubmenu && (
-        <div className="submenu">
-          <button onClick={() => onSelect('Diferencia de Inventario AV')}>
-            Diferencias de AV
-          </button>
-          <button onClick={() => onSelect('Diferencia de Inventario Categoría')}>
-            Diferencias de Categoría
-          </button>
-        </div>
-      )}
+      <div className="section">
+        <button className="main-button" onClick={() => toggle('inventario')}>
+          Inventarios
+        </button>
+        {active.inventario && (
+          <div className="submenu">
+            <button className="sub-button" onClick={() => onSelect('Diferencia en AV')}>Diferencia en AV</button>
+            <button className="sub-button" onClick={() => onSelect('Diferencia en Categoría')}>Diferencia en Categoría</button>
+          </div>
+        )}
+      </div>
 
-      <button onClick={() => onSelect('Depósitos')}>
+      <button className="main-button" onClick={() => onSelect('Depósitos')}>
         Depósitos
       </button>
     </div>
