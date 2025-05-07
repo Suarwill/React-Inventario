@@ -1,0 +1,33 @@
+.panel-overlay {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    border-radius: 12px;
+    color: #0D1B2A;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .envio-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    background-color: white;
+  }
+  
+  .envio-table th, .envio-table td {
+    border: 1px solid #cccccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .envio-table th {
+    background-color: #e3f2fd;
+    font-weight: bold;
+  }
+  
+  .envio-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  

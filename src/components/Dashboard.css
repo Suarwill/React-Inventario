@@ -8,16 +8,11 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-image: url('bg.jpg'); /* bg.jpg está en la misma carpeta components */
+  background-image: url('bg.jpg'); /* Asegúrate de que bg.jpg esté correctamente ubicado */
   background-size: cover;
   background-position: center;
 }
 
-.dashboard-container {
-  display: flex;
-  flex: 1;
-  font-family: 'Segoe UI', sans-serif;
-}
 .sidebar {
   width: 250px;
   display: flex;
@@ -26,7 +21,6 @@
   gap: 15px;
   font-family: 'Segoe UI', sans-serif;
 }
-
 
 .section {
   display: flex;
@@ -58,8 +52,8 @@
 }
 
 .sub-button {
-  background: linear-gradient(to right, #4a90e2, #bd4fbb); /* degradado claro */
-  color: white;
+  background: linear-gradient(to right, #4a90e2, #bd4fbb);
+  color: black;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
@@ -71,22 +65,13 @@
 
 .sub-button:hover {
   background: linear-gradient(to right, #5fa8ec, #c167cb);
+  font-weight: 1000;
 }
+
 .panel-content {
   flex: 1;
   padding: 0;
-  /* El fondo principal se ha movido a .dashboard-wrapper */
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.panel-overlay {
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 40px;
-  border-radius: 12px;
-  color: #0D1B2A;
-  max-width: 800px;
-  width: 100%;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }

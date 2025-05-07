@@ -6,8 +6,8 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [selectedOption, setSelectedOption] = useState('Verificación de EM');
+  const [envioData, setEnvioData] = useState(null);
 
-  // Aquí se puede obtener el usuario desde props, contexto o localStorage
   const username = localStorage.getItem('username') || 'Usuario';
 
   return (
@@ -15,7 +15,11 @@ const Dashboard = () => {
       <Navbar username={username} />
       <div className="dashboard-container">
         <Sidebar onSelect={setSelectedOption} />
-        <PanelContent selected={selectedOption} />
+        <PanelContent
+          selected={selectedOption}
+          envioData={envioData}
+          setEnvioData={setEnvioData}
+        />
       </div>
     </div>
   );
