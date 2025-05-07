@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import PanelContent from './PanelContent';
-import Navbar from './Navbar';
+import Sidebar from './Sidebar/Sidebar';
+import PanelContent from './PanelContent/PanelContent';
+import Navbar from './Navbar/Navbar';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -15,8 +15,7 @@ const Dashboard = () => {
       <Navbar username={username} />
       <div className="dashboard-container">
         <Sidebar onSelect={setSelectedOption} />
-        <PanelContent
-          selected={selectedOption}
+        <PanelContent selected={selectedOption}
           envioData={envioData}
           setEnvioData={setEnvioData}
         />

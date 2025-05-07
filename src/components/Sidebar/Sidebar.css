@@ -1,0 +1,47 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .main-button-side {
+    background: linear-gradient(to right, #000000, #2c2c54);
+    color: white;
+    border: none;
+    margin: 5px;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .main-button:hover {
+    background: linear-gradient(to right, #1e1e2f, #4a4a75);
+  }
+  
+  .submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 15px;
+  }
+  
+  .sub-button {
+    background: linear-gradient(to right, #4a90e2, #bd4fbb);
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.3s ease;
+  }
+  
+  .sub-button:hover {
+    background: linear-gradient(to right, #5fa8ec, #c167cb);
+    font-weight: 1000;
+  }

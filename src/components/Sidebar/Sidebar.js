@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Sidebar.css';
 
 const Sidebar = ({ onSelect }) => {
   const [active, setActive] = useState({
@@ -17,7 +18,7 @@ const Sidebar = ({ onSelect }) => {
   return (
     <div className="sidebar">
       <div className="section">
-        <button className="main-button" onClick={() => toggle('envio')}>
+        <button className="main-button-side" onClick={() => toggle('envio')}>
           Envío de Mercadería
         </button>
         {active.envio && (
@@ -29,7 +30,7 @@ const Sidebar = ({ onSelect }) => {
       </div>
 
       <div className="section">
-        <button className="main-button" onClick={() => toggle('recepcion')}>
+        <button className="main-button-side" onClick={() => toggle('recepcion')}>
           Recepción de Mercadería
         </button>
         {active.recepcion && (
@@ -41,7 +42,7 @@ const Sidebar = ({ onSelect }) => {
       </div>
 
       <div className="section">
-        <button className="main-button" onClick={() => toggle('inventario')}>
+        <button className="main-button-side" onClick={() => toggle('inventario')}>
           Inventarios
         </button>
         {active.inventario && (
@@ -52,7 +53,7 @@ const Sidebar = ({ onSelect }) => {
         )}
       </div>
 
-      <button className="main-button" onClick={() => onSelect('Depósitos')}>
+      <button className="main-button-side" onClick={() => onSelect('Depósitos')}>
         Depósitos
       </button>
     </div>

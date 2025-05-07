@@ -64,9 +64,9 @@ const PanelContent = ({ selected, envioData, setEnvioData }) => {
   }
 
   return (
-    <div className="panel-overlay">
+    <div className="panel-content">
       <h2>{selected}</h2>
-      {/* Puedes añadir contenido por sección si lo deseas */}
+      {/* logica de renderizado */}
     </div>
   );
 };
