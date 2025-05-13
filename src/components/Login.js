@@ -20,6 +20,7 @@ const Login = () => {
 
       // Si todo OK, guardamos el usuario y el token en el localStorage
       localStorage.setItem('username', username);
+      localStorage.setItem('id', response.data.user.id); // Guardando el usuario aquí
       localStorage.setItem('token', response.data.token); // Guardando el token aquí
 
       setMensaje('Login exitoso');

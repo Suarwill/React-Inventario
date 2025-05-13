@@ -3,13 +3,14 @@ const API_URL = 'http://localhost:3000/deposito';
 export const getDepositos = async () => {
   try {
     const token = localStorage.getItem('token');
-    const usuario = localStorage.getItem('usuario');
+    const usuario = localStorage.getItem('username');
+    const userId = localStorage.getItem('id');
 
     if (!usuario) {
       throw new Error('Usuario no encontrado en localStorage');
     }
 
-    const response = await fetch(`${API_URL}/search?usuario=${encodeURIComponent(usuario)}`, {
+    const response = await fetch(`${API_URL}/search?id=${userId}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
