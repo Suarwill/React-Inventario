@@ -98,7 +98,6 @@ const deleteConteo = async (req, res) => {
 module.exports = {
     addConteo,
     getConteo,
-    getConteos,
     updateConteo,
     deleteConteo
 };
