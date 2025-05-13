@@ -21,7 +21,7 @@ const addDeposito = async (req, res) => {
 }
 
 const getDeposito = async (req, res) => {
-  const { id } = req.query; // ID del usuario (esperado como string)
+  const { id } = req.query;
 
   try {
     if (!id) {
@@ -33,27 +33,26 @@ const getDeposito = async (req, res) => {
       return res.status(400).json({ error: 'El ID debe ser un número válido' });
     }
 
-    const idStr = idInt.toString(); // Necesario para comparar con campo tipo VARCHAR
-
     console.log('ID recibido:', idInt);
 
-    // Verificar si el usuario existe y obtener su sector
-    const { rows: sectorData } = await pool.query(
-      'SELECT sector FROM usuarios WHERE id = $1',
+    // Obtener username y sector del usuario
+    const { rows: userData } = await pool.query(
+      'SELECT username, sector FROM usuarios WHERE id = $1',
       [idInt]
     );
 
-    if (sectorData.length === 0) {
+    if (userData.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const sector = sectorData[0].sector;
-    console.log('Sector del usuario:', sector);
+    const { username, sector } = userData[0];
+    console.log('Usuario:', username);
+    console.log('Sector:', sector);
 
-    // Buscar los últimos 20 depósitos del usuario
+    // Buscar depósitos por username (VARCHAR) en tabla depositos
     const { rows: userDeposits } = await pool.query(
       'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
-      [idStr] // Comparación con VARCHAR
+      [username]
     );
 
     console.log('Depósitos del usuario:', userDeposits.length);
@@ -62,11 +61,11 @@ const getDeposito = async (req, res) => {
       return res.status(200).json(userDeposits);
     }
 
-    // Si no tiene depósitos, buscar los últimos 20 depósitos del mismo sector (excluyendo al usuario)
+    // Si no tiene depósitos, buscar en el sector (excluyendo al usuario actual)
     const { rows: sectorDeposits } = await pool.query(
       `SELECT * FROM depositos 
        WHERE usuario IN (
-         SELECT id::text FROM usuarios 
+         SELECT username FROM usuarios 
          WHERE sector = $1 AND id != $2
        )
        ORDER BY fecha DESC
