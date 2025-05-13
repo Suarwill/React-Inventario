@@ -27,11 +27,15 @@ const getDeposito = async (req, res) => {
     if (!id) {
       return res.status(400).json({ error: 'Debe proporcionar un ID de usuario' });
     }
+    const idInt = parseInt(id, 10);
+      if (isNaN(idInt)) {
+      return res.status(400).json({ error: 'ID inválido' });
+      }
 
     // Verificar si el usuario existe y obtener su sector
     const { rows: sectorData } = await pool.query(
       'SELECT sector FROM usuarios WHERE id = $1',
-      [id]
+      [idInt]
     );
 
     if (sectorData.length === 0) {
@@ -59,7 +63,7 @@ const getDeposito = async (req, res) => {
        )
        ORDER BY fecha DESC
        LIMIT 20`,
-      [sector, id]
+      [sector, idInt]
     );
 
     res.status(200).json(sectorDeposits);
