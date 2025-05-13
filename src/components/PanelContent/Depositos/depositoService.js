@@ -2,7 +2,13 @@ const API_URL = 'http://localhost:3000/deposito';
 
 export const fetchDepositos = async () => {
   try {
-    const response = await fetch(`${API_URL}/search`);
+    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
+    const response = await fetch(`${API_URL}/search`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+      },
+    });
     if (!response.ok) throw new Error('Error al cargar depósitos');
     return await response.json();
   } catch (error) {
@@ -13,9 +19,13 @@ export const fetchDepositos = async () => {
 
 export const addDeposito = async (nuevoDeposito) => {
   try {
+    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
     const response = await fetch(`${API_URL}/add`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+      },
       body: JSON.stringify(nuevoDeposito),
     });
     if (!response.ok) throw new Error('Error al agregar depósito');
@@ -28,9 +38,13 @@ export const addDeposito = async (nuevoDeposito) => {
 
 export const editDeposito = async (id, depositoEditado) => {
   try {
+    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+      },
       body: JSON.stringify(depositoEditado),
     });
     if (!response.ok) throw new Error('Error al editar depósito');
@@ -43,8 +57,12 @@ export const editDeposito = async (id, depositoEditado) => {
 
 export const deleteDeposito = async (id) => {
   try {
+    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+      },
     });
     if (!response.ok) throw new Error('Error al eliminar depósito');
     return await response.json();
