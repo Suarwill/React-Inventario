@@ -21,21 +21,27 @@ const addDeposito = async (req, res) => {
 }
 
 const getDeposito = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.query; // ID del usuario (esperado como string)
 
   try {
     if (!id) {
       return res.status(400).json({ error: 'Debe proporcionar un ID de usuario' });
     }
 
-    console.log('ID recibido:', id);
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) {
+      return res.status(400).json({ error: 'El ID debe ser un número válido' });
+    }
 
+    const idStr = idInt.toString(); // Necesario para comparar con campo tipo VARCHAR
+
+    console.log('ID recibido:', idInt);
+
+    // Verificar si el usuario existe y obtener su sector
     const { rows: sectorData } = await pool.query(
       'SELECT sector FROM usuarios WHERE id = $1',
-      [id]
+      [idInt]
     );
-
-    console.log('Sector data:', sectorData);
 
     if (sectorData.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -44,9 +50,10 @@ const getDeposito = async (req, res) => {
     const sector = sectorData[0].sector;
     console.log('Sector del usuario:', sector);
 
+    // Buscar los últimos 20 depósitos del usuario
     const { rows: userDeposits } = await pool.query(
       'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
-      [id]
+      [idStr] // Comparación con VARCHAR
     );
 
     console.log('Depósitos del usuario:', userDeposits.length);
@@ -55,26 +62,24 @@ const getDeposito = async (req, res) => {
       return res.status(200).json(userDeposits);
     }
 
+    // Si no tiene depósitos, buscar los últimos 20 depósitos del mismo sector (excluyendo al usuario)
     const { rows: sectorDeposits } = await pool.query(
       `SELECT * FROM depositos 
        WHERE usuario IN (
-         SELECT id FROM usuarios 
+         SELECT id::text FROM usuarios 
          WHERE sector = $1 AND id != $2
        )
        ORDER BY fecha DESC
        LIMIT 20`,
-      [sector, id]
+      [sector, idInt]
     );
-
-    console.log('Depósitos del sector:', sectorDeposits.length);
 
     res.status(200).json(sectorDeposits);
   } catch (error) {
-    console.error('Error al obtener el depósito:', error.message);
+    console.error('Error al obtener el depósito:', error);
     res.status(500).json({ error: 'Error al obtener el depósito' });
   }
 };
-
 
 const updateDeposito = async (req, res) => {
   const { id } = req.params;
