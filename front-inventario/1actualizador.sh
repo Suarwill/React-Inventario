@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "actualizando el frontend."
+git pull origin main
+
 echo "📁 Copiando archivos de build a /var/www/html"
 sudo mkdir -p /var/www/html
 sudo rm -rf /var/www/html/*
