@@ -19,8 +19,8 @@ export const getDepositos = async () => {
     console.log('Response:', response); // Agregado para depuración
 
     if (!response.ok) throw new Error('Error al cargar depósitos');
-    return await response.json();
     console.log('Response JSON:', response.json()); // Agregado para depuración
+    return await response.json();
   } catch (error) {
     console.error('Error al cargar depósitos:', error);
     throw error;

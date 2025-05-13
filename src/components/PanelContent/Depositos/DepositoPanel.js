@@ -17,6 +17,7 @@ const DepositoPanel = () => {
 
   const handleLoadDepositos = async () => {
     try {
+      console.log('Cargando depósitos...');
       const data = await getDepositos();
       setDepositos(data.slice(0, 7)); // Mostrar solo los últimos 7 depósitos
     } catch (error) {
