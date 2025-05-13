@@ -15,8 +15,6 @@ const DepositoPanel = () => {
     comentario: '',
   });
 
-  const usuario = localStorage.getItem('username');
-
   const handleLoadDepositos = async () => {
     try {
       const data = await getDepositos();
@@ -28,13 +26,10 @@ const DepositoPanel = () => {
 
   const handleNuevoDeposito = async () => {
     const deposito = {
-      usuario,
       fecha: new Date().toISOString().split('T')[0],
       monto: nuevoDeposito.monto,
       comentario: nuevoDeposito.comentario,
     };
-
-    console.log(deposito);
 
     try {
       await addDeposito(deposito);
@@ -51,16 +46,27 @@ const DepositoPanel = () => {
     setNuevoDeposito({ ...nuevoDeposito, [name]: value });
   };
 
-  const handleEditarDeposito = (id) => {
-    console.log(`Editar depósito con ID: ${id}`);
-    // Implementa la lógica para editar un depósito
+  const handleEditarDeposito = async (id) => {
+    const depositoEditado = {
+      fecha: new Date().toISOString().split('T')[0],
+      monto: nuevoDeposito.monto,
+      comentario: nuevoDeposito.comentario,
+    };
+
+    try {
+      await updateDeposito(id, depositoEditado);
+      console.log(`Depósito con ID ${id} actualizado`);
+      handleLoadDepositos();
+    } catch (error) {
+      console.error(`Error al actualizar el depósito con ID ${id}:`, error);
+    }
   };
 
   const handleEliminarDeposito = async (id) => {
     try {
       await deleteDeposito(id);
       console.log(`Depósito con ID ${id} eliminado`);
-      handleLoadDepositos(); // Recargar la lista de depósitos
+      handleLoadDepositos();
     } catch (error) {
       console.error(`Error al eliminar el depósito con ID ${id}:`, error);
     }
@@ -117,8 +123,8 @@ const DepositoPanel = () => {
             <h3>Nuevo Depósito</h3>
             <form
               onSubmit={(e) => {
-                e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
-                handleNuevoDeposito(); // Llamar a la función para enviar los datos
+                e.preventDefault();
+                handleNuevoDeposito();
               }}
             >
               <label>

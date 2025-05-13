@@ -3,10 +3,9 @@ const API_URL = 'http://localhost:3000/deposito';
 export const getDepositos = async () => {
   try {
     const token = localStorage.getItem('token');
-    const usuario = localStorage.getItem('username');
     const userId = localStorage.getItem('id');
 
-    if (!usuario) {
+    if (!userId) {
       throw new Error('Usuario no encontrado en localStorage');
     }
 
@@ -25,18 +24,22 @@ export const getDepositos = async () => {
   }
 };
 
-
 export const addDeposito = async (nuevoDeposito) => {
   try {
-    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('id'); // Obtén el usuarioId de localStorage
+
+    const depositoConUsuario = { ...nuevoDeposito, usuarioId: userId }; // Agrega usuarioId al cuerpo
+
     const response = await fetch(`${API_URL}/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(nuevoDeposito),
+      body: JSON.stringify(depositoConUsuario),
     });
+
     if (!response.ok) throw new Error('Error al agregar depósito');
     return await response.json();
   } catch (error) {
@@ -47,15 +50,20 @@ export const addDeposito = async (nuevoDeposito) => {
 
 export const updateDeposito = async (id, depositoEditado) => {
   try {
-    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('id'); // Obtén el usuarioId de localStorage
+
+    const depositoConUsuario = { ...depositoEditado, usuarioId: userId }; // Agrega usuarioId al cuerpo
+
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(depositoEditado),
+      body: JSON.stringify(depositoConUsuario),
     });
+
     if (!response.ok) throw new Error('Error al editar depósito');
     return await response.json();
   } catch (error) {
@@ -66,13 +74,18 @@ export const updateDeposito = async (id, depositoEditado) => {
 
 export const deleteDeposito = async (id) => {
   try {
-    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('id'); // Obtén el usuarioId de localStorage
+
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({ usuarioId: userId }), // Envía usuarioId en el cuerpo
     });
+
     if (!response.ok) throw new Error('Error al eliminar depósito');
     return await response.json();
   } catch (error) {
