@@ -16,16 +16,17 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/api/user/login', { username, password });
+      const response = await axiosInstance.post('/user/login', { username, password });
+      console.log('Respuesta del backend:', response.data); // Agregado para depuración
 
-      // Si todo OK, guardamos el usuario y el token en el localStorage
       localStorage.setItem('username', username);
-      localStorage.setItem('id', response.data.user.id); // Guardando el usuario aquí
-      localStorage.setItem('token', response.data.token); // Guardando el token aquí
+      localStorage.setItem('id', response.data.user.id);
+      localStorage.setItem('token', response.data.token);
 
       setMensaje('Login exitoso');
       navigate('/dashboard');
     } catch (error) {
+      console.error('Error en login:', error.response?.data || error); // Agregado para depuración
       setMensaje(error.response?.data?.error || 'Error al iniciar sesión');
     }
   };

@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-// Configuración de axios para incluir el token en todas las solicitudes
 const axiosInstance = axios.create({
-  baseURL: '/',  // Cambia esto a la URL de tu API
+  baseURL: '/api/', // Asegúrate de que todas las solicitudes usen el prefijo /api/
 });
 
-// Si el token está disponible, agregarlo a las cabeceras
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
