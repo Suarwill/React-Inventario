@@ -16,7 +16,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post('api/user/login', { username, password });
+      const response = await axiosInstance.post('/user/login', { username, password });
 
       // Si todo OK, guardamos el usuario y el token en el localStorage
       localStorage.setItem('username', username);
