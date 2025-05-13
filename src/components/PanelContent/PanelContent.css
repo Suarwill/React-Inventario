@@ -1,33 +1,40 @@
 .panel-overlay {
     background-color: rgba(255, 255, 255, 0.85);
     padding: 40px;
-    margin: 20px;
+    margin: 20px auto; /* Centrar horizontalmente */
     border-radius: 12px;
     color: #0D1B2A;
-    width: 100%;
+    width: 80%; /* Ajustar el ancho del contenedor */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     font-family: 'Segoe UI', sans-serif;
-  }
-  
-  .envio-table {
+    display: flex;
+    flex-direction: column; /* Alinear elementos verticalmente */
+    align-items: center; /* Centrar horizontalmente los hijos */
+}
+
+.main-button {
+    margin: 20px 0; /* Espaciado alrededor del botón */
+}
+
+.envio-table {
     border-collapse: collapse;
-    width: 100%;
+    width: 100%; /* Ocupa el 100% del ancho disponible */
     margin-top: 20px;
     background-color: white;
-  }
-  
-  .envio-table th, .envio-table td {
+    text-align: center; /* Centrar texto dentro de la tabla */
+}
+
+.envio-table th, .envio-table td {
     border: 1px solid #cccccc;
     padding: 10px;
     text-align: center;
-  }
-  
-  .envio-table th {
+}
+
+.envio-table th {
     background-color: #e3f2fd;
     font-weight: bold;
-  }
-  
-  .envio-table tr:hover {
+}
+
+.envio-table tr:hover {
     background-color: #f1f1f1;
-  }
-  
+}
