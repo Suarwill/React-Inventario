@@ -107,7 +107,18 @@ const updateDeposito = async (req, res) => {
     }
 
     // Verificar si el usuario existe
-    const { rows: userResult } = await pool.query('SELECT username FROM usuarios WHERE id = $1', [usuarioId]);
+    const idInt = parseInt(usuarioId, 10);
+    if (isNaN(idInt)) {
+      return res.status(400).json({ error: 'El ID debe ser un número válido' });
+    }
+
+    console.log('ID recibido:', idInt);
+
+    // Obtener username del usuario
+    const { rows: userResult } = await pool.query(
+      'SELECT username FROM usuarios WHERE id = $1',
+      [idInt]
+    );
     if (userResult.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
@@ -137,7 +148,19 @@ const deleteDeposito = async (req, res) => {
     }
 
     // Verificar si el usuario existe
-    const { rows: userResult } = await pool.query('SELECT username FROM usuarios WHERE id = $1', [usuarioId]);
+    // Verificar si el usuario existe
+    const idInt = parseInt(usuarioId, 10);
+    if (isNaN(idInt)) {
+      return res.status(400).json({ error: 'El ID debe ser un número válido' });
+    }
+
+    console.log('ID recibido:', idInt);
+
+    // Obtener username del usuario
+    const { rows: userResult } = await pool.query(
+      'SELECT username FROM usuarios WHERE id = $1',
+      [idInt]
+    );
     if (userResult.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
