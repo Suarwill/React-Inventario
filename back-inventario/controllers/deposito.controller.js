@@ -11,8 +11,6 @@ const addDeposito = async (req, res) => {
       return res.status(400).json({ error: 'El ID debe ser un número válido' });
     }
 
-    console.log('ID recibido:', idInt);
-
     // Obtener username y sector del usuario
     const { rows: userResult } = await pool.query(
       'SELECT username, sector FROM usuarios WHERE id = $1',
@@ -49,8 +47,6 @@ const getDeposito = async (req, res) => {
       return res.status(400).json({ error: 'El ID debe ser un número válido' });
     }
 
-    console.log('ID recibido:', idInt);
-
     // Obtener username y sector del usuario
     const { rows: userData } = await pool.query(
       'SELECT username, sector FROM usuarios WHERE id = $1',
@@ -62,16 +58,12 @@ const getDeposito = async (req, res) => {
     }
 
     const { username, sector } = userData[0];
-    console.log('Usuario:', username);
-    console.log('Sector:', sector);
 
     // Buscar depósitos por username (VARCHAR) en tabla depositos
     const { rows: userDeposits } = await pool.query(
       'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
       [username]
     );
-
-    console.log('Depósitos del usuario:', userDeposits.length);
 
     if (userDeposits.length > 0) {
       return res.status(200).json(userDeposits);

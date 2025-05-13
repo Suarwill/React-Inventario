@@ -26,6 +26,7 @@ const DepositoPanel = () => {
 
   const handleNuevoDeposito = async () => {
     const deposito = {
+      usuarioId: localStorage.getItem('id'),
       fecha: new Date().toISOString().split('T')[0],
       monto: nuevoDeposito.monto,
       comentario: nuevoDeposito.comentario,

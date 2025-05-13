@@ -16,8 +16,11 @@ export const getDepositos = async () => {
       },
     });
 
+    console.log('Response:', response); // Agregado para depuración
+
     if (!response.ok) throw new Error('Error al cargar depósitos');
     return await response.json();
+    console.log('Response JSON:', response.json()); // Agregado para depuración
   } catch (error) {
     console.error('Error al cargar depósitos:', error);
     throw error;
@@ -27,9 +30,6 @@ export const getDepositos = async () => {
 export const addDeposito = async (nuevoDeposito) => {
   try {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('id'); // Obtén el usuarioId de localStorage
-
-    const depositoConUsuario = { ...nuevoDeposito, usuarioId: userId }; // Agrega usuarioId al cuerpo
 
     const response = await fetch(`${API_URL}/add`, {
       method: 'POST',
@@ -37,7 +37,7 @@ export const addDeposito = async (nuevoDeposito) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(depositoConUsuario),
+      body: JSON.stringify(nuevoDeposito),
     });
 
     if (!response.ok) throw new Error('Error al agregar depósito');
