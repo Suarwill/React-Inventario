@@ -95,27 +95,21 @@ const DepositoPanel = () => {
           </tr>
         </thead>
         <tbody>
-          {depositos.map((deposito, index) => (
-            <tr key={index}>
-              <td>{deposito.fecha}</td>
-              <td>{deposito.monto}</td>
-              <td>{deposito.comentario}</td>
-              <td>
-                <button
-                  className="edit-button"
-                  onClick={() => handleEditarDeposito(deposito.id)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="delete-button"
-                  onClick={() => handleEliminarDeposito(deposito.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
+        {depositos.length === 0 ? (
+           <tr><td colSpan="4">No hay depósitos disponibles</td></tr>
+          ) : (
+           depositos.map((deposito, index) => (
+             <tr key={index}>
+               <td>{deposito.fecha}</td>
+               <td>{deposito.monto}</td>
+               <td>{deposito.comentario}</td>
+               <td>
+                 <button onClick={() => handleEditarDeposito(deposito.id)}>Editar</button>
+                 <button onClick={() => handleEliminarDeposito(deposito.id)}>Eliminar</button>
+               </td>
+             </tr>
+           ))
+          )}
         </tbody>
       </table>
 

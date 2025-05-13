@@ -9,6 +9,9 @@ export const getDepositos = async () => {
       throw new Error('Usuario no encontrado en localStorage');
     }
 
+    console.log('userId:', userId); // Agregado para depuración
+    console.log('token:', token); // Agregado para depuración
+
     const response = await fetch(`${API_URL}/search?id=${userId}`, {
       method: 'GET',
       headers: {
