@@ -1,14 +1,21 @@
 const API_URL = 'http://localhost:3000/deposito';
 
-export const fetchDepositos = async () => {
+export const getDepositos = async () => {
   try {
-    const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
-    const response = await fetch(`${API_URL}/search`, {
+    const token = localStorage.getItem('token');
+    const usuario = localStorage.getItem('usuario');
+
+    if (!usuario) {
+      throw new Error('Usuario no encontrado en localStorage');
+    }
+
+    const response = await fetch(`${API_URL}/search?usuario=${encodeURIComponent(usuario)}`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`, // Agrega el token al encabezado
+        Authorization: `Bearer ${token}`,
       },
     });
+
     if (!response.ok) throw new Error('Error al cargar depósitos');
     return await response.json();
   } catch (error) {
@@ -16,6 +23,7 @@ export const fetchDepositos = async () => {
     throw error;
   }
 };
+
 
 export const addDeposito = async (nuevoDeposito) => {
   try {
@@ -36,7 +44,7 @@ export const addDeposito = async (nuevoDeposito) => {
   }
 };
 
-export const editDeposito = async (id, depositoEditado) => {
+export const updateDeposito = async (id, depositoEditado) => {
   try {
     const token = localStorage.getItem('token'); // Obtén el token del almacenamiento local
     const response = await fetch(`${API_URL}/${id}`, {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  fetchDepositos,
+  getDepositos,
   addDeposito,
-  editDeposito,
+  updateDeposito,
   deleteDeposito,
 } from './depositoService';
 import '../PanelContent.css';
@@ -19,7 +19,7 @@ const DepositoPanel = () => {
 
   const handleLoadDepositos = async () => {
     try {
-      const data = await fetchDepositos();
+      const data = await getDepositos();
       setDepositos(data.slice(0, 7)); // Mostrar solo los últimos 7 depósitos
     } catch (error) {
       console.error(error);

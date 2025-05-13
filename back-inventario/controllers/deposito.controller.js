@@ -4,7 +4,7 @@ const addDeposito = async (req, res) => {
   const { usuario, fecha, monto, comentario } = req.body;
   try {
     // Verificar si el usuario existe
-    const userResult = await pool.query('SELECT * FROM usuarios WHERE usuario = $1', [usuario]);
+    const userResult = await pool.query('SELECT * FROM usuarios WHERE username = $1', [usuario]);
     if (userResult.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
