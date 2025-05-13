@@ -22,7 +22,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Login usuario
 const loginUser = async (req, res) => {
   const { validationResult } = require('express-validator');
   const errors = validationResult(req);
@@ -37,13 +36,28 @@ const loginUser = async (req, res) => {
     const valid = await bcrypt.compare(password, usuario.password);
     if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-    const token = jwt.sign({ userId: usuario.id, username: usuario.username }, process.env.JWT_SECRET, { expiresIn: '8h' }); // <-- Añadir username al payload
-    res.json({ message: 'Login exitoso', token });
+    // Crear el token JWT
+    const token = jwt.sign(
+      { userId: usuario.id, username: usuario.username }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '8h' }
+    );
+
+    // Devolver la respuesta con el token y la información del usuario
+    res.json({
+      message: 'Login exitoso',
+      token,
+      user: {
+        id: usuario.id,
+        username: usuario.username
+      }
+    });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
+
 
 // Buscar usuarios
 const searchUsers = async (req, res) => {
