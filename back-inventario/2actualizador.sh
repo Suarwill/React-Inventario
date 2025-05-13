@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Salir si algo falla
-set -e
-
-bash
 echo "actualizando el backend."
 git pull origin main
 

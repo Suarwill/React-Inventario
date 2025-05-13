@@ -34,6 +34,8 @@ const DepositoPanel = () => {
       comentario: nuevoDeposito.comentario,
     };
 
+    console.log(deposito);
+
     try {
       await addDeposito(deposito);
       console.log('Depósito agregado exitosamente');
@@ -115,8 +117,8 @@ const DepositoPanel = () => {
             <h3>Nuevo Depósito</h3>
             <form
               onSubmit={(e) => {
-                e.preventDefault();
-                handleNuevoDeposito();
+                e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
+                handleNuevoDeposito(); // Llamar a la función para enviar los datos
               }}
             >
               <label>
@@ -136,7 +138,6 @@ const DepositoPanel = () => {
                   name="comentario"
                   value={nuevoDeposito.comentario}
                   onChange={handleInputChange}
-                  required
                 />
               </label>
               <div className="modal-actions">
@@ -145,7 +146,7 @@ const DepositoPanel = () => {
                 </button>
                 <button
                   type="button"
-                  className="secondary-button"
+                  className="main-button"
                   onClick={() => setShowModal(false)}
                 >
                   Cancelar
