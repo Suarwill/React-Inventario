@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const movementController = require('../controllers/movimiento.controller');
+const movementController = require('../controllers/movement.controller');
 const authenticateToken = require('../middlewares/auth.middleware');
 const { validateUser} = require('../middlewares/validation.middleware');
 
