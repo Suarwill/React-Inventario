@@ -42,7 +42,7 @@ const getDeposito = async (req, res) => {
 
     // Buscar los últimos 20 depósitos del usuario
     const { rows: userDeposits } = await pool.query(
-      'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
+      'SELECT * FROM depositos WHERE id = $1 ORDER BY fecha DESC LIMIT 20',
       [id] // Usar id en lugar de UserID
     );
 
