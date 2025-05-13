@@ -21,17 +21,17 @@ const addDeposito = async (req, res) => {
 }
 
 const getDeposito = async (req, res) => {
-  const { id } = req.query; // Cambiado de UserID a id
+  const { id } = req.query; // ID del usuario
 
   try {
     if (!id) {
       return res.status(400).json({ error: 'Debe proporcionar un ID de usuario' });
     }
 
-    // Obtener el sector del usuario
+    // Verificar si el usuario existe y obtener su sector
     const { rows: sectorData } = await pool.query(
       'SELECT sector FROM usuarios WHERE id = $1',
-      [id] // Usar id en lugar de UserID
+      [id]
     );
 
     if (sectorData.length === 0) {
@@ -42,8 +42,8 @@ const getDeposito = async (req, res) => {
 
     // Buscar los últimos 20 depósitos del usuario
     const { rows: userDeposits } = await pool.query(
-      'SELECT * FROM depositos WHERE id = $1 ORDER BY fecha DESC LIMIT 20',
-      [id] // Usar id en lugar de UserID
+      'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
+      [id] // Aquí usamos el ID del usuario como referencia en la tabla depositos
     );
 
     if (userDeposits.length > 0) {
@@ -59,7 +59,7 @@ const getDeposito = async (req, res) => {
        )
        ORDER BY fecha DESC
        LIMIT 20`,
-      [sector, id] // Usar id en lugar de UserID
+      [sector, id]
     );
 
     res.status(200).json(sectorDeposits);
@@ -68,7 +68,6 @@ const getDeposito = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el depósito' });
   }
 };
-
 
 const updateDeposito = async (req, res) => {
   const { id } = req.params;
