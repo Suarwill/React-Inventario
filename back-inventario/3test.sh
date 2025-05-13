@@ -1,4 +1,4 @@
-#!/bin/bash
+#!bash
 
 # prueba de crear usuario
 echo "Realizando prueba de login de usuario..."
