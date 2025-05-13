@@ -21,22 +21,54 @@ const addDeposito = async (req, res) => {
 }
 
 const getDeposito = async (req, res) => {
-  const { id } = req.query;
+  const { usuario } = req.query;
+
   try {
-    let result;
-    if (id) {
-      // Obtener un deposito por ID
-      result = await pool.query('SELECT * FROM depositos WHERE id = $1', [id]);
-    } else {
-      // Obtener todos los depositos
-      result = await pool.query('SELECT * FROM depositos');
+    if (!usuario) {
+      return res.status(400).json({ error: 'Debe proporcionar un ID de usuario' });
     }
-    res.status(200).json(result.rows);
+
+    // Obtener el sector del usuario
+    const { rows: sectorData } = await pool.query(
+      'SELECT sector FROM usuarios WHERE id = $1',
+      [usuario]
+    );
+
+    if (sectorData.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const sector = sectorData[0].sector;
+
+    // Buscar los últimos 20 depósitos del usuario
+    const { rows: userDeposits } = await pool.query(
+      'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
+      [usuario]
+    );
+
+    if (userDeposits.length > 0) {
+      return res.status(200).json(userDeposits);
+    }
+
+    // Si no tiene depósitos, buscar los últimos 20 depósitos del mismo sector (excluyendo al usuario)
+    const { rows: sectorDeposits } = await pool.query(
+      `SELECT * FROM depositos 
+       WHERE usuario IN (
+         SELECT id FROM usuarios 
+         WHERE sector = $1 AND id != $2
+       )
+       ORDER BY fecha DESC
+       LIMIT 20`,
+      [sector, usuario]
+    );
+
+    res.status(200).json(sectorDeposits);
   } catch (error) {
-    console.error('Error al obtener el deposito:', error);
-    res.status(500).json({ error: 'Error al obtener el deposito' });
+    console.error('Error al obtener el depósito:', error);
+    res.status(500).json({ error: 'Error al obtener el depósito' });
   }
-}
+};
+
 
 const updateDeposito = async (req, res) => {
   const { id } = req.params;

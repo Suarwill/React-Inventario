@@ -15,7 +15,7 @@ const DepositoPanel = () => {
     comentario: '',
   });
 
-  const usuario = 'usuario_actual'; // Reemplaza con el usuario de la sesión actual
+  const usuario = localStorage.getItem('username');
 
   const handleLoadDepositos = async () => {
     try {
