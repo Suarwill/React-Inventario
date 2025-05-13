@@ -46,7 +46,7 @@ const AdminPanel = () => {
     }
 
     try {
-      const res = await axiosInstance.post('/user/register', { username, password });
+      const res = await axiosInstance.post('/api/user/register', { username, password });
       showMessage(res.data.message || 'Usuario registrado con éxito.');
       setUsername('');
       setPassword('');
@@ -58,7 +58,7 @@ const AdminPanel = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const res = await axiosInstance.get('/user/search', { params: { username: searchQuery } });
+      const res = await axiosInstance.get('/api/user/search', { params: { username: searchQuery } });
       setSearchResults(res.data);
       showMessage('');
     } catch (error) {
@@ -69,7 +69,7 @@ const AdminPanel = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      const res = await axiosInstance.delete(`/user/${deleteUser}`);
+      const res = await axiosInstance.delete(`/api/user/${deleteUser}`);
       showMessage(res.data.message);
       setDeleteUser('');
     } catch (error) {
@@ -84,7 +84,7 @@ const AdminPanel = () => {
     }
 
     try {
-      const res = await axiosInstance.put(`/user/${editUsername}`, {
+      const res = await axiosInstance.put(`/api/user/${editUsername}`, {
         newUsername: newUsername.trim() || undefined,
         newPassword: newPassword.trim() || undefined,
       });

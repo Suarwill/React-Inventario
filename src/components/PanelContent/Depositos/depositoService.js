@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/deposito';
+const API_URL = '/api/deposito';
 
 export const getDepositos = async () => {
   try {
