@@ -1,4 +1,4 @@
-#!bash
+#!/bin/bash
 
 # Salir si algo falla
 set -e
