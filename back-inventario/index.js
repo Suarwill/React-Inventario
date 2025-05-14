@@ -28,7 +28,7 @@ app.use('/api/movimiento', movimientoRoutes); // todas las rutas de movimiento: 
 app.use('/api/conteo', conteoRoutes); // todas las rutas de conteo: /conteo/add, /conteo/update, etc.
 
 
-app.listen(PORT, '127.0.0.1',() => {
+app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
   /*
   console.log('Database connection details:');
