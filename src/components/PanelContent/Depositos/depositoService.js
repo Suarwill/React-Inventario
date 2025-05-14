@@ -4,7 +4,6 @@ const API_URL = '/api/deposito';
 export const getDepositos = async () => {
   try {
     const userId = localStorage.getItem('id');
-
     if (!userId) {
       throw new Error('Usuario no encontrado en localStorage');
     }
