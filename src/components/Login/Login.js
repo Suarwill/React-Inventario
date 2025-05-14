@@ -21,6 +21,8 @@ const Login = () => {
 
       localStorage.setItem('username', username);
       localStorage.setItem('id', response.data.user.id);
+      localStorage.setItem('sector', response.data.user.sector);
+      localStorage.setItem('zona', response.data.user.zona);
       localStorage.setItem('token', response.data.token);
 
       setMensaje('Login exitoso');

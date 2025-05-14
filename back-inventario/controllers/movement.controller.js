@@ -74,7 +74,7 @@ const getMovimiento = async (req, res) => {
 
 const getMovimientoCercano = async (req, res) => {
   const { destino } = req.query; // El destino se envía desde el frontend
-  const origen = "ADM";
+  const origen = "BODEGA";
   const tipo = "PRODUCCION";
 
   try {

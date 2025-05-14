@@ -29,7 +29,10 @@ const loginUser = async (req, res) => {
   
   const { username, password } = req.body;
   try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+    const result = await pool.query(
+      'SELECT id, username, password, sector, zona FROM usuarios WHERE username = $1',
+      [username]
+    );
     if (result.rows.length === 0) return res.status(401).json({ error: 'Usuario no encontrado' });
 
     const usuario = result.rows[0];
@@ -43,13 +46,15 @@ const loginUser = async (req, res) => {
       { expiresIn: '8h' }
     );
 
-    // Devolver la respuesta con el token y la información del usuario
+    // Devolver la respuesta con el token, la información del usuario, sector y zona
     res.json({
       message: 'Login exitoso',
       token,
       user: {
         id: usuario.id,
-        username: usuario.username
+        username: usuario.username,
+        sector: usuario.sector,
+        zona: usuario.zona
       }
     });
   } catch (err) {
