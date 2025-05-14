@@ -11,10 +11,6 @@ const conteoRoutes = require('./routes/conteo.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-  res.status(404).json({ error: 'Ruta no encontrada' });
-});
-
 app.use(cors());
 app.use(express.json());
 
