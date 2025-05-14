@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 });
 
 // Rutas
-app.use('/api/user', userRoutes);  // todas las rutas de usuario: /user/login, /user/register, etc.
+app.use('/user', userRoutes);  // todas las rutas de usuario: /user/login, /user/register, etc.
 app.use('/api/product', productRoutes); // todas las rutas de producto: /product/add, /product/update, etc.
 app.use('/api/deposito', depositoRoutes); // todas las rutas de deposito: /deposito/add, /deposito/update, etc.
 app.use('/api/movimiento', movimientoRoutes); // todas las rutas de movimiento: /movimiento/add, /movimiento/update, etc.
