@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: '/api', // Asegúrate de que todas las solicitudes usen el prefijo /api/
+  baseURL: '/', // Asegúrate de que todas las solicitudes usen el prefijo /api/
 });
 
 axiosInstance.interceptors.request.use(

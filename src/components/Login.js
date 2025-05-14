@@ -16,7 +16,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/user/login', { username, password });
+      const response = await axiosInstance.post('/api/user/login', { username, password });
       console.log('Respuesta del backend:', response.data); // Agregado para depuración
 
       localStorage.setItem('username', username);
