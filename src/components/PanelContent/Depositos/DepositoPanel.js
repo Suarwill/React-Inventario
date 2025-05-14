@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   getDepositos,
   addDeposito,
-  updateDeposito,
   deleteDeposito,
 } from './depositoService';
-import '../PanelContent.css';
+import './DepositoPanel.css';
 
 const DepositoPanel = () => {
   const [depositos, setDepositos] = useState([]);
@@ -48,23 +47,12 @@ const DepositoPanel = () => {
     setNuevoDeposito({ ...nuevoDeposito, [name]: value });
   };
 
-  const handleEditarDeposito = async (id) => {
-    const depositoEditado = {
-      fecha: new Date().toISOString().split('T')[0],
-      monto: nuevoDeposito.monto,
-      comentario: nuevoDeposito.comentario,
-    };
-
-    try {
-      await updateDeposito(id, depositoEditado);
-      console.log(`Depósito con ID ${id} actualizado`);
-      handleLoadDepositos();
-    } catch (error) {
-      console.error(`Error al actualizar el depósito con ID ${id}:`, error);
-    }
-  };
-
   const handleEliminarDeposito = async (id) => {
+    const confirmacion = window.confirm('¿Seguro quiere eliminar este depósito?');
+    if (!confirmacion) {
+      return; // Si el usuario cancela, no se realiza ninguna acción
+    }
+
     try {
       await deleteDeposito(id);
       console.log(`Depósito con ID ${id} eliminado`);
@@ -104,8 +92,7 @@ const DepositoPanel = () => {
                <td>{deposito.monto}</td>
                <td>{deposito.comentario}</td>
                <td>
-                 <button onClick={() => handleEditarDeposito(deposito.id)}>Editar</button>
-                 <button onClick={() => handleEliminarDeposito(deposito.id)}>Eliminar</button>
+                 <button className="main-button" onClick={() => handleEliminarDeposito(deposito.id)}>Eliminar</button>
                </td>
              </tr>
            ))
