@@ -36,6 +36,7 @@ const RecepcionPanel = () => {
             <th>Número</th>
             <th>Cantidad</th>
             <th>Código</th>
+            <th>Descripción</th>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +51,7 @@ const RecepcionPanel = () => {
                 <td>{recepcion.nro}</td>
                 <td>{recepcion.cant}</td>
                 <td>{recepcion.cod}</td>
+                <td>{recepcion.descripcion}</td>
               </tr>
             ))
           )}
