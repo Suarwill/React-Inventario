@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const depositoController = require('../controllers/deposito.controller');
 const authenticateToken = require('../middlewares/auth.middleware');
-const { validateUser} = require('../middlewares/validation.middleware');
 
 router.post('/add',authenticateToken ,depositoController.addDeposito);
 router.get('/search', authenticateToken ,depositoController.getDeposito);

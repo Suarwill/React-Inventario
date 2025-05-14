@@ -66,6 +66,7 @@ const updateMovimiento = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el movimiento' });
   }
 }
+
 const deleteMovimiento = async (req, res) => {
   const { id } = req.params;
   try {
@@ -76,12 +77,12 @@ const deleteMovimiento = async (req, res) => {
     }
     // Eliminar el movimiento
     await pool.query('DELETE FROM movimientos WHERE id = $1', [id]);
-    res.status(204).send();
+    res.status(200).json({ message: 'Movimiento eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar el movimiento:', error);
     res.status(500).json({ error: 'Error al eliminar el movimiento' });
   }
-}
+};
 
 module.exports = {
   addMovimiento,

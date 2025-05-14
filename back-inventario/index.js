@@ -11,13 +11,7 @@ const conteoRoutes = require('./routes/conteo.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
-
 app.use(cors());
-
 app.use(express.json());
 
 // Ruta para pruebas
@@ -25,7 +19,7 @@ app.get('/', (req, res) => {
   res.send('Servidor backend funcionando 👌');
 });
 
-// Rutas
+// Rutas (Segun la configuracion en NGINX, hay que omitir aqui el prefijo /api)
 app.use('/user', userRoutes);  // todas las rutas de usuario: /user/login, /user/register, etc.
 app.use('/product', productRoutes); // todas las rutas de producto: /product/add, /product/update, etc.
 app.use('/deposito', depositoRoutes); // todas las rutas de deposito: /deposito/add, /deposito/update, etc.
