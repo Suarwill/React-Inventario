@@ -11,6 +11,10 @@ const conteoRoutes = require('./routes/conteo.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
 app.use(cors());
 app.use(express.json());
 
@@ -26,6 +30,10 @@ app.use('/deposito', depositoRoutes); // todas las rutas de deposito: /deposito/
 app.use('/movimiento', movimientoRoutes); // todas las rutas de movimiento: /movimiento/add, /movimiento/update, etc.
 app.use('/conteo', conteoRoutes); // todas las rutas de conteo: /conteo/add, /conteo/update, etc.
 
+// Middleware para manejar errores, rutas no encontradas y errores de servidor
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'la ruta'+ req.path + ' no existe'});
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
