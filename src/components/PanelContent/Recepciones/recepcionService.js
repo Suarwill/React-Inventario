@@ -12,7 +12,7 @@ export const getRecepciones = async () => {
     const response = await axiosInstance.get(`${API_URL}/closest`, {
       params: { destino: sector },
     });
-
+    console.log('Recepciones cargadas:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error al cargar recepciones:', error.response?.data || error);
