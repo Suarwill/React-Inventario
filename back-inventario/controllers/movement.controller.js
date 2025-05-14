@@ -30,22 +30,83 @@ const addMovimiento = async (req, res) => {
 }
 
 const getMovimiento = async (req, res) => {
-  const { nro } = req.query;
+  const { origen, destino, tipo } = req.query;
   try {
-    let result;
-    if (nro) {
-      // Obtener un movimiento por ID
-      result = await pool.query('SELECT * FROM movimientos WHERE nro = $1', [nro]);
-    } else {
-      // Obtener todos los movimientos
-      result = await pool.query('SELECT * FROM movimientos');
+    let query = `
+      SELECT 
+        movimientos.fecha, 
+        movimientos.nro, 
+        movimientos.cant, 
+        movimientos.cod, 
+        productos.descripcion
+      FROM movimientos
+      INNER JOIN productos ON movimientos.cod = productos.codigo
+    `;
+    const params = [];
+    const conditions = [];
+
+    // Agregar condiciones dinámicamente según los parámetros proporcionados
+    if (origen) {
+      conditions.push('movimientos.origen = $' + (conditions.length + 1));
+      params.push(origen);
     }
+    if (destino) {
+      conditions.push('movimientos.destino = $' + (conditions.length + 1));
+      params.push(destino);
+    }
+    if (tipo) {
+      conditions.push('movimientos.tipo = $' + (conditions.length + 1));
+      params.push(tipo);
+    }
+
+    // Si hay condiciones, agregarlas al query
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    const result = await pool.query(query, params);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error al obtener el movimiento:', error);
     res.status(500).json({ error: 'Error al obtener el movimiento' });
   }
-}
+};
+
+const getMovimientoCercano = async (req, res) => {
+  const { destino } = req.query; // El destino se envía desde el frontend
+  const origen = "ADM";
+  const tipo = "PRODUCCION";
+
+  try {
+    const query = `
+      SELECT 
+        movimientos.fecha, 
+        movimientos.nro, 
+        movimientos.cant, 
+        movimientos.cod, 
+        productos.descripcion
+      FROM movimientos
+      INNER JOIN productos ON movimientos.cod = productos.codigo
+      WHERE movimientos.origen = $1 
+        AND movimientos.destino = $2 
+        AND movimientos.tipo = $3
+      ORDER BY ABS(EXTRACT(EPOCH FROM (movimientos.fecha - NOW()))) ASC
+      LIMIT 1
+    `;
+    const params = [origen, destino, tipo];
+
+    const result = await pool.query(query, params);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron movimientos cercanos' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al obtener el movimiento más cercano:', error);
+    res.status(500).json({ error: 'Error al obtener el movimiento más cercano' });
+  }
+};
+
 const updateMovimiento = async (req, res) => {
   const { id } = req.params;
   const { nro, origen, destino, tipo, cant, cod } = req.body;
@@ -88,5 +149,6 @@ module.exports = {
   addMovimiento,
   getMovimiento,
   updateMovimiento,
-  deleteMovimiento
+  deleteMovimiento,
+  getMovimientoCercano
 }

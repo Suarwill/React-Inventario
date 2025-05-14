@@ -1,0 +1,37 @@
+.panel-overlay {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    margin: 20px auto;
+    border-radius: 12px;
+    color: #0D1B2A;
+    width: 80%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-button {
+    margin: 20px 0;
+}
+
+.envios-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.envios-table th, .envios-table td {
+    border: 1px solid #cccccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.envios-table th {
+    background-color: #96c8ec;
+    font-weight: bold;
+}
+
+.envios-table tr:hover {
+    background-color: #f1f1f1;
+}

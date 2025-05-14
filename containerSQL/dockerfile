@@ -1,7 +1,7 @@
-FROM postgres:latest
+FROM postgres:15.4-alpine
 
-ENV POSTGRES_USER=servidor
-ENV POSTGRES_PASSWORD=ServerSQL
+ENV POSTGRES_USER=inventario2
+ENV POSTGRES_PASSWORD=Clave123
 ENV POSTGRES_DB=inventario
 
 EXPOSE 5432
