@@ -76,7 +76,11 @@ const getMovimientoCercano = async (req, res) => {
   const { destino } = req.query; // El destino se envía desde el frontend
   const origen = "BODEGA";
   const tipo = "PRODUCCION";
-
+  
+  console.log('>>> Ejecutando búsqueda con:', {
+    origen, destino, tipo
+  });
+  
   try {
     const query = `
       SELECT 
