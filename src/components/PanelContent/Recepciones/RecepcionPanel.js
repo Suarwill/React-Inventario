@@ -7,7 +7,7 @@ const RecepcionPanel = () => {
   const [showModal, setShowModal] = useState(false);
   const [nuevaRecepcion, setNuevaRecepcion] = useState({
     nro: '',
-    origen: 'ADM',
+    origen: 'BODEGA',
     destino: localStorage.getItem('sector') || '',
     tipo: 'PRODUCCION',
     cant: '',
@@ -17,7 +17,13 @@ const RecepcionPanel = () => {
   const handleLoadRecepciones = async () => {
     try {
       const data = await getRecepciones();
-      setRecepciones([data]); // Cargar solo el movimiento más cercano
+      if (Array.isArray(data) && data.length > 0) {
+        // Ordenar por fecha descendente y tomar el más reciente
+        const movimientoMasReciente = data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+        setRecepciones([movimientoMasReciente]);
+      } else {
+        setRecepciones([]); // No hay recepciones disponibles
+      }
     } catch (error) {
       console.error(error);
     }
