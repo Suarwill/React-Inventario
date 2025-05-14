@@ -9,14 +9,18 @@ export const getDepositos = async () => {
       throw new Error('Usuario no encontrado en localStorage');
     }
 
-    console.log('userId:', userId); // Agregado para depuración
-
     const response = await axiosInstance.get(`${API_URL}/search`, {
       params: { id: userId },
     });
 
-    console.log('Response:', response.data); // Agregado para depuración
-    return response.data;
+    // Formatear los datos antes de retornarlos
+    const formattedData = response.data.map((deposito) => ({
+      ...deposito,
+      fecha: new Date(deposito.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }),
+      monto: `$${deposito.monto}`,
+    }));
+
+    return formattedData;
   } catch (error) {
     console.error('Error al cargar depósitos:', error.response?.data || error);
     throw error.response?.data?.error || 'Error al cargar depósitos';
@@ -27,7 +31,6 @@ export const addDeposito = async (nuevoDeposito) => {
   try {
     const response = await axiosInstance.post(`${API_URL}/add`, nuevoDeposito);
 
-    console.log('Response:', response.data); // Agregado para depuración
     return response.data;
   } catch (error) {
     console.error('Error al agregar depósito:', error.response?.data || error);
@@ -42,7 +45,6 @@ export const updateDeposito = async (id, depositoEditado) => {
 
     const response = await axiosInstance.put(`${API_URL}/${id}`, depositoConUsuario);
 
-    console.log('Response:', response.data); // Agregado para depuración
     return response.data;
   } catch (error) {
     console.error('Error al editar depósito:', error.response?.data || error);
@@ -58,7 +60,6 @@ export const deleteDeposito = async (id) => {
       data: { usuarioId: userId }, // Envía usuarioId en el cuerpo
     });
 
-    console.log('Response:', response.data); // Agregado para depuración
     return response.data;
   } catch (error) {
     console.error('Error al eliminar depósito:', error.response?.data || error);

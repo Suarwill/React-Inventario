@@ -19,6 +19,7 @@
 .envio-table {
     border-collapse: collapse;
     width: 100%; /* Ocupa el 100% del ancho disponible */
+    min-width: 50%;
     margin-top: 20px;
     background-color: white;
     text-align: center; /* Centrar texto dentro de la tabla */
