@@ -85,14 +85,15 @@ const uploadCsv = async (req, res) => {
     fs.createReadStream(filePath)
       .pipe(csv())
       .on('data', (row) => {
+        console.log('Fila procesada:', row); // Agrega este log
         const { codigo, descripcion, categoria } = row;
         if (codigo && descripcion && categoria) {
           productos.push([codigo, descripcion, categoria]);
         }
       })
       .on('end', async () => {
+        console.log('Total de productos procesados:', productos.length); // Log para verificar el total
         try {
-          // Insertar los productos en la base de datos
           const query = `
             INSERT INTO productos (codigo, descripcion, categoria)
             VALUES ($1, $2, $3)
@@ -101,7 +102,6 @@ const uploadCsv = async (req, res) => {
           for (const producto of productos) {
             await pool.query(query, producto);
           }
-          console.log('Productos cargados con éxito:', productos.length);
           res.status(201).json({ message: 'Productos cargados con éxito.' });
         } catch (error) {
           console.error('Error al insertar productos:', error);
