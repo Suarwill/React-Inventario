@@ -73,6 +73,7 @@ const deleteProducto = async (req, res) => {
 
 const uploadCsv = async (req, res) => {
   if (!req.file) {
+    console.error('No se proporcionó un archivo CSV.');
     return res.status(400).json({ error: 'No se proporcionó un archivo.' });
   }
 
@@ -100,6 +101,7 @@ const uploadCsv = async (req, res) => {
           for (const producto of productos) {
             await pool.query(query, producto);
           }
+          console.log('Productos cargados con éxito:', productos.length);
           res.status(201).json({ message: 'Productos cargados con éxito.' });
         } catch (error) {
           console.error('Error al insertar productos:', error);
