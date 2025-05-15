@@ -5,7 +5,6 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
 }
 
 .admin-panel h2 {
@@ -19,7 +18,6 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  margin-top: 20px;
 }
 
 /* Responsivo: 1 columna en pantallas pequeñas */
@@ -62,6 +60,19 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s ease;
+}
+
+.sub-button {
+  background: linear-gradient(to right, #000000, #2c2c54);
+  color: white;
+  border: none;
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .admin-box button:hover {
