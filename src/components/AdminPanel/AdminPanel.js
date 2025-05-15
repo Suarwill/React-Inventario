@@ -23,12 +23,12 @@ const AdminPanel = () => {
 
   useEffect(() => {
     if (!promptShownRef.current) {
-      const secretKey = window.prompt('Ingrese la clave para acceder al panel de administración:');
-      if (secretKey === 'ingresar') {
+     const username = localStorage.getItem('username') ;
+      if (username === 'admin') {
         setIsAuthorized(true); // Cambia el estado a autorizado
       } else {
-        alert('Clave incorrecta. Redirigiendo al dashboard.');
-        navigate('/dashboard');
+        alert('No Autorizado. Redirigiendo al dashboard.');
+        navigate('/admin');
       }
       promptShownRef.current = true;
     }
