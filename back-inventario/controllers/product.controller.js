@@ -81,14 +81,19 @@ const uploadCsv = async (req, res) => {
   const filePath = req.file.path;
 
   try {
-    // Leer y procesar el archivo CSV
+    // Leer y procesar el archivo CSV sin encabezados
     fs.createReadStream(filePath)
-      .pipe(csv())
+      .pipe(csv({ headers: false })) // No se usan encabezados
       .on('data', (row) => {
-        console.log('Fila procesada:', row); // Agrega este log
-        const { codigo, descripcion, categoria } = row;
-        if (codigo && descripcion && categoria) {
+        const codigo = row[0]?.trim(); // Primera columna: codigo
+        const descripcion = row[1]?.trim(); // Segunda columna: descripcion
+        const categoria = row[2]?.trim().toUpperCase(); // Tercera columna: categoria en mayúsculas
+
+        // Validaciones
+        if (codigo && codigo.length <= 10 && descripcion && categoria) {
           productos.push([codigo, descripcion, categoria]);
+        } else {
+          console.warn('Fila ignorada por datos inválidos:', row);
         }
       })
       .on('end', async () => {
