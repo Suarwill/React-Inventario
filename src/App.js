@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login/Login'; // Actualización de la ruta
 import Dashboard from './components/Dashboard';
-import AdminPanel from './components/AdminPanel';
+import AdminPanel from './components/AdminPanel/AdminPanel';
 
 
 const App = () => {
