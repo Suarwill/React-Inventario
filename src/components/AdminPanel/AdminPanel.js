@@ -14,6 +14,7 @@ const AdminPanel = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const promptShownRef = useRef(false);
+  const [isAuthorized, setIsAuthorized] = useState(false); // Nuevo estado para manejar la autorización
 
   const showMessage = (text, type = 'success') => {
     setMessage(text);
@@ -24,7 +25,7 @@ const AdminPanel = () => {
     if (!promptShownRef.current) {
       const secretKey = window.prompt('Ingrese la clave para acceder al panel de administración:');
       if (secretKey === 'ingresar') {
-        setModal(null);
+        setIsAuthorized(true); // Cambia el estado a autorizado
       } else {
         alert('Clave incorrecta. Redirigiendo al dashboard.');
         navigate('/dashboard');
@@ -33,8 +34,13 @@ const AdminPanel = () => {
     }
   }, [navigate]);
 
-  if (!modal) {
-    return null;
+  if (!isAuthorized) {
+    return (
+      <div className="admin-panel">
+        <h2>Panel de Administración</h2>
+        <p>Por favor, ingrese la clave para acceder al panel de administración.</p>
+      </div>
+    ); // No renderiza nada hasta que el usuario esté autorizado
   }
 
   return (
