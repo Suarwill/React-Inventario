@@ -8,12 +8,12 @@ const registerUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { username, password } = req.body;
+  const { username, password, sector, zona } = req.body; // Agregar sector y zona
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      'INSERT INTO usuarios (username, password) VALUES ($1, $2) RETURNING *',
-      [username, hashedPassword]
+      'INSERT INTO usuarios (username, password, sector, zona) VALUES ($1, $2, $3, $4) RETURNING *',
+      [username, hashedPassword, sector, zona] // Incluir sector y zona en la consulta
     );
     res.status(201).json({ message: 'Usuario registrado', user: result.rows[0] });
   } catch (err) {
@@ -81,27 +81,48 @@ const searchUsers = async (req, res) => {
 // Editar usuario
 const updateUser = async (req, res) => {
   const { username } = req.params;
-  const { newUsername, newPassword } = req.body;
+  const { newUsername, newPassword, newSector, newZona } = req.body; // Agregar sector y zona
 
   try {
-    const user = await User.findOne({ where: { username } });
-    if (!user) {
+    const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado.' });
     }
 
+    const updates = [];
+    const params = [];
+    let paramIndex = 1;
+
     if (newUsername) {
-      user.username = newUsername;
+      updates.push(`username = $${paramIndex++}`);
+      params.push(newUsername);
     }
 
     if (newPassword) {
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-      user.password = hashedPassword;
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      updates.push(`password = $${paramIndex++}`);
+      params.push(hashedPassword);
     }
 
-    await user.save();
+    if (newSector) {
+      updates.push(`sector = $${paramIndex++}`);
+      params.push(newSector);
+    }
 
-    res.json({ message: 'Usuario actualizado correctamente.' });
+    if (newZona) {
+      updates.push(`zona = $${paramIndex++}`);
+      params.push(newZona);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ error: 'No se proporcionaron datos para actualizar.' });
+    }
+
+    params.push(username);
+    const query = `UPDATE usuarios SET ${updates.join(', ')} WHERE username = $${paramIndex} RETURNING *`;
+    const updatedResult = await pool.query(query, params);
+
+    res.json({ message: 'Usuario actualizado correctamente.', user: updatedResult.rows[0] });
   } catch (error) {
     console.error('Error al actualizar usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor.' });
