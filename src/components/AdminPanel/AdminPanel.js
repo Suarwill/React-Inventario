@@ -4,6 +4,8 @@ import { handleRegister, handleSearch, handleDelete, handleEdit } from './UserMa
 import { handleUploadCsv, handleEditProduct } from './ProductManagement/ProductFunctions';
 import { RegisterUserModal, EditUserModal, SearchUserModal, DeleteUserModal } from './UserManagement/UserModals';
 import { UploadCsvModal, EditProductModal } from './ProductManagement/ProductModals';
+import { handleUploadReposicion, handleDeleteReposicion } from './MovementManagement/MovFuntions';
+import { UploadReposicion, DeleteReposicion } from './MovementManagement/MovModals';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -48,12 +50,21 @@ const AdminPanel = () => {
       <h2>Panel de {usuario}</h2>
 
       <div className="grid-container">
+        <br>Manejo de Usuarios</br>
         <button className="sub-button" onClick={() => setModal('register')}>Agregar Usuario</button>
         <button className="sub-button" onClick={() => setModal('edit')}>Editar Usuario</button>
         <button className="sub-button" onClick={() => setModal('search')}>Buscar Usuario</button>
         <button className="sub-button" onClick={() => setModal('delete')}>Eliminar Usuario</button>
+      </div>
+      <div className="grid-container">
+        <br>Manejo de Productos</br>
         <button className="sub-button" onClick={() => setModal('uploadCsv')}>Agregar Productos (CSV)</button>
         <button className="sub-button" onClick={() => setModal('editProduct')}>Editar Producto</button>
+      </div>
+      <div className="grid-container">
+        <br>Otros</br>
+        <button className="sub-button" onClick={() => setModal('uploadReposicion')}>Cargar Reposicion</button>
+        <button className="sub-button" onClick={() => setModal('deleteReposicion')}>Eliminar Reposicion</button>
       </div>
 
       {/* Modales */}
@@ -63,6 +74,10 @@ const AdminPanel = () => {
       {modal === 'delete' && <DeleteUserModal handleDelete={handleDelete} setModal={setModal} showMessage={showMessage} />}
       {modal === 'uploadCsv' && <UploadCsvModal handleUploadCsv={handleUploadCsv} file={csvFile} setFile={setCsvFile} setModal={setModal} showMessage={showMessage} />}
       {modal === 'editProduct' && <EditProductModal handleEditProduct={handleEditProduct} setModal={setModal} showMessage={showMessage} />}
+      {modal === 'uploadReposicion' && <UploadReposicion handleUploadReposicion={handleUploadReposicion} setModal={setModal} showMessage={showMessage}  />}
+      {modal === 'deleteReposicion' && <DeleteReposicion handleDeleteReposicion={handleDeleteReposicion} setModal={setModal} showMessage={showMessage}  />}
+
+      {/* Botón de cerrar sesión */}
 
       {/* Mensajes */}
       {message && (

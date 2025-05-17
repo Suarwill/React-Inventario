@@ -1,26 +1,30 @@
 const pool = require('../db/pool');
 
 const addMovimiento = async (req, res) => {
-  const { nro, origen, destino, tipo, cant, cod } = req.body;
+  const { nro, destino, fecha, tipo, cant, cod } = req.body;
+  const origen = "BODEGA"; // Establecer siempre el origen como "BODEGA"
+
+  console.log('>>> Agregando movimiento:', {
+    nro, origen, destino, tipo, cant, cod, fecha
+  });
+
   try {
     // Verificar si el producto existe
-    const productResult = await pool.query('SELECT * FROM productos WHERE id = $1', [cod]);
+    const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
     if (productResult.rows.length === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    // Verificar si el origen y destino son válidos
-    const origenResult = await pool.query('SELECT * FROM sectores WHERE id = $1', [origen]);
-    const destinoResult = await pool.query('SELECT * FROM sectores WHERE id = $1', [destino]);
-    if (origenResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Origen no encontrado' });
-    }
+
+    // Verificar si el destino es válido
+    const destinoResult = await pool.query('SELECT * FROM sectores WHERE sector = $1', [destino]);
     if (destinoResult.rows.length === 0) {
       return res.status(404).json({ error: 'Destino no encontrado' });
     }
+
     // Insertar el nuevo movimiento
     const result = await pool.query(
-      'INSERT INTO movimientos (nro, origen, destino, tipo, cant, cod) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [nro, origen, destino, tipo, cant, cod]
+      'INSERT INTO movimientos (nro, origen, destino, tipo, cant, cod, fecha) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [nro, origen, destino, tipo, cant, cod, fecha]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -133,19 +137,54 @@ const updateMovimiento = async (req, res) => {
 }
 
 const deleteMovimiento = async (req, res) => {
-  const { id } = req.params;
+  const { nro } = req.params;
   try {
     // Verificar si el movimiento existe
-    const result = await pool.query('SELECT * FROM movimientos WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM movimientos WHERE nro = $1', [nro]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Movimiento no encontrado' });
     }
     // Eliminar el movimiento
-    await pool.query('DELETE FROM movimientos WHERE id = $1', [id]);
+    await pool.query('DELETE FROM movimientos WHERE nro = $1', [nro]);
     res.status(200).json({ message: 'Movimiento eliminado correctamente' });
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error al eliminar el movimiento:', error);
     res.status(500).json({ error: 'Error al eliminar el movimiento' });
+  }
+};
+
+const getUltimosEnvios = async (req, res) => {
+  const { destino } = req.query; // Recibir el destino desde el frontend
+  const origen = "BODEGA"; // Origen siempre será "BODEGA"
+  const tipo = "PRODUCCION"; // Tipo siempre será "PRODUCCION"
+
+  try {
+    const query = `
+      SELECT 
+        movimientos.nro AS numero_envio,
+        MAX(movimientos.fecha) AS fecha_envio,
+        SUM(movimientos.cant) AS cantidad_total
+      FROM movimientos
+      WHERE movimientos.origen = $1 
+        AND movimientos.destino = $2 
+        AND movimientos.tipo = $3
+      GROUP BY movimientos.nro
+      ORDER BY MAX(movimientos.fecha) DESC
+      LIMIT 3
+    `;
+    const params = [origen, destino, tipo];
+
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron envíos recientes' });
+    }
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener los últimos envíos:', error);
+    res.status(500).json({ error: 'Error al obtener los últimos envíos' });
   }
 };
 
@@ -154,5 +193,6 @@ module.exports = {
   getMovimiento,
   updateMovimiento,
   deleteMovimiento,
-  getMovimientoCercano
+  getMovimientoCercano,
+  getUltimosEnvios
 }

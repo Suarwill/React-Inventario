@@ -1,7 +1,8 @@
 import React from 'react';
 import './PanelContent.css';
 import DepositoPanel from './Depositos/DepositoPanel';
-import RecepcionPanel from './Recepciones/RecepcionPanel'; // <- Asegúrate que la ruta es correcta
+import RecepcionPanel from './Recepciones/RecepcionPanel';
+import EnviosPanel from './Envios/VerificacionPanel';
 
 const PanelContent = ({ selected }) => {
   if (selected === 'Depósitos') {
@@ -10,6 +11,10 @@ const PanelContent = ({ selected }) => {
 
   if (selected === 'Envío desde Matriz') {
     return <RecepcionPanel />;
+  }
+
+  if (selected === 'Verificación') {
+    return <EnviosPanel />;
   }
 
   return (
