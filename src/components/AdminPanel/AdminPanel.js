@@ -40,19 +40,19 @@ const AdminPanel = () => {
       <h2>Panel de {usuario}</h2>
 
       <div className="grid-container">
-        <br>Manejo de Usuarios</br>
+        <p>Manejo de Usuarios</p>
         <button className="sub-button" onClick={() => setModal('register')}>Agregar Usuario</button>
         <button className="sub-button" onClick={() => setModal('edit')}>Editar Usuario</button>
         <button className="sub-button" onClick={() => setModal('search')}>Buscar Usuario</button>
         <button className="sub-button" onClick={() => setModal('delete')}>Eliminar Usuario</button>
       </div>
       <div className="grid-container">
-        <br>Manejo de Productos</br>
+        <p>Manejo de Productos</p>
         <button className="sub-button" onClick={() => setModal('uploadCsv')}>Agregar Productos (CSV)</button>
         <button className="sub-button" onClick={() => setModal('editProduct')}>Editar Producto</button>
       </div>
       <div className="grid-container">
-        <br>Otros</br>
+        <p>Otros</p>
         <button className="sub-button" onClick={() => setModal('uploadReposicion')}>Cargar Reposicion</button>
         <button className="sub-button" onClick={() => setModal('deleteReposicion')}>Eliminar Reposicion</button>
       </div>
