@@ -5,12 +5,22 @@ import axios from 'axios';
  * @param {string} destino - El sector de destino.
  * @returns {Promise} - Promesa que resuelve con los datos de los envíos.
  */
-export const fetchUltimosEnvios = async (destino) => {
+export const fetchUltimosEnvios = async () => {
   try {
+    const destino = localStorage.getItem('sector');
     const response = await axios.get('/api/movimientos/last', {
       params: { destino },
     });
-    return response.data;
+    const data = response.data;
+    const formattedData = (Array.isArray(data) ? data : [data]).map((item) => ({
+      ...item,
+      fecha: new Date(item.fecha).toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }),
+    }));
+    return formattedData;
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
     throw new Error('Error al obtener los últimos envíos.');

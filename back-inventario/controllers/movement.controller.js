@@ -162,9 +162,9 @@ const getUltimosEnvios = async (req, res) => {
   try {
     const query = `
       SELECT 
-        movimientos.nro AS numero_envio,
-        MAX(movimientos.fecha) AS fecha_envio,
-        SUM(movimientos.cant) AS cantidad_total
+        movimientos.nro,
+        MAX(movimientos.fecha),
+        SUM(movimientos.cant),
       FROM movimientos
       WHERE movimientos.origen = $1 
         AND movimientos.destino = $2 
@@ -174,6 +174,9 @@ const getUltimosEnvios = async (req, res) => {
       LIMIT 3
     `;
     const params = [origen, destino, tipo];
+    console.log('>>> Ejecutando búsqueda de últimos envíos con:', {
+      params
+    });
 
     const result = await pool.query(query, params);
 

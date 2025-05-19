@@ -10,16 +10,10 @@ const VerificacionPanel = () => {
   const [selectedEnvio, setSelectedEnvio] = useState(null);
 
   useEffect(() => {
-    const destino = localStorage.getItem('sector');
-
-    if (!destino) {
-      setError('No se encontró el sector del usuario en localStorage.');
-      return;
-    }
 
     const obtenerEnvios = async () => {
       try {
-        const data = await fetchUltimosEnvios(destino);
+        const data = await fetchUltimosEnvios();
         setEnvios(data);
       } catch (err) {
         setError(err.message);

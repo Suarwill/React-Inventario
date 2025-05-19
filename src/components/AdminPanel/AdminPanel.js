@@ -16,8 +16,7 @@ const AdminPanel = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const promptShownRef = useRef(false);
-  const [isAuthorized, setIsAuthorized] = useState(false); // Nuevo estado para manejar la autorización
-
+  const [ setIsAuthorized] = useState(false);
   const showMessage = (text, type = 'success') => {
     setMessage(text);
     setMessageType(type);
@@ -35,15 +34,6 @@ const AdminPanel = () => {
       promptShownRef.current = true;
     }
   }, [navigate]);
-
-  if (!isAuthorized) {
-    return (
-      <div className="admin-panel">
-        <h2>Panel de Administración</h2>
-        <p>Por favor, ingrese la clave para acceder al panel de administración.</p>
-      </div>
-    ); // No renderiza nada hasta que el usuario esté autorizado
-  }
 
   return (
     <div className="admin-panel">
