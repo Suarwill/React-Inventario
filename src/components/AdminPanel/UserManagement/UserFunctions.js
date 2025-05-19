@@ -1,8 +1,8 @@
 import axiosInstance from '../../axiosConfig';
 
 export const handleRegister = async (data, showMessage, setModal) => {
-  authuser = localStorage.getItem('username');
-  const { authuser, username, password, sector, zona } = data;
+  const authuser = localStorage.getItem('username');
+  const { username, password, sector, zona } = data;
   if (!username.trim() || !password.trim() || !sector.trim() || !zona.trim()) {
     return showMessage('Por favor, complete todos los campos.', 'error');
   }
