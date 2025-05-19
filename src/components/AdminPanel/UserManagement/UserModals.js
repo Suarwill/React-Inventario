@@ -8,7 +8,7 @@ export const RegisterUserModal = ({ handleRegister, setModal, showMessage }) => 
       <h3>Agregar Usuario</h3>
       <form onSubmit={(e) => { e.preventDefault(); handleRegister(data, showMessage, setModal); }}>
         <input type="text" placeholder="Nombre de usuario" value={data.username} onChange={(e) => setData({ ...data, username: e.target.value })} required />
-        <input type="password" placeholder="Contraseña" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} required />
+        <input type="password" placeholder="Contraseña (mayor a 6 caracteres)" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} required />
         <input type="text" placeholder="Sector" value={data.sector} onChange={(e) => setData({ ...data, sector: e.target.value })} required />
         <input type="text" placeholder="Zona" value={data.zona} onChange={(e) => setData({ ...data, zona: e.target.value })} required />
         <button type="submit">Crear</button>
