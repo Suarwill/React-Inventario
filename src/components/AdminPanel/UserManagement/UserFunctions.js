@@ -1,13 +1,14 @@
 import axiosInstance from '../../axiosConfig';
 
 export const handleRegister = async (data, showMessage, setModal) => {
-  const { username, password, sector, zona } = data;
+  authuser = localStorage.getItem('username');
+  const { authuser, username, password, sector, zona } = data;
   if (!username.trim() || !password.trim() || !sector.trim() || !zona.trim()) {
     return showMessage('Por favor, complete todos los campos.', 'error');
   }
 
   try {
-    const res = await axiosInstance.post('/api/user/register', { username, password, sector, zona });
+    const res = await axiosInstance.post('/api/user/register', { authuser ,username, password, sector, zona });
     showMessage(res.data.message || 'Usuario registrado con éxito.');
     setModal(null);
   } catch (error) {

@@ -50,7 +50,7 @@
         <h2>Panel de {usuario}</h2>
 
         <div className="grid-container">
-          <p>Manejo de Usuarios</p>
+          <h3>Manejo de Usuarios</h3>
           <div className="botones">
             <button className="sub-button" onClick={() => setModal('register')}>Agregar Usuario</button>
             <button className="sub-button" onClick={() => setModal('edit')}>Editar Usuario</button>
@@ -59,14 +59,14 @@
           </div>
         </div>
         <div className="grid-container">
-          <p>Manejo de Productos</p>
+          <h3>Manejo de Productos</h3>
           <div className="botones">
             <button className="sub-button" onClick={() => setModal('uploadCsv')}>Agregar Productos (CSV)</button>
             <button className="sub-button" onClick={() => setModal('editProduct')}>Editar Producto</button>
           </div>
           </div>
         <div className="grid-container">
-          <p>Otros</p>
+          <h3>Otros</h3>
           <div className="botones">
             <button className="sub-button" onClick={() => setModal('uploadReposicion')}>Cargar Reposicion</button>
             <button className="sub-button" onClick={() => setModal('deleteReposicion')}>Eliminar Reposicion</button>
