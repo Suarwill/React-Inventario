@@ -43,6 +43,14 @@ server {
     root /var/www/html;
     index index.html;
 
+    client_max_body_size 50M;
+
+    gzip on;
+    gzip_min_length 1000;
+    gzip_proxied any;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; # Tipos de contenido a comprimir
+    gzip_vary on; # Agregar encabezado Vary para proxies
+    
     location / {
         try_files $uri /index.html;
     }
