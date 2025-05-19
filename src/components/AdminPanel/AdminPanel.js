@@ -51,20 +51,26 @@
 
         <div className="grid-container">
           <p>Manejo de Usuarios</p>
-          <button className="sub-button" onClick={() => setModal('register')}>Agregar Usuario</button>
-          <button className="sub-button" onClick={() => setModal('edit')}>Editar Usuario</button>
-          <button className="sub-button" onClick={() => setModal('search')}>Buscar Usuario</button>
-          <button className="sub-button" onClick={() => setModal('delete')}>Eliminar Usuario</button>
+          <div className="botones">
+            <button className="sub-button" onClick={() => setModal('register')}>Agregar Usuario</button>
+            <button className="sub-button" onClick={() => setModal('edit')}>Editar Usuario</button>
+            <button className="sub-button" onClick={() => setModal('search')}>Buscar Usuario</button>
+            <button className="sub-button" onClick={() => setModal('delete')}>Eliminar Usuario</button>
+          </div>
         </div>
         <div className="grid-container">
           <p>Manejo de Productos</p>
-          <button className="sub-button" onClick={() => setModal('uploadCsv')}>Agregar Productos (CSV)</button>
-          <button className="sub-button" onClick={() => setModal('editProduct')}>Editar Producto</button>
-        </div>
+          <div className="botones">
+            <button className="sub-button" onClick={() => setModal('uploadCsv')}>Agregar Productos (CSV)</button>
+            <button className="sub-button" onClick={() => setModal('editProduct')}>Editar Producto</button>
+          </div>
+          </div>
         <div className="grid-container">
           <p>Otros</p>
-          <button className="sub-button" onClick={() => setModal('uploadReposicion')}>Cargar Reposicion</button>
-          <button className="sub-button" onClick={() => setModal('deleteReposicion')}>Eliminar Reposicion</button>
+          <div className="botones">
+            <button className="sub-button" onClick={() => setModal('uploadReposicion')}>Cargar Reposicion</button>
+            <button className="sub-button" onClick={() => setModal('deleteReposicion')}>Eliminar Reposicion</button>
+          </div>
         </div>
 
         {/* Modales */}
