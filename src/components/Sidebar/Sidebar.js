@@ -16,24 +16,8 @@ const Sidebar = ({ onSelect }) => {
     }));
   };
 
-  const handleSelect = async (option) => {
-    if (option === 'Envío desde Matriz') {
-      const sector = localStorage.getItem('sector'); // Obtener el sector del localStorage
-      try {
-        const response = await axios.get('/movimiento/closest', {
-          params: { destino: sector },
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        const movimiento = response.data;
-        console.log('Movimiento más cercano:', movimiento);
-        // Aquí puedes pasar los datos al panel de contenido
-        onSelect(option, movimiento);
-      } catch (error) {
-        console.error('Error al cargar el movimiento más cercano:', error);
-      }
-    } else {
-      onSelect(option);
-    }
+  const handleSelect = (option) => {
+    onSelect(option); // Solo pasa la opción seleccionada
   };
 
   return (

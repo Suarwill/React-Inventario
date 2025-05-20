@@ -1,4 +1,5 @@
 import axios from 'axios';
+const API_URL = '/api/movimiento';
 
 /**
  * Obtiene los últimos envíos hacia el sector especificado.
@@ -11,7 +12,7 @@ export const fetchUltimosEnvios = async () => {
       throw new Error('Sector no definido en localStorage.');
     }
 
-    const response = await axios.get('/api/movimientos/last', {
+    const response = await axios.get(`${API_URL}/last`, {
       params: { destino: sector },
     });
 
