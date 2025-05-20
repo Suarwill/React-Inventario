@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../axiosConfig';
 const API_URL = '/api/movimiento';
 
 /**
@@ -12,7 +12,7 @@ export const fetchUltimosEnvios = async () => {
       throw new Error('Sector no definido en localStorage.');
     }
 
-    const response = await axios.get(`${API_URL}/last`, {
+    const response = await axiosInstance.get(`${API_URL}/last`, {
       params: { destino: sector },
     });
 
@@ -40,7 +40,7 @@ export const fetchUltimosEnvios = async () => {
  */
 export const fetchProductos = async () => {
   try {
-    const response = await axios.get('/api/productos');
+    const response = await axiosInstance.get('/api/productos');
     return response.data;
   } catch (error) {
     console.error('Error al obtener los productos:', error);
@@ -59,7 +59,7 @@ export const enviarConteo = async (conteo) => {
       throw new Error('Datos de conteo incompletos.');
     }
 
-    await axios.post('/api/conteo/add', conteo);
+    await axiosInstance.post('/api/conteo/add', conteo);
   } catch (error) {
     console.error('Error al enviar el conteo:', error);
     throw new Error('Error al enviar el conteo.');
