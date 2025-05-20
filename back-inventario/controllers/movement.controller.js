@@ -146,6 +146,7 @@ const updateMovimiento = async (req, res) => {
 
 const deleteMovimiento = async (req, res) => {
   const { nro } = req.params; // Obtener el número de reposición desde los parámetros
+  console.log('>>> Eliminando movimientos con número:', nro);
   try {
     // Verificar si existen movimientos con el número proporcionado
     const result = await pool.query('SELECT * FROM movimientos WHERE nro = $1', [nro]);
