@@ -179,12 +179,12 @@ const getUltimosEnvios = async (req, res) => {
     // Subconsulta para obtener las 3 fechas más cercanas
     const query = `
       WITH fechas_cercanas AS (
-        SELECT DISTINCT fecha
+        SELECT fecha, ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) AS diferencia
         FROM movimientos
         WHERE origen = $1 
           AND destino = $2 
           AND tipo = $3
-        ORDER BY ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) ASC
+        ORDER BY diferencia ASC
         LIMIT 3
       )
       SELECT 
