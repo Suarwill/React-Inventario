@@ -9,8 +9,9 @@ const addMovimiento = async (req, res) => {
 
   try {
     for (const movimiento of movimientos) {
-      const { C: nro, M: destino, O: fecha, AH: tipo, AW: cant, AY: cod } = movimiento;
+      const { C: nro, M: destinoRaw, O: fecha, AH: tipo, AW: cant, AY: cod } = movimiento;
       const origen = "BODEGA";
+      const destino = destinoRaw ? destinoRaw.toUpperCase() : null; // Convertir destino a mayúsculas
 
       console.log('>>> Agregando movimiento:', { nro, origen, destino, tipo, cant, cod, fecha });
 
