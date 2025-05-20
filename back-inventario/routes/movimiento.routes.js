@@ -9,6 +9,6 @@ router.get('/search',authenticateToken, movementController.getMovimiento);
 router.get('/closest', authenticateToken, movementController.getMovimientoCercano);
 router.get('/last', authenticateToken, movementController.getUltimosEnvios);
 router.put('/:nro',validateUser, authenticateToken , movementController.updateMovimiento);
-router.delete('/delete/:id',authenticateToken , movementController.deleteMovimiento);
+router.delete('/delete/:nro',authenticateToken , movementController.deleteMovimiento);
 
 module.exports = router;
