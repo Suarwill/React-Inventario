@@ -16,18 +16,7 @@ export const fetchUltimosEnvios = async () => {
       params: { destino: sector },
     });
 
-    const data = response.data;
-
-    const formattedData = (Array.isArray(data) ? data : [data]).map((item) => ({
-      ...item,
-      fecha: new Date(item.fecha).toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      }),
-    }));
-    console.log('>>> Últimos envíos encontrados:', formattedData);
-    return formattedData;
+    return response.data;
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
     throw new Error('Error al obtener los últimos envíos.');

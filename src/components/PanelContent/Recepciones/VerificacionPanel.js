@@ -135,7 +135,11 @@ const VerificacionPanel = () => {
 
             return (
               <tr key={envio.nro}>
-                <td>{new Date(envio.fecha).toLocaleDateString()}</td>
+                <td>{new Date(envio.fecha).toLocaleDateString('es-ES', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                  })}</td>
                 <td>{envio.nro}</td>
                 <td>{envio.cantidadEnviada}</td>
                 <td>{cantidadVerificada}</td>
