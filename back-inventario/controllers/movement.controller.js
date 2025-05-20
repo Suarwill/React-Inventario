@@ -173,6 +173,7 @@ const getUltimosEnvios = async (req, res) => {
   const { destino } = req.query; // Recibir el destino desde el frontend
   const origen = "BODEGA"; // Origen siempre será "BODEGA"
   const tipo = "PRODUCCION"; // Tipo siempre será "PRODUCCION"
+  console.log('>>> Obteniendo últimos envíos para el destino:', destino);
 
   try {
     // Subconsulta para obtener las 3 fechas más cercanas
