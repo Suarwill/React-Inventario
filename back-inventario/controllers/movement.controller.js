@@ -1,35 +1,42 @@
 const pool = require('../db/pool');
 
 const addMovimiento = async (req, res) => {
-  const { nro, destino, fecha, tipo, cant, cod } = req.body;
-  const origen = "BODEGA"; // Establecer siempre el origen como "BODEGA"
+  const movimientos = req.body.data; // Extraer el array de movimientos
 
-  console.log('>>> Agregando movimiento:', {
-    nro, origen, destino, tipo, cant, cod, fecha
-  });
+  if (!movimientos || !Array.isArray(movimientos)) {
+    return res.status(400).json({ error: 'Datos inválidos o faltantes' });
+  }
 
   try {
-    // Verificar si el producto existe
-    const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
-    if (productResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
+    for (const movimiento of movimientos) {
+      const { C: nro, M: destino, O: fecha, AH: tipo, AW: cant, AY: cod } = movimiento;
+      const origen = "BODEGA";
+
+      console.log('>>> Agregando movimiento:', { nro, origen, destino, tipo, cant, cod, fecha });
+
+      // Verificar si el producto existe
+      const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
+      if (productResult.rows.length === 0) {
+        return res.status(404).json({ error: `Producto no encontrado: ${cod}` });
+      }
+
+      // Verificar si el destino es válido
+      const destinoResult = await pool.query('SELECT * FROM sectores WHERE sector = $1', [destino]);
+      if (destinoResult.rows.length === 0) {
+        return res.status(404).json({ error: `Destino no encontrado: ${destino}` });
+      }
+
+      // Insertar el nuevo movimiento
+      await pool.query(
+        'INSERT INTO movimientos (nro, origen, destino, tipo, cant, cod, fecha) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [nro, origen, destino, tipo, cant, cod, fecha]
+      );
     }
 
-    // Verificar si el destino es válido
-    const destinoResult = await pool.query('SELECT * FROM sectores WHERE sector = $1', [destino]);
-    if (destinoResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Destino no encontrado' });
-    }
-
-    // Insertar el nuevo movimiento
-    const result = await pool.query(
-      'INSERT INTO movimientos (nro, origen, destino, tipo, cant, cod, fecha) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [nro, origen, destino, tipo, cant, cod, fecha]
-    );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({ message: 'Movimientos agregados exitosamente' });
   } catch (error) {
-    console.error('Error al agregar el movimiento:', error);
-    res.status(500).json({ error: 'Error al agregar el movimiento' });
+    console.error('Error al agregar los movimientos:', error);
+    res.status(500).json({ error: 'Error al agregar los movimientos' });
   }
 }
 
