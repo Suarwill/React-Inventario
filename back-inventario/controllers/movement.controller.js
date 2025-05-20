@@ -121,7 +121,7 @@ const getMovimientoCercano = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No se encontraron movimientos cercanos' });
     }
-    console.log('>>> Movimientos más cercanos encontrados:', result.rows);
+    console.log('>>> Cargados movimientos cercanos para el destino:', destino, ':', result.rows.length);
     res.status(200).json(result.rows); // Devolver todas las filas con la fecha más cercana
   } catch (error) {
     console.error('Error al obtener el movimiento más cercano:', error);

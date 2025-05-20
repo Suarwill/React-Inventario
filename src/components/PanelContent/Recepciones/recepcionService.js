@@ -22,6 +22,7 @@ export const getRecepciones = async () => {
         year: 'numeric',
       }),
     }));
+    
     return formattedData;
   } catch (error) {
     console.error('Error al cargar recepciones:', error.response?.data || error);

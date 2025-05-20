@@ -6,15 +6,17 @@ import axios from 'axios';
  */
 export const fetchUltimosEnvios = async () => {
   try {
-    const destino = localStorage.getItem('sector');
-    if (!destino) {
+    const sector = localStorage.getItem('sector');
+    if (!sector) {
       throw new Error('Sector no definido en localStorage.');
     }
 
     const response = await axios.get('/api/movimientos/last', {
-      params: { destino },
+      params: { destino: sector },
     });
+
     const data = response.data;
+
     const formattedData = (Array.isArray(data) ? data : [data]).map((item) => ({
       ...item,
       fecha: new Date(item.fecha).toLocaleDateString('es-ES', {
@@ -23,6 +25,7 @@ export const fetchUltimosEnvios = async () => {
         year: 'numeric',
       }),
     }));
+    console.log('>>> Últimos envíos encontrados:', formattedData);
     return formattedData;
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
