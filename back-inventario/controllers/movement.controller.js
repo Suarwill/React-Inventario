@@ -88,13 +88,23 @@ const getMovimientoCercano = async (req, res) => {
   const { destino } = req.query; // El destino se envía desde el frontend
   const origen = "BODEGA";
   const tipo = "PRODUCCION";
-  
+
   console.log('>>> Ejecutando búsqueda con:', {
     origen, destino, tipo
   });
-  
+
   try {
+    // Subconsulta para obtener la fecha más cercana
     const query = `
+      WITH fecha_cercana AS (
+        SELECT fecha
+        FROM movimientos
+        WHERE origen = $1 
+          AND destino = $2 
+          AND tipo = $3
+        ORDER BY ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) ASC
+        LIMIT 1
+      )
       SELECT 
         movimientos.fecha, 
         movimientos.nro, 
@@ -106,8 +116,8 @@ const getMovimientoCercano = async (req, res) => {
       WHERE movimientos.origen = $1 
         AND movimientos.destino = $2 
         AND movimientos.tipo = $3
-      ORDER BY ABS(EXTRACT(EPOCH FROM (movimientos.fecha - NOW()))) ASC
-      LIMIT 1
+        AND movimientos.fecha = (SELECT fecha FROM fecha_cercana)
+      ORDER BY movimientos.nro ASC
     `;
     const params = [origen, destino, tipo];
 
@@ -115,8 +125,8 @@ const getMovimientoCercano = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No se encontraron movimientos cercanos' });
     }
-
-    res.status(200).json(result.rows[0]);
+    console.log('>>> Movimientos más cercanos encontrados:', result.rows);
+    res.status(200).json(result.rows); // Devolver todas las filas con la fecha más cercana
   } catch (error) {
     console.error('Error al obtener el movimiento más cercano:', error);
     res.status(500).json({ error: 'Error al obtener el movimiento más cercano' });
