@@ -89,10 +89,6 @@ const getMovimientoCercano = async (req, res) => {
   const origen = "BODEGA";
   const tipo = "PRODUCCION";
 
-  console.log('>>> Ejecutando búsqueda con:', {
-    origen, destino, tipo
-  });
-
   try {
     // Subconsulta para obtener la fecha más cercana
     const query = `
@@ -179,23 +175,30 @@ const getUltimosEnvios = async (req, res) => {
   const tipo = "PRODUCCION"; // Tipo siempre será "PRODUCCION"
 
   try {
+    // Subconsulta para obtener las 3 fechas más cercanas
     const query = `
+      WITH fechas_cercanas AS (
+        SELECT DISTINCT fecha
+        FROM movimientos
+        WHERE origen = $1 
+          AND destino = $2 
+          AND tipo = $3
+        ORDER BY ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) ASC
+        LIMIT 3
+      )
       SELECT 
-        movimientos.nro,
-        MAX(movimientos.fecha),
-        SUM(movimientos.cant),
+        movimientos.fecha, 
+        movimientos.nro, 
+        movimientos.cant, 
+        movimientos.cod
       FROM movimientos
       WHERE movimientos.origen = $1 
         AND movimientos.destino = $2 
         AND movimientos.tipo = $3
-      GROUP BY movimientos.nro
-      ORDER BY MAX(movimientos.fecha) DESC
-      LIMIT 3
+        AND movimientos.fecha IN (SELECT fecha FROM fechas_cercanas)
+      ORDER BY movimientos.fecha DESC, movimientos.nro ASC
     `;
     const params = [origen, destino, tipo];
-    console.log('>>> Ejecutando búsqueda de últimos envíos con:', {
-      params
-    });
 
     const result = await pool.query(query, params);
 
@@ -203,7 +206,8 @@ const getUltimosEnvios = async (req, res) => {
       return res.status(404).json({ error: 'No se encontraron envíos recientes' });
     }
 
-    res.status(200).json(result.rows);
+    console.log('>>> Últimos envíos encontrados:', result.rows);
+    res.status(200).json(result.rows); // Devolver todas las filas relacionadas a las fechas más cercanas
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
     res.status(500).json({ error: 'Error al obtener los últimos envíos' });

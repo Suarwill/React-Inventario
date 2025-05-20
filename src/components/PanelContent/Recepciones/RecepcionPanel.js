@@ -31,8 +31,7 @@ const RecepcionPanel = () => {
   return (
     <div className="panel-overlay">
       <h2>Recepciones</h2>
-
-      <table className="recepciones-table">
+      <table className="tabla-titular">
         <thead>
           {/* Fila superior con la fecha y número del último envío */}
           {ultimoEnvio && (
@@ -46,10 +45,15 @@ const RecepcionPanel = () => {
               <td colSpan="2">Número: {ultimoEnvio.nro}</td>
             </tr>
           )}
+        </thead>
+      </table>
+    
+      <table className="tabla-contenido">
+        <thead>
           {/* Cabeceras para las filas de recepciones */}
           <tr>
-            <th>Cantidad</th>
             <th>Código</th>
+            <th>Cantidad</th>
             <th>Descripción</th>
           </tr>
         </thead>
@@ -61,8 +65,8 @@ const RecepcionPanel = () => {
           ) : (
             recepciones.map((recepcion, index) => (
               <tr key={index}>
-                <td>{recepcion.cant}</td>
                 <td>{recepcion.cod}</td>
+                <td>{recepcion.cant}</td>
                 <td>{recepcion.descripcion}</td>
               </tr>
             ))

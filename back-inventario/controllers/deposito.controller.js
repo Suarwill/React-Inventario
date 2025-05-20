@@ -3,7 +3,7 @@ const pool = require('../db/pool');
 //Se debe recibir token, para la validacion previamente.
 
 const addDeposito = async (req, res) => {
-  const { usuarioId, fecha, monto, comentario } = req.body; // Cambiado a usuarioId
+  const { usuarioId, fecha, voucher, monto, comentario } = req.body; // Cambiado a usuarioId
   try {
     // Verificar si el usuario existe
     const idInt = parseInt(usuarioId, 10);
@@ -24,8 +24,8 @@ const addDeposito = async (req, res) => {
 
     // Insertar el nuevo depósito
     const result = await pool.query(
-      'INSERT INTO depositos (usuario, fecha, monto, comentario) VALUES ($1, $2, $3, $4) RETURNING *',
-      [username, fecha, monto, comentario]
+      'INSERT INTO depositos (usuario, fecha, voucher, monto, comentario) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [username, fecha, voucher, monto, comentario]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {

@@ -27,7 +27,8 @@ const DepositoPanel = () => {
   const handleNuevoDeposito = async () => {
     const deposito = {
       usuarioId: localStorage.getItem('id'),
-      fecha: new Date().toISOString().split('T')[0],
+      fecha: nuevoDeposito.fecha,
+      voucher:nuevoDeposito.voucher,
       monto: nuevoDeposito.monto,
       comentario: nuevoDeposito.comentario,
     };
@@ -77,6 +78,7 @@ const DepositoPanel = () => {
         <thead>
           <tr>
             <th>Fecha</th>
+            <th>Voucher</th>
             <th>Monto</th>
             <th>Comentario</th>
             <th>Acciones</th>
@@ -89,6 +91,7 @@ const DepositoPanel = () => {
            depositos.map((deposito, index) => (
              <tr key={index}>
                <td>{deposito.fecha}</td>
+               <td>{deposito.voucher}</td>
                <td>{deposito.monto}</td>
                <td>{deposito.comentario}</td>
                <td>
@@ -111,6 +114,24 @@ const DepositoPanel = () => {
               }}
             >
               <label>
+                Fecha:
+                <input
+                  type="date"
+                  name="fecha"
+                  value={nuevoDeposito.fecha}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Voucher:
+                <input
+                  type="number"
+                  name="voucher"
+                  value={nuevoDeposito.voucher}
+                  onChange={handleInputChange}
+                  required
+                />
                 Monto:
                 <input
                   type="number"
