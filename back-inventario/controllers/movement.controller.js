@@ -173,7 +173,6 @@ const getUltimosEnvios = async (req, res) => {
   const { destino } = req.query; // Recibir el destino desde el frontend
   const origen = "BODEGA"; // Origen siempre será "BODEGA"
   const tipo = "PRODUCCION"; // Tipo siempre será "PRODUCCION"
-  console.log('>>> Obteniendo últimos envíos para el destino:', destino);
 
   try {
     // Subconsulta para obtener las 3 fechas más cercanas
@@ -207,7 +206,7 @@ const getUltimosEnvios = async (req, res) => {
       return res.status(404).json({ error: 'No se encontraron envíos recientes' });
     }
 
-    console.log('>>> Últimos envíos encontrados:', result.rows);
+    console.log('>>> Últimos envíos encontrados para:', destino, ':', result.rows.length);
     res.status(200).json(result.rows); // Devolver todas las filas relacionadas a las fechas más cercanas
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
