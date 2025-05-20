@@ -145,20 +145,20 @@ const updateMovimiento = async (req, res) => {
 }
 
 const deleteMovimiento = async (req, res) => {
-  const { nro } = req.params;
+  const { nro } = req.params; // Obtener el número de reposición desde los parámetros
   try {
-    // Verificar si el movimiento existe
+    // Verificar si existen movimientos con el número proporcionado
     const result = await pool.query('SELECT * FROM movimientos WHERE nro = $1', [nro]);
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Movimiento no encontrado' });
+      return res.status(404).json({ error: 'No se encontraron movimientos con el número proporcionado' });
     }
-    // Eliminar el movimiento
+
+    // Eliminar todas las filas que coincidan con el número de reposición
     await pool.query('DELETE FROM movimientos WHERE nro = $1', [nro]);
-    res.status(200).json({ message: 'Movimiento eliminado correctamente' });
-  }
-  catch (error) {
-    console.error('Error al eliminar el movimiento:', error);
-    res.status(500).json({ error: 'Error al eliminar el movimiento' });
+    res.status(200).json({ message: 'Todos los movimientos con el número proporcionado han sido eliminados correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar los movimientos:', error);
+    res.status(500).json({ error: 'Error al eliminar los movimientos' });
   }
 };
 
