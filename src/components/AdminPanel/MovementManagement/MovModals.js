@@ -30,11 +30,14 @@ export const UploadReposicion = ({ handleUploadReposicion, setModal, showMessage
   );
 };
 
-export const DeleteReposicion = ({ nro, setNro, handleDeleteReposicion, setModal }) => (
+export const DeleteReposicion = ({ nro, setNro, handleDeleteReposicion, setModal, showMessage }) => (
   <div className="modal">
     <h3>Eliminar Reposición</h3>
     <p>Ingrese el número de reposición a eliminar.</p>
-    <form onSubmit={(e) => handleDeleteReposicion(nro, e)}>
+    <form onSubmit={(e) => {
+      e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+      handleDeleteReposicion(nro, showMessage, setModal);
+    }}>
       <input
         type="text"
         placeholder="Número de reposición"
