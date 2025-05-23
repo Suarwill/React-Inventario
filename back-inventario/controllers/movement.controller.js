@@ -193,6 +193,7 @@ const getUltimosEnvios = async (req, res) => {
 
 const addInventarioAV = async (req, res) => {
   const inventarios = req.body.data; // Extraer el array de inventarios
+  console.log('>>> Agregando inventarios:', req.body.usuario);
   if (!inventarios || !Array.isArray(inventarios)) {
     return res.status(400).json({ error: 'Datos inválidos o faltantes' });
   }
@@ -252,6 +253,22 @@ const getInventarioAV = async (req, res) => {
 };
 
 const deleteInventarioAV = async (req, res) => {
+  const { fecha, usuario, tipo_dif } = req.params; // Obtener la fecha desde los parámetros
+  console.log('>>> Eliminando inventarios con fecha:', fecha, 'usuario:', usuario, 'tipo_dif:', tipo_dif);
+  try {
+    // Verificar si existen inventarios con la fecha y usuario proporcionados
+    const result = await pool.query('SELECT * FROM diferencia_inv WHERE fecha = $1 AND usuario = $2 AND tipo_dif = $3', [fecha, usuario, tipo_dif]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron inventarios con los parámetros proporcionados' });
+    }
+
+    // Eliminar todas las filas que coincidan con la fecha y usuario de reposición
+    await pool.query('DELETE FROM diferencia_inv WHERE fecha = $1 AND usuario = $2 AND tipo_dif = $3', [fecha, usuario, tipo_dif]);
+    res.status(200).json({ message: 'Todos los inventarios con los parámetros proporcionados han sido eliminados correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar los inventarios:', error);
+    res.status(500).json({ error: 'Error al eliminar los inventarios' });
+  }
 };
 
 
