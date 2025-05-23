@@ -13,8 +13,6 @@ const addMovimiento = async (req, res) => {
       const origen = "BODEGA";
       const destino = destinoRaw ? destinoRaw.toUpperCase() : null; // Convertir destino a mayúsculas
 
-      console.log('>>> Agregando movimiento:', { nro, origen, destino, tipo, cant, cod, fecha });
-
       // Verificar si el producto existe
       const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
       if (productResult.rows.length === 0) {
@@ -129,27 +127,6 @@ const getMovimientoCercano = async (req, res) => {
   }
 };
 
-const updateMovimiento = async (req, res) => {
-  const { id } = req.params;
-  const { nro, origen, destino, tipo, cant, cod } = req.body;
-  try {
-    // Verificar si el movimiento existe
-    const result = await pool.query('SELECT * FROM movimientos WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Movimiento no encontrado' });
-    }
-    // Actualizar el movimiento
-    const updatedResult = await pool.query(
-      'UPDATE movimientos SET nro = $1, origen = $2, destino = $3, tipo = $4, cant = $5, cod = $6 WHERE id = $7 RETURNING *',
-      [nro, origen, destino, tipo, cant, cod, id]
-    );
-    res.status(200).json(updatedResult.rows[0]);
-  } catch (error) {
-    console.error('Error al actualizar el movimiento:', error);
-    res.status(500).json({ error: 'Error al actualizar el movimiento' });
-  }
-}
-
 const deleteMovimiento = async (req, res) => {
   const { nro } = req.params; // Obtener el número de reposición desde los parámetros
   console.log('>>> Eliminando movimientos con número:', nro);
@@ -214,11 +191,78 @@ const getUltimosEnvios = async (req, res) => {
   }
 };
 
+const addInventarioAV = async (req, res) => {
+  const inventarios = req.body.data; // Extraer el array de inventarios
+  if (!inventarios || !Array.isArray(inventarios)) {
+    return res.status(400).json({ error: 'Datos inválidos o faltantes' });
+  }
+  try {
+    for (const inventario of inventarios) {
+      const { tipo_dif, usuario, fecha, codigo, stock, fisico  } = inventario;
+      query = `
+        INSERT INTO diferencia_inv (tipo_dif, usuario, fecha, codigo, stock, fisico)
+        VALUES ($1, $2, $3, $4, $5, $6)`;
+      const params = [tipo_dif, usuario, fecha, codigo, stock, fisico];
+      await pool.query(query, params);
+    }
+    console.log('>>> Inventarios agregados exitosamente:', inventarios.length);
+    res.status(201).json({ message: 'Inventarios agregados exitosamente' });
+  } catch (error) {
+    console.error('Error al agregar los inventarios:', error);
+    res.status(500).json({ error: 'Error al agregar los inventarios' });
+  }
+};
+
+const getInventarioAV = async (req, res) => {
+  const { tipo_dif, sector } = req.query;
+  console.log('>>> Obteniendo inventarios para el sector:', sector, 'y tipo_dif:', tipo_dif);  try {
+    const query = `
+      WITH ultima_fecha AS (
+        SELECT MAX(d.fecha) AS fecha
+        FROM diferencia_inv d
+        INNER JOIN usuarios u ON d.usuario = u.id
+        WHERE u.sector = $1 AND d.tipo_dif = $2
+      )
+      SELECT 
+        d.fecha, 
+        u.sector, 
+        d.usuario, 
+        d.tipo_dif
+      FROM diferencia_inv d
+      INNER JOIN usuarios u ON d.usuario = u.id
+      WHERE u.sector = $1 
+        AND d.tipo_dif = $2 
+        AND d.fecha = (SELECT fecha FROM ultima_fecha)
+    `;
+
+    const params = [ fecha, sector, tipo_dif ];
+
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron inventarios recientes' });
+    }
+
+    console.log('>>> Últimos inventarios encontrados para el sector:', sector, 'y tipo_dif:', tipo_dif, ':', result.rows.length);
+    res.status(200).json(result.rows); // Devolver todas las filas relacionadas a la última fecha encontrada
+  } catch (error) {
+    console.error('Error al obtener los inventarios:', error);
+    res.status(500).json({ error: 'Error al obtener los últimos inventarios' });
+  }
+};
+
+const deleteInventarioAV = async (req, res) => {
+};
+
+
+
 module.exports = {
   addMovimiento,
   getMovimiento,
-  updateMovimiento,
   deleteMovimiento,
   getMovimientoCercano,
-  getUltimosEnvios
-}
+  getUltimosEnvios,
+  addInventarioAV,
+  getInventarioAV,
+  deleteInventarioAV
+};

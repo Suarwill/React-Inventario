@@ -166,8 +166,6 @@ const deleteDeposito = async (req, res) => {
   }
 };
 
-// Exportar las funciones
-
 module.exports = {
   addDeposito,
   getDeposito,

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from "../../axiosConfig";
+import * as XLSX from 'xlsx';
 
-import '../PanelContent.css';
+
 
 export default InventariosPanel;

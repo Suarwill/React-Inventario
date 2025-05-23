@@ -4,10 +4,8 @@ const jwt = require('jsonwebtoken');
 
 // Registrar usuario
 const registerUser = async (req, res) => {
-  console.log("Registering user:", req.body);
   const { validationResult } = require('express-validator');
   const errors = validationResult(req);
-  console.log("Validation errors:", errors);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
   const { username, password, sector, zona } = req.body; // Agregar sector y zona
@@ -64,7 +62,6 @@ const loginUser = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
-
 
 // Buscar usuarios
 const searchUsers = async (req, res) => {

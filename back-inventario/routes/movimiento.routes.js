@@ -8,7 +8,10 @@ router.post('/add',validateUser, authenticateToken ,movementController.addMovimi
 router.get('/search',authenticateToken, movementController.getMovimiento);
 router.get('/closest', authenticateToken, movementController.getMovimientoCercano);
 router.get('/last', authenticateToken, movementController.getUltimosEnvios);
-router.put('/:nro',validateUser, authenticateToken , movementController.updateMovimiento);
 router.delete('/delete/:nro',authenticateToken , movementController.deleteMovimiento);
+
+router.post('/inventario/av/add',authenticateToken,movementController.addInventarioAV);
+router.get('/inventario/av/last',authenticateToken,movementController.getInventarioAV);
+router.delete('/inventario/av/delete/:nro',authenticateToken,movementController.deleteInventarioAV);
 
 module.exports = router;
