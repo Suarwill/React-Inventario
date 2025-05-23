@@ -1,14 +1,22 @@
 const pool = require('../db/pool');
 
 const addConteo = async (req, res) => {
-    const { tipo, cant, cod, nro_envio, usuario } = req.body;
+    const verificaciones = req.body;
+
+    console.log('Datos recibidos desde el cliente:', req.body.usuario);
 
     try {
-        const query = 'INSERT INTO conteo (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        const values = [tipo, cant, cod, nro_envio, usuario];
+        for (const verificacion of verificaciones) {
+            if (!verificacion.tipo || !verificacion.cant || !verificacion.cod || !verificacion.nro_envio || !verificacion.usuario) {
+                return res.status(400).json({ error: 'Faltan datos requeridos' });
+            }
+            const { tipo, cant, cod, nro_envio, usuario } = verificacion;
+            const query = 'INSERT INTO conteo (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            const values = [tipo, cant, cod, nro_envio, usuario];
 
-        const result = await pool.query(query, values);
-        res.status(201).json({ message: 'Conteo agregado correctamente', conteo: result.rows[0] });
+            const result = await pool.query(query, values);
+        };
+        res.status(201).json({ message: 'Conteo agregado correctamente', conteo: result.rows[0] })
     } catch (error) {
         console.error('Error al agregar el conteo:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
