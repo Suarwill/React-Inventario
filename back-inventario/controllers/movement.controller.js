@@ -205,6 +205,7 @@ const addInventarioAV = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5, $6)`;
       const params = [tipo_dif, usuario, fecha, codigo, stock, fisico];
       await pool.query(query, params);
+      console.log('>>> Inventario agregado:', inventario);
     }
     console.log('>>> Inventarios agregados exitosamente:', inventarios.length);
     res.status(201).json({ message: 'Inventarios agregados exitosamente' });
