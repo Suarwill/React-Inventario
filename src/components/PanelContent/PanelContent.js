@@ -2,7 +2,8 @@ import React from 'react';
 import DepositoPanel from './Depositos/DepositoPanel';
 import RecepcionPanel from './Recepciones/RecepcionPanel';
 import VerificacionPanel from './Recepciones/VerificacionPanel';
-import InventariosPanel from './Inventarios/InventariosPanel';
+import InventariosAV from './Inventarios/inventarioAV';
+import InventariosCat from './Inventarios/inventarioCat';
 import './PanelContent.css';
 
 const PanelContent = ({ selected }) => {
@@ -13,8 +14,8 @@ const PanelContent = ({ selected }) => {
   if (selected === 'Verificación')        {return <VerificacionPanel />;}
 
   //Inventarios
-  if (selected === 'Diferencia en AV')    {return <InventariosPanel tipo="AV" />;}
-  if (selected === 'Diferencia en Categoría') {return <InventariosPanel tipo="Categoria" />;}
+  if (selected === 'Diferencia en AV')    {return <InventariosAV />;}
+  if (selected === 'Diferencia en Categoría') {return <InventariosCat />;}
 
   //Depósitos
   if (selected === 'Depósitos')           {return <DepositoPanel />;}
