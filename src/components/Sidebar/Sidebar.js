@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
-import axios from 'axios';
 
 const Sidebar = ({ onSelect }) => {
   const [active, setActive] = useState({
@@ -17,7 +16,7 @@ const Sidebar = ({ onSelect }) => {
   };
 
   const handleSelect = (option) => {
-    onSelect(option); // Solo pasa la opción seleccionada
+    onSelect(option);
   };
 
   return (

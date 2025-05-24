@@ -1,21 +1,23 @@
 import React from 'react';
-import './PanelContent.css';
 import DepositoPanel from './Depositos/DepositoPanel';
 import RecepcionPanel from './Recepciones/RecepcionPanel';
 import VerificacionPanel from './Recepciones/VerificacionPanel';
+import InventariosPanel from './Inventarios/InventariosPanel';
+import './PanelContent.css';
 
 const PanelContent = ({ selected }) => {
-  if (selected === 'Depósitos') {
-    return <DepositoPanel />;
-  }
+  //Envios
 
-  if (selected === 'Envío desde Matriz') {
-    return <RecepcionPanel />;
-  }
+  //Recepciones
+  if (selected === 'Envío desde Matriz')  {return <RecepcionPanel />;}
+  if (selected === 'Verificación')        {return <VerificacionPanel />;}
 
-  if (selected === 'Verificación') {
-    return <VerificacionPanel />;
-  }
+  //Inventarios
+  if (selected === 'Diferencia en AV')    {return <InventariosPanel tipo="AV" />;}
+  if (selected === 'Diferencia en Categoría') {return <InventariosPanel tipo="Categoria" />;}
+
+  //Depósitos
+  if (selected === 'Depósitos')           {return <DepositoPanel />;}
 
   return (
     <div className="panel-content">
