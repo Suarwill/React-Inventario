@@ -11,25 +11,29 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       return;
     }
 
-    try {
-      const response = await axiosInstance.get(`/api/product/search/${codigo}`);
-      console.log('Respuesta del servidor:', response.data);
-      const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
+    // Usar un temporizador para evitar múltiples solicitudes
+    clearTimeout(window.codigoTimeout); // Limpiar cualquier temporizador previo
+    window.codigoTimeout = setTimeout(async () => {
+      try {
+        const response = await axiosInstance.get(`/api/product/search/${codigo}`);
+        console.log('Respuesta del servidor:', response.data);
+        const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
 
-      setConteo((prevConteo) => {
-        const nuevoConteo = [...prevConteo];
-        nuevoConteo[index] = { cod: codigo, cant: 1, descripcion };
-        return nuevoConteo;
-      });
+        setConteo((prevConteo) => {
+          const nuevoConteo = [...prevConteo];
+          nuevoConteo[index] = { cod: codigo, cant: 1, descripcion };
+          return nuevoConteo;
+        });
 
-      // Agregar una nueva fila vacía si estamos en la última fila
-      if (index === conteo.length - 1) {
-        setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
+        // Agregar una nueva fila vacía si estamos en la última fila
+        if (index === conteo.length - 1) {
+          setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
+        }
+      } catch (error) {
+        console.error('Error al buscar el código:', error);
+        alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
       }
-    } catch (error) {
-      console.error('Error al buscar el código:', error);
-      alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
-    }
+    }, 500); // Esperar 300 ms para procesar el código completo
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
