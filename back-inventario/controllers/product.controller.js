@@ -15,12 +15,12 @@ const addProducto = async (req, res) => {
 }
 
 const getProducto = async (req, res) => {
-    const { id } = req.query;
+    const { cod } = req.query;
     try {
         let result;
-        if (id) {
+        if (cod) {
         // Obtener un producto por ID
-        result = await pool.query('SELECT * FROM productos WHERE id = $1', [id]);
+        result = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
         } else {
         // Obtener todos los productos
         result = await pool.query('SELECT * FROM productos');
