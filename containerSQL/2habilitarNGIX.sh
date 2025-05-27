@@ -1,4 +1,5 @@
-#!/bin/bash
+#
+!/bin/bash
 set -e
 
 echo "📦 Instalando NGINX..."
