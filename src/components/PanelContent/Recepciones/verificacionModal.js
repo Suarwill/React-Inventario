@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
-  const [conteo, setConteo] = useState(initialConteo || [{ cod: '', cant: 1, descripcion: '' }]);
+  const [conteo, setConteo] = useState(initialConteo || [{ cod: '130lh', cant: 1, descripcion: '' }]);
 
   const handleCodigoChange = async (index, codigo) => {
     if (!codigo.trim()) {
