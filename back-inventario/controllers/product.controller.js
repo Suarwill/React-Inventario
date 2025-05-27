@@ -15,8 +15,7 @@ const addProducto = async (req, res) => {
 }
 
 const getProducto = async (req, res) => {
-    const { cod } = req.params;
-    // transformar el codigo a string
+    let { cod } = req.params; // Cambiar "const" por "let"
     if (cod) {
         cod = cod.toString().trim();
     } else {
@@ -25,10 +24,9 @@ const getProducto = async (req, res) => {
     try {
         let result;
         if (cod) {
-        // Obtener un producto por código
-        result = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
-        }
-        else {
+            // Obtener un producto por código
+            result = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
+        } else {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         res.status(200).json(result.rows);
