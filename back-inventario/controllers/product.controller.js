@@ -17,7 +17,11 @@ const addProducto = async (req, res) => {
 const getProducto = async (req, res) => {
     const { cod } = req.params;
     // transformar el codigo a string
-      cod = cod.toString().trim();
+    if (cod) {
+        cod = cod.toString().trim();
+    } else {
+        return res.status(400).json({ error: 'Código de producto no proporcionado' });
+    }
     try {
         let result;
         if (cod) {
