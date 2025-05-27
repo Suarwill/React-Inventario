@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
-  const [conteo, setConteo] = useState(initialConteo || [{ cod: '130lh', cant: 1, descripcion: '' }]);
+  // Aseguramos que siempre haya al menos una fila inicial
+  const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
 
   const handleCodigoChange = async (index, codigo) => {
     if (!codigo.trim()) {
@@ -20,6 +21,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
         return nuevoConteo;
       });
 
+      // Agregar una nueva fila vacía si estamos en la última fila
       if (index === conteo.length - 1) {
         setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
       }
