@@ -15,7 +15,9 @@ const addProducto = async (req, res) => {
 }
 
 const getProducto = async (req, res) => {
-    const { cod } = req.query;
+    const { cod } = req.params;
+    // transformar el codigo a string
+      cod = cod.toString().trim();
     try {
         let result;
         if (cod) {
