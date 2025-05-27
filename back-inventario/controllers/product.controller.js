@@ -17,7 +17,7 @@ const addProducto = async (req, res) => {
 const getProducto = async (req, res) => {
     let { cod } = req.params; // Cambiar "const" por "let"
     if (cod) {
-        cod = cod.toString().trim();
+        cod = cod.toString().trim().toUpperCase();
     } else {
         return res.status(400).json({ error: 'Código de producto no proporcionado' });
     }
