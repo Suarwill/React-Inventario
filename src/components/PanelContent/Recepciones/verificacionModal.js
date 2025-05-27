@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../axiosConfig'; // Asegúrate de que esta ruta sea correcta
+import axiosInstance from '../../axiosConfig';
 
-const VerificacionModal = ({ handleGuardarConteo, closeModal }) => {
-  const [conteo, setConteo] = useState([{ cod: '', cant: 1, descripcion: '' }]);
+const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
+  const [conteo, setConteo] = useState(initialConteo || [{ cod: '', cant: 1, descripcion: '' }]);
 
   const handleCodigoChange = async (index, codigo) => {
+    if (!codigo.trim()) {
+      alert('El código no puede estar vacío.');
+      return;
+    }
+
     try {
-      // Realizar la solicitud al backend para obtener la descripción del código
       const response = await axiosInstance.get(`/api/productos/${codigo}`);
       const descripcion = response.data.descripcion || 'Descripción no encontrada';
 
@@ -16,7 +20,6 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal }) => {
         return nuevoConteo;
       });
 
-      // Agregar una nueva fila vacía si es la última fila
       if (index === conteo.length - 1) {
         setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
       }
@@ -39,8 +42,8 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal }) => {
   };
 
   const handleGuardar = () => {
-    handleGuardarConteo(conteo); // Guardar el conteo actual
-    closeModal(); // Cerrar el modal
+    handleGuardarConteo(conteo);
+    closeModal();
   };
 
   return (

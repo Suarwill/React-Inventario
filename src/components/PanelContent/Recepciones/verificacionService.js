@@ -1,10 +1,6 @@
 import axiosInstance from '../../axiosConfig';
 const API_URL = '/api/movimiento';
 
-/**
- * Obtiene los últimos envíos hacia el sector especificado.
- * @returns {Promise} - Promesa que resuelve con los datos de los envíos.
- */
 export const fetchUltimosEnvios = async () => {
   try {
     const sector = localStorage.getItem('sector');
@@ -24,20 +20,6 @@ export const fetchUltimosEnvios = async () => {
 };
 
 /**
- * Obtiene la lista de productos.
- * @returns {Promise} - Promesa que resuelve con los datos de los productos.
- */
-export const fetchProductos = async () => {
-  try {
-    const response = await axiosInstance.get('/api/productos');
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener los productos:', error);
-    throw new Error('Error al obtener los productos.');
-  }
-};
-
-/**
  * Envía un conteo al backend.
  * @param {Object} conteo - Datos del conteo.
  * @returns {Promise} - Promesa que resuelve cuando el conteo se envía correctamente.
@@ -47,7 +29,6 @@ export const enviarConteo = async (conteo) => {
     if (!conteo || !conteo.tipo || !conteo.cant || !conteo.cod || !conteo.nro_envio) {
       throw new Error('Datos de conteo incompletos.');
     }
-
     await axiosInstance.post('/api/conteo/add', conteo);
   } catch (error) {
     console.error('Error al enviar el conteo:', error);
@@ -70,26 +51,4 @@ export const agruparEnviosPorNumero = (data) => {
     return acc;
   }, {});
   return Object.values(grouped);
-};
-
-/**
- * Calcula la cantidad verificada para un número de envío.
- * @param {Array} conteo - Datos del conteo.
- * @param {number} nro - Número de envío.
- * @returns {number} - Cantidad verificada.
- */
-export const calcularCantidadVerificada = (conteo, nro) => {
-  return conteo
-    .filter((item) => item.nro_envio === nro)
-    .reduce((sum, item) => sum + item.cant, 0);
-};
-
-/**
- * Calcula la diferencia entre la cantidad enviada y la cantidad verificada.
- * @param {number} cantidadEnviada - Cantidad enviada.
- * @param {number} cantidadVerificada - Cantidad verificada.
- * @returns {number} - Diferencia.
- */
-export const calcularDiferencia = (cantidadEnviada, cantidadVerificada) => {
-  return cantidadVerificada - cantidadEnviada;
 };

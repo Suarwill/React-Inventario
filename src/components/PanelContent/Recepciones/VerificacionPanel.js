@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   fetchUltimosEnvios,
-  fetchProductos,
   enviarConteo,
   agruparEnviosPorNumero,
   calcularCantidadVerificada,
@@ -11,11 +10,11 @@ import VerificacionModal from './verificacionModal';
 
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
-  const [productos, setProductos] = useState([]);
   const [conteo, setConteo] = useState([]);
+  const [productos, setProductos] = useState([]); // Estado para almacenar productos
+  const [selectedEnvio, setSelectedEnvio] = useState(null); // Estado inicializado
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedEnvio, setSelectedEnvio] = useState(null);
 
   useEffect(() => {
     const obtenerEnvios = async () => {
@@ -28,22 +27,15 @@ const VerificacionPanel = () => {
       }
     };
     obtenerEnvios();
-  },[]);
+  }, []);
 
-  const handleAgregarVerificacion = async (envio) => {
+  const handleAgregarVerificacion = (envio) => {
     setSelectedEnvio(envio);
     setModalVisible(true);
-    try {
-      const productosData = await fetchProductos();
-      setProductos(productosData);
-    } catch (err) {
-      setError('Error al cargar los productos.');
-      closeModal(); // Cerrar el modal si ocurre un error
-    }
   };
 
   const handleConfirmarVerificacion = async (envio) => {
-    const usuario = localStorage.getItem('usuario'); // Obtener el usuario desde localStorage
+    const usuario = localStorage.getItem('usuario');
     const tipo = 'VERIFICACION';
     const nro_envio = envio.nro;
 
@@ -71,45 +63,6 @@ const VerificacionPanel = () => {
     setConteo([]);
   };
 
-  const handleScan = (codigo) => {
-    if (!codigo) {
-      alert('Código no válido.');
-      return;
-    }
-
-    const productoExistente = conteo.find((item) => item.cod === codigo);
-    if (productoExistente) {
-      setConteo((prevConteo) =>
-        prevConteo.map((item) =>
-          item.cod === codigo ? { ...item, cant: item.cant + 1 } : item
-        )
-      );
-    } else {
-      const producto = productos.find((p) => p.codigo === codigo);
-      if (producto) {
-        setConteo((prevConteo) => [
-          ...prevConteo,
-          { cod: codigo, cant: 1, descripcion: producto.descripcion },
-        ]);
-      } else {
-        alert('Producto no encontrado.');
-      }
-    }
-  };
-
-  const handleCantidadChange = (codigo, nuevaCantidad) => {
-    if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
-      alert('Cantidad no válida.');
-      return;
-    }
-
-    setConteo((prevConteo) =>
-      prevConteo.map((item) =>
-        item.cod === codigo ? { ...item, cant: nuevaCantidad } : item
-      )
-    );
-  };
-
   return (
     <div>
       <h2>Últimos Envíos</h2>
@@ -133,11 +86,7 @@ const VerificacionPanel = () => {
 
             return (
               <tr key={envio.nro}>
-                <td>{new Date(envio.fecha).toLocaleDateString('es-ES', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                  })}</td>
+                <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
                 <td>{envio.nro}</td>
                 <td>{envio.cantidadEnviada}</td>
                 <td>{cantidadVerificada}</td>
@@ -155,9 +104,7 @@ const VerificacionPanel = () => {
       {modalVisible && (
         <VerificacionModal
           conteo={conteo}
-          handleCantidadChange={handleCantidadChange}
-          handleScan={handleScan}
-          handleEnviarConteo={() => alert('Conteo enviado.')}
+          handleGuardarConteo={setConteo}
           closeModal={closeModal}
         />
       )}
