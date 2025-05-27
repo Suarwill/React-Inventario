@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
-  // Aseguramos que siempre haya al menos una fila inicial
+
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
 
   const handleCodigoChange = async (index, codigo) => {
@@ -12,7 +12,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
     }
 
     try {
-      const response = await axiosInstance.get(`/api/productos/${codigo}`);
+      const response = await axiosInstance.get(`/api/product/search/${codigo}`);
       const descripcion = response.data.descripcion || 'Descripción no encontrada';
 
       setConteo((prevConteo) => {
