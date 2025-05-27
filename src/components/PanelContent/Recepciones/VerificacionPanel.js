@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   fetchUltimosEnvios,
   enviarConteo,
-  agruparEnviosPorNumero,
-  calcularCantidadVerificada,
-  calcularDiferencia,
+  agruparEnviosPorNumero
 } from './verificacionService';
 import VerificacionModal from './verificacionModal';
 
@@ -81,8 +79,8 @@ const VerificacionPanel = () => {
         </thead>
         <tbody>
           {envios.map((envio) => {
-            const cantidadVerificada = calcularCantidadVerificada(conteo, envio.nro);
-            const diferencia = calcularDiferencia(envio.cantidadEnviada, cantidadVerificada);
+            const cantidadVerificada = 'en construccion';
+            const diferencia = 'en construccion';
 
             return (
               <tr key={envio.nro}>
