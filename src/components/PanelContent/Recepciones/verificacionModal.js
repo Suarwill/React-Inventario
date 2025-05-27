@@ -13,6 +13,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
 
     try {
       const response = await axiosInstance.get(`/api/product/search/${codigo}`);
+      console.log('Respuesta del servidor:', response.data);
       const descripcion = response.data.descripcion || 'Descripción no encontrada';
 
       setConteo((prevConteo) => {

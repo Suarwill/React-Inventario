@@ -19,11 +19,11 @@ const getProducto = async (req, res) => {
     try {
         let result;
         if (cod) {
-        // Obtener un producto por ID
+        // Obtener un producto por código
         result = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
-        } else {
-        // Obtener todos los productos
-        result = await pool.query('SELECT * FROM productos');
+        }
+        else {
+            return res.status(404).json({ error: 'Producto no encontrado' });
         }
         res.status(200).json(result.rows);
     } catch (error) {
