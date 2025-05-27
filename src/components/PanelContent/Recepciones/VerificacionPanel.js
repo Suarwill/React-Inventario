@@ -27,14 +27,12 @@ const VerificacionPanel = () => {
         setError(err.message);
       }
     };
-
     obtenerEnvios();
-  }, []);
+  },[]);
 
   const handleAgregarVerificacion = async (envio) => {
     setSelectedEnvio(envio);
     setModalVisible(true);
-
     try {
       const productosData = await fetchProductos();
       setProductos(productosData);

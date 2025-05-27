@@ -1,12 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axiosInstance from '../../axiosConfig'; // Asegúrate de que esta ruta sea correcta
 
-const VerificacionModal = ({
-  conteo,
-  handleCantidadChange,
-  handleScan,
-  handleEnviarConteo,
-  closeModal,
-}) => {
+const VerificacionModal = ({ handleGuardarConteo, closeModal }) => {
+  const [conteo, setConteo] = useState([{ cod: '', cant: 1, descripcion: '' }]);
+
+  const handleCodigoChange = async (index, codigo) => {
+    try {
+      // Realizar la solicitud al backend para obtener la descripción del código
+      const response = await axiosInstance.get(`/api/productos/${codigo}`);
+      const descripcion = response.data.descripcion || 'Descripción no encontrada';
+
+      setConteo((prevConteo) => {
+        const nuevoConteo = [...prevConteo];
+        nuevoConteo[index] = { cod: codigo, cant: 1, descripcion };
+        return nuevoConteo;
+      });
+
+      // Agregar una nueva fila vacía si es la última fila
+      if (index === conteo.length - 1) {
+        setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
+      }
+    } catch (error) {
+      console.error('Error al buscar el código:', error);
+      alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
+    }
+  };
+
+  const handleCantidadChange = (index, nuevaCantidad) => {
+    if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
+      alert('Cantidad no válida.');
+      return;
+    }
+    setConteo((prevConteo) => {
+      const nuevoConteo = [...prevConteo];
+      nuevoConteo[index].cant = nuevaCantidad;
+      return nuevoConteo;
+    });
+  };
+
+  const handleGuardar = () => {
+    handleGuardarConteo(conteo); // Guardar el conteo actual
+    closeModal(); // Cerrar el modal
+  };
+
   return (
     <div className="modal">
       <h3>Agregar Verificación</h3>
@@ -19,22 +55,21 @@ const VerificacionModal = ({
           </tr>
         </thead>
         <tbody>
-          {conteo.map((item) => (
-            <tr key={item.cod}>
-              <td>{item.cod}</td>
+          {conteo.map((item, index) => (
+            <tr key={index}>
+              <td>
+                <input
+                  type="text"
+                  value={item.cod}
+                  onChange={(e) => handleCodigoChange(index, e.target.value)}
+                />
+              </td>
               <td>
                 <input
                   type="number"
                   value={item.cant}
                   min="1"
-                  onChange={(e) => {
-                    const nuevaCantidad = parseInt(e.target.value, 10);
-                    if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
-                      alert('Cantidad no válida.');
-                      return;
-                    }
-                    handleCantidadChange(item.cod, nuevaCantidad);
-                  }}
+                  onChange={(e) => handleCantidadChange(index, parseInt(e.target.value, 10))}
                 />
               </td>
               <td>{item.descripcion}</td>
@@ -42,10 +77,7 @@ const VerificacionModal = ({
           ))}
         </tbody>
       </table>
-      <button onClick={() => handleScan(prompt('Escanea el código de barras:'))}>
-        Escanear
-      </button>
-      <button onClick={handleEnviarConteo}>Enviar</button>
+      <button onClick={handleGuardar}>Guardar</button>
       <button onClick={closeModal}>Cerrar</button>
     </div>
   );
