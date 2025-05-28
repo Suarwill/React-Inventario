@@ -17,12 +17,18 @@ const VerificacionPanel = () => {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const [enviosData, verificacionesData] = await Promise.all([
-          fetchUltimosEnvios(),
-          obtenerVerificaciones(),
-        ]);
+        const enviosData = await fetchUltimosEnvios();
         setEnvios(enviosData);
-        setVerificaciones(verificacionesData);
+
+        // Obtener verificaciones relacionadas con los números de envío
+        const verificacionesPromises = enviosData.map((envio) =>
+          obtenerVerificaciones(envio.nro)
+        );
+        const verificacionesData = await Promise.all(verificacionesPromises);
+
+        // Consolidar todas las verificaciones en un solo array
+        const verificacionesConsolidadas = verificacionesData.flat();
+        setVerificaciones(verificacionesConsolidadas);
       } catch (err) {
         setError(err.message);
       }
