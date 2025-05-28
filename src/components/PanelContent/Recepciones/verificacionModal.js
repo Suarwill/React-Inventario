@@ -8,6 +8,12 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
     setConteo((prevConteo) => {
       const nuevoConteo = [...prevConteo];
       nuevoConteo[index].cod = codigo;
+
+      // Agregar una nueva fila si es la última fila
+      if (index === prevConteo.length - 1 && codigo.trim() !== '') {
+        nuevoConteo.push({ cod: '', cant: 1, descripcion: '' });
+      }
+
       return nuevoConteo;
     });
   };
@@ -25,11 +31,12 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
   };
 
   const handleGuardar = () => {
-    if (conteo.some(item => !item.cod || item.cant <= 0)) {
-      alert('Todos los campos deben estar completos y las cantidades deben ser mayores a 0.');
+    const conteoFiltrado = conteo.filter(item => item.cod.trim() !== '' && item.cant > 0);
+    if (conteoFiltrado.length === 0) {
+      alert('Debe ingresar al menos un producto válido.');
       return;
     }
-    handleGuardarConteo(conteo);
+    handleGuardarConteo(conteoFiltrado); // Actualiza el conteo en el componente principal
     closeModal();
   };
 
@@ -64,7 +71,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
                     onChange={(e) => handleCantidadChange(index, parseInt(e.target.value, 10))}
                   />
                 </td>
-                <td>{item.descripcion}</td>
+                <td>{item.descripcion || 'Sin descripción'}</td>
               </tr>
             ))}
           </tbody>
