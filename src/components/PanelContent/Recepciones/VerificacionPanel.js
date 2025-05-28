@@ -199,9 +199,9 @@ const VerificacionPanel = () => {
                 <td>{faltantes}</td>
                 <td>{sobrantes}</td>
                 <td>
-                  <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
-                  <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
-                  <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
+                  <button className='main-button' onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
+                  <button className='main-button' onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
+                  <button className='main-button' onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
                 </td>
               </tr>
             );
