@@ -74,9 +74,7 @@ export const obtenerVerificaciones = async (nroEnvio) => {
       throw new Error('El número de envío (nroEnvio) es requerido.');
     }
 
-    const response = await axiosInstance.get(`/api/conteo/search`, {
-      params: { nro_envio: nroEnvio },
-    });
+    const response = await axiosInstance.get(`/api/conteo/search/${nroEnvio}`);
 
     return response.data;
   } catch (error) {
