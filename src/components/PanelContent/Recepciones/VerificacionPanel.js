@@ -68,7 +68,7 @@ const VerificacionPanel = () => {
   };
 
   const handleConfirmarVerificacion = async (envio) => {
-    const usuario = localStorage.getItem('usuario');
+    const usuario = localStorage.getItem('username');
     const tipo = 'VERIFICACION';
 
     if (!window.confirm('¿Está seguro de que desea confirmar la verificación?')) {
