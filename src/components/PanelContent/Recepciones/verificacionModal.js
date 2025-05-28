@@ -79,11 +79,18 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
   };
 
   const handleGuardar = () => {
-    const conteoFiltrado = conteo.filter(item => item.cod.trim() !== '' && item.cant > 0);
+    const conteoFiltrado = conteo
+      .filter(item => item.cod.trim() !== '' && item.cant > 0)
+      .map(item => ({
+        ...item,
+        cod: item.cod.toUpperCase(), // Convertir el código a mayúsculas
+      }));
+
     if (conteoFiltrado.length === 0) {
       alert('Debe ingresar al menos un producto válido.');
       return;
     }
+
     handleGuardarConteo(conteoFiltrado); // Actualiza el conteo en el componente principal
     closeModal();
   };
