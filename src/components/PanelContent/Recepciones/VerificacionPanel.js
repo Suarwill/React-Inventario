@@ -95,7 +95,7 @@ const VerificacionPanel = () => {
     ).map(([cod, { cantidadEnvio, descripcion }]) => {
       const cantidadConteo = conteo
         .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-        .reduce((total, item) => total + item.cant, 0);
+        .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
 
       const diferencia = cantidadEnvio - cantidadConteo;
 
