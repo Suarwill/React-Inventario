@@ -16,21 +16,21 @@ const addConteo = async (req, res) => {
 
             const result = await pool.query(query, values);
         };
-        res.status(201).json({ message: 'Conteo agregado correctamente', conteo: result.rows[0] })
+        res.status(200).json({ message: 'Se han agregado las verificaciones correctamente' });
     } catch (error) {
         console.error('Error al agregar el conteo:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
-const getConteo = async (req, res) => {
-    const { id } = req.query;
+const getConteos = async (req, res) => {
+    const { nro } = req.query;
 
     try {
         let result;
-        if (id) {
-            const query = 'SELECT * FROM conteo WHERE id = $1';
-            result = await pool.query(query, [id]);
+        if (nro) {
+            const query = 'SELECT * FROM conteo WHERE nro_envio = $1';
+            result = await pool.query(query, [nro]);
         } else {
             const query = 'SELECT * FROM conteo';
             result = await pool.query(query);
@@ -88,7 +88,7 @@ const deleteConteo = async (req, res) => {
 
 module.exports = {
     addConteo,
-    getConteo,
+    getConteos,
     updateConteo,
     deleteConteo
 };

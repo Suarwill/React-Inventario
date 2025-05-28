@@ -5,7 +5,7 @@ const authenticateToken = require('../middlewares/auth.middleware');
 const { validateUser} = require('../middlewares/validation.middleware');
 
 router.post('/add', authenticateToken ,conteoController.addConteo);
-router.get('/search',authenticateToken, conteoController.getConteo);
+router.get('/search/:nro',authenticateToken, conteoController.getConteos);
 router.put('/:id',validateUser, authenticateToken , conteoController.updateConteo);
 router.delete('/:id',validateUser, authenticateToken , conteoController.deleteConteo);
 

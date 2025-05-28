@@ -62,3 +62,17 @@ export const agruparEnviosPorNumero = (data) => {
   }, {});
   return Object.values(grouped);
 };
+
+/**
+ * Obtiene las verificaciones desde el backend.
+ * @returns {Promise<Array>} - Promesa que resuelve con las verificaciones.
+ */
+export const obtenerVerificaciones = async () => {
+  try {
+    const response = await axiosInstance.get('/api/conteo');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener las verificaciones:', error);
+    throw new Error('Error al obtener las verificaciones.');
+  }
+};

@@ -1,28 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUltimosEnvios, enviarConteo } from './verificacionService';
+import { fetchUltimosEnvios, enviarConteo, obtenerVerificaciones } from './verificacionService';
 import VerificacionModal from './verificacionModal';
 import DiferenciasModal from './DiferenciasModal';
 
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
   const [conteo, setConteo] = useState([]);
+  const [verificaciones, setVerificaciones] = useState([]); // Nuevo estado para las verificaciones
   const [enviosAgrupados, setEnviosAgrupados] = useState([]);
   const [selectedEnvio, setSelectedEnvio] = useState(null);
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
 
-  // Obtener envíos al cargar el componente
+  // Obtener envíos y verificaciones al cargar el componente
   useEffect(() => {
-    const obtenerEnvios = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await fetchUltimosEnvios();
-        setEnvios(data); // Cargar los datos directamente como elementos individuales
+        const [enviosData, verificacionesData] = await Promise.all([
+          fetchUltimosEnvios(),
+          obtenerVerificaciones(),
+        ]);
+        setEnvios(enviosData);
+        setVerificaciones(verificacionesData);
       } catch (err) {
         setError(err.message);
       }
     };
-    obtenerEnvios();
+    cargarDatos();
   }, []);
 
   // Agrupar envíos por número de envío
@@ -48,9 +53,15 @@ const VerificacionPanel = () => {
 
   // Calcular faltantes y sobrantes
   const calcularDiferencias = (envio) => {
-    const cantidadVerificada = (conteo || [])
+    const cantidadVerificadaBackend = (verificaciones || [])
       .filter(item => item.nro_envio === envio.nro)
       .reduce((total, item) => total + item.cant, 0);
+
+    const cantidadVerificadaLocal = (conteo || [])
+      .filter(item => item.nro_envio === envio.nro)
+      .reduce((total, item) => total + item.cant, 0);
+
+    const cantidadVerificada = cantidadVerificadaBackend + cantidadVerificadaLocal;
 
     const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
 
@@ -93,17 +104,16 @@ const VerificacionPanel = () => {
         usuario,
       }));
 
-      // Enviar el array de conteos al backend
       await enviarConteo(conteos);
 
       alert('Verificación confirmada correctamente.');
+      setConteo([]); // Limpiar el conteo después de confirmar
     } catch (err) {
       alert('Error al confirmar la verificación.');
     }
   };
 
   const handleGuardarConteo = (nuevoConteo) => {
-    console.log('Nuevo conteo recibido desde el modal:', nuevoConteo); // Depuración
     setConteo(nuevoConteo); // Actualiza el estado de conteo
   };
 
@@ -156,9 +166,15 @@ const VerificacionPanel = () => {
         <tbody>
           {enviosAgrupados.map((envio, index) => {
             const { faltantes, sobrantes } = calcularDiferencias(envio);
-            const cantidadVerificada = (conteo || [])
+            const cantidadVerificadaBackend = (verificaciones || [])
               .filter(item => item.nro_envio === envio.nro)
               .reduce((total, item) => total + item.cant, 0);
+
+            const cantidadVerificadaLocal = (conteo || [])
+              .filter(item => item.nro_envio === envio.nro)
+              .reduce((total, item) => total + item.cant, 0);
+
+            const cantidadVerificada = cantidadVerificadaBackend + cantidadVerificadaLocal;
 
             const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
 
