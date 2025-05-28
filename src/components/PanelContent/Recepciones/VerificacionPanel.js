@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  fetchUltimosEnvios,
-  enviarConteo,
-  agruparEnviosPorNumero
-} from './verificacionService';
+import { fetchUltimosEnvios, enviarConteo } from './verificacionService';
 import VerificacionModal from './verificacionModal';
 import DiferenciasModal from './DiferenciasModal';
 
@@ -14,15 +10,13 @@ const VerificacionPanel = () => {
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [enviosCalculados, setEnviosCalculados] = useState([]);
 
   // Obtener envíos al cargar el componente
   useEffect(() => {
     const obtenerEnvios = async () => {
       try {
         const data = await fetchUltimosEnvios();
-        const groupedData = agruparEnviosPorNumero(data);
-        setEnvios(groupedData);
+        setEnvios(data); // Cargar los datos directamente como elementos individuales
       } catch (err) {
         setError(err.message);
       }
@@ -30,62 +24,19 @@ const VerificacionPanel = () => {
     obtenerEnvios();
   }, []);
 
-  // Recalcular envíos cuando cambie el conteo o los envíos
-  useEffect(() => {
-    console.log('Estado de conteo actualizado:', conteo); // Depuración
-    const recalcularEnvios = envios.map((envio) => {
-      const cantidadVerificada = (conteo || [])
-        .filter(item => item.nro_envio === envio.nro)
-        .reduce((total, item) => total + item.cant, 0);
+  // Calcular faltantes y sobrantes
+  const calcularDiferencias = (envio) => {
+    const cantidadConteo = (conteo || [])
+      .filter(item => item.nro_envio === envio.nro && item.cod === envio.cod)
+      .reduce((total, item) => total + item.cant, 0);
 
-      let faltantes = 0;
-      let sobrantes = 0;
+    const diferencia = envio.cant - cantidadConteo;
 
-      // Agrupar envíos y conteo por código y calcular faltantes y sobrantes
-      const agrupados = (envio.detalles || []).reduce((acc, item) => {
-        acc[item.cod] = {
-          cantidadEnvio: (acc[item.cod]?.cantidadEnvio || 0) + item.cant,
-        };
-        return acc;
-      }, {});
-
-      (conteo || []).forEach((item) => {
-        if (item.nro_envio === envio.nro) {
-          agrupados[item.cod] = {
-            ...agrupados[item.cod],
-            cantidadConteo: (agrupados[item.cod]?.cantidadConteo || 0) + item.cant,
-          };
-        }
-      });
-
-      // Calcular faltantes y sobrantes
-      Object.entries(agrupados).forEach(([cod, { cantidadEnvio = 0, cantidadConteo = 0 }]) => {
-        const diferencia = cantidadEnvio - cantidadConteo;
-
-        if (diferencia < 0) {
-          sobrantes += Math.abs(diferencia); // Diferencia positiva suma a sobrantes
-        } else if (diferencia > 0) {
-          faltantes += Math.abs(diferencia); // Diferencia negativa suma a faltantes
-        }
-      });
-
-      // Verificar códigos que están en conteo pero no en envíos
-      (conteo || [])
-        .filter(item => item.nro_envio === envio.nro && !agrupados[item.cod])
-        .forEach((item) => {
-          sobrantes += item.cant; // Todo lo que no está en envíos se considera sobrante
-        });
-
-      return {
-        ...envio,
-        cantidadVerificada,
-        faltantes: Math.abs(faltantes), // Retornar el absoluto de faltantes
-        sobrantes: Math.abs(sobrantes), // Retornar el absoluto de sobrantes
-      };
-    });
-
-    setEnviosCalculados(recalcularEnvios);
-  }, [conteo, envios]);
+    return {
+      faltantes: diferencia > 0 ? diferencia : 0,
+      sobrantes: diferencia < 0 ? Math.abs(diferencia) : 0,
+    };
+  };
 
   const handleAgregarVerificacion = (envio) => {
     setSelectedEnvio(envio); // Guardar el envío seleccionado
@@ -115,6 +66,7 @@ const VerificacionPanel = () => {
             tipo,
             cant: item.cant,
             cod: item.cod,
+            nro_envio: envio.nro,
             usuario,
           })
         )
@@ -135,36 +87,12 @@ const VerificacionPanel = () => {
   };
 
   const handleVerDiferencias = (envio) => {
-    if (!Array.isArray(envio.detalles) || envio.detalles.length === 0) {
+    if (!envio) {
       alert('No hay detalles disponibles para este envío.');
       return;
     }
 
-    console.log('Envios:', envio.detalles);
-    console.log('Conteo:', conteo);
-
-    const diferencias = Object.entries(
-      envio.detalles.reduce((acc, item) => {
-        acc[item.cod] = {
-          cantidadEnvio: (acc[item.cod]?.cantidadEnvio || 0) + item.cant,
-          descripcion: item.descripcion || 'Sin descripción',
-        };
-        return acc;
-      }, {})
-    ).map(([cod, { cantidadEnvio, descripcion }]) => {
-      const cantidadConteo = (conteo || [])
-        .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-        .reduce((total, item) => total + item.cant, 0) || 0;
-
-      const diferencia = cantidadEnvio - cantidadConteo;
-
-      return {
-        cod,
-        cantidad: cantidadEnvio,
-        descripcion,
-        diferencia,
-      };
-    }).filter(diferencia => diferencia.diferencia !== 0);
+    const diferencias = calcularDiferencias(envio);
 
     setSelectedEnvio({ ...envio, diferencias });
     setModalVisible2(true);
@@ -178,31 +106,30 @@ const VerificacionPanel = () => {
       <table>
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Número de Envío</th>
+            <th>Código</th>
             <th>Cantidad Enviada</th>
-            <th>Cantidad Verificada</th>
             <th>Faltantes</th>
             <th>Sobrantes</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {enviosCalculados.map((envio) => (
-            <tr key={envio.nro}>
-              <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
-              <td>{envio.nro}</td>
-              <td>{envio.cantidadEnviada}</td>
-              <td>{envio.cantidadVerificada}</td>
-              <td>{envio.faltantes}</td>
-              <td>{envio.sobrantes}</td>
-              <td>
-                <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
-                <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
-                <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
-              </td>
-            </tr>
-          ))}
+          {envios.map((envio, index) => {
+            const { faltantes, sobrantes } = calcularDiferencias(envio);
+            return (
+              <tr key={index}>
+                <td>{envio.cod}</td>
+                <td>{envio.cant}</td>
+                <td>{faltantes}</td>
+                <td>{sobrantes}</td>
+                <td>
+                  <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
+                  <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
+                  <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
