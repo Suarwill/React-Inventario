@@ -106,17 +106,18 @@ const VerificacionPanel = () => {
     }
 
     try {
-      await Promise.all(
-        conteo.map((item) =>
-          enviarConteo({
-            tipo,
-            cant: item.cant,
-            cod: item.cod,
-            nro_envio: envio.nro,
-            usuario,
-          })
-        )
-      );
+      // Crear el array de conteos con los datos requeridos
+      const conteos = conteo.map((item) => ({
+        tipo,
+        cant: item.cant,
+        cod: item.cod,
+        nro_envio: envio.nro,
+        usuario,
+      }));
+
+      // Enviar el array de conteos al backend
+      await enviarConteo(conteos);
+
       alert('Verificación confirmada correctamente.');
     } catch (err) {
       alert('Error al confirmar la verificación.');

@@ -20,16 +20,25 @@ export const fetchUltimosEnvios = async () => {
 };
 
 /**
- * Envía un conteo al backend.
- * @param {Object} conteo - Datos del conteo.
- * @returns {Promise} - Promesa que resuelve cuando el conteo se envía correctamente.
+ * Envía un array de conteos al backend.
+ * @param {Array} conteos - Array de objetos con los datos del conteo.
+ * @returns {Promise} - Promesa que resuelve cuando los conteos se envían correctamente.
  */
-export const enviarConteo = async (conteo) => {
+export const enviarConteo = async (conteos) => {
   try {
-    if (!conteo || !conteo.tipo || !conteo.cant || !conteo.cod || !conteo.nro_envio) {
-      throw new Error('Datos de conteo incompletos.');
+    if (!Array.isArray(conteos) || conteos.length === 0) {
+      throw new Error('El parámetro debe ser un array de conteos.');
     }
-    await axiosInstance.post('/api/conteo/add', conteo);
+
+    // Validar que cada objeto en el array tenga los campos requeridos
+    conteos.forEach((conteo) => {
+      if (!conteo.tipo || !conteo.cant || !conteo.cod || !conteo.nro_envio || !conteo.usuario) {
+        throw new Error('Datos de conteo incompletos.');
+      }
+    });
+
+    // Enviar el array completo al backend
+    await axiosInstance.post('/api/conteo/add', conteos);
   } catch (error) {
     console.error('Error al enviar el conteo:', error);
     throw new Error('Error al enviar el conteo.');
