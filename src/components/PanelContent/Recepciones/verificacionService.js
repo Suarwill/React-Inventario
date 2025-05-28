@@ -32,6 +32,7 @@ export const enviarConteo = async (conteos) => {
 
     // Validar que cada objeto en el array tenga los campos requeridos
     conteos.forEach((conteo) => {
+      console.log('Validando conteo:', conteo); // Depuración
       if (!conteo.tipo || !conteo.cant || !conteo.cod || !conteo.nro_envio || !conteo.usuario) {
         throw new Error('Datos de conteo incompletos.');
       }
