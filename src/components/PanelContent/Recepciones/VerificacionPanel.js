@@ -111,12 +111,25 @@ const VerificacionPanel = () => {
   };
 
   const handleVerDiferencias = (envio) => {
-    if (!envio) {
+    if (!envio || !envio.detalles || envio.detalles.length === 0) {
       alert('No hay detalles disponibles para este envío.');
       return;
     }
 
-    const diferencias = calcularDiferencias(envio);
+    const diferencias = envio.detalles.map((detalle) => {
+      const cantidadConteo = (conteo || [])
+        .filter(item => item.nro_envio === envio.nro && item.cod === detalle.cod)
+        .reduce((total, item) => total + item.cant, 0);
+
+      const diferencia = detalle.cant - cantidadConteo;
+
+      return {
+        cod: detalle.cod,
+        cantidad: detalle.cant,
+        descripcion: detalle.descripcion || 'Sin descripción',
+        diferencia,
+      };
+    });
 
     setSelectedEnvio({ ...envio, diferencias });
     setModalVisible2(true);
