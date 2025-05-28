@@ -11,22 +11,28 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       return;
     }
 
-    // Actualizar el código en el estado inmediatamente
+    // Reiniciar el temporizador de debounce
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Actualizar el código en el estado inmediatamente (para mostrarlo en el input)
     setConteo((prevConteo) => {
       const nuevoConteo = [...prevConteo];
       nuevoConteo[index].cod = codigo;
       return nuevoConteo;
     });
 
-    // Reiniciar el temporizador de debounce
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-
+    // Usar debounce para procesar el código completo después de 300 ms de inactividad
     debounceTimeout.current = setTimeout(async () => {
       try {
+        // Verificar si el código tiene una longitud mínima esperada (por ejemplo, 5 caracteres)
+        if (codigo.length < 5) {
+          console.warn('El código es demasiado corto para procesar.');
+          return;
+        }
+
         const response = await axiosInstance.get(`/api/product/search/${codigo}`);
-        console.log('Respuesta del servidor:', response.data);
         const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
 
         setConteo((prevConteo) => {
@@ -43,7 +49,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
         console.error('Error al buscar el código:', error);
         alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
       }
-    }, 500); // Esperar 500 ms después de que el usuario deje de escribir
+    }, 300); // Reducir el tiempo de espera para mejorar la respuesta
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
