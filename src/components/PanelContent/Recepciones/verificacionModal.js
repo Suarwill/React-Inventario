@@ -38,14 +38,22 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
 
         setConteo((prevConteo) => {
           const nuevoConteo = [...prevConteo];
-          nuevoConteo[index] = { cod: codigo, cant: 1, descripcion };
+          nuevoConteo[index] = { cod: codigo, cant: 1, descripcion }; // Cambiar cant a 1 al ingresar un código válido
           return nuevoConteo;
         });
+
+        // Mover el foco al siguiente input
+        setTimeout(() => {
+          const nextInput = inputRefs.current[index + 1];
+          if (nextInput) {
+            nextInput.focus();
+          }
+        }, 0);
 
         // Agregar una nueva fila vacía si estamos en la última fila
         if (index === conteo.length - 1) {
           setConteo((prevConteo) => {
-            const nuevoConteo = [...prevConteo, { cod: '', cant: 1, descripcion: '' }];
+            const nuevoConteo = [...prevConteo, { cod: '', cant: 0, descripcion: '' }]; // Nueva fila con cant en 0
             return nuevoConteo;
           });
 

@@ -39,6 +39,19 @@ const VerificacionPanel = () => {
     const tipo = 'VERIFICACION';
     const nro_envio = envio.nro;
 
+    //solicitar confirmar si envia verificación
+    if (!window.confirm('¿Está seguro de que desea confirmar la verificación?')) {
+      return;
+    }
+    if (conteo.length === 0) {
+      alert('Debe ingresar al menos un conteo antes de confirmar la verificación.');
+      return;
+    }
+    if (conteo.some(item => !item.cod || item.cant <= 0)) {
+      alert('Todos los conteos deben tener un código válido y una cantidad mayor a cero.');
+      return;
+    }
+
     try {
       await Promise.all(
         conteo.map((item) =>
