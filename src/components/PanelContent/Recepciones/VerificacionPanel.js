@@ -46,6 +46,28 @@ const VerificacionPanel = () => {
     agruparPorNumeroEnvio();
   }, [envios]);
 
+  // Cargar conteo guardado desde localStorage
+  useEffect(() => {
+    const cargarConteoGuardado = () => {
+      const data = localStorage.getItem('conteoGuardado');
+      if (data) {
+        const { conteo: conteoGuardado, timestamp } = JSON.parse(data);
+        const ahora = new Date().getTime();
+
+        // Verificar si el conteo guardado es válido (menos de 1 hora)
+        if (ahora - timestamp < 3600000) { // 3600000 ms = 1 hora
+          console.log('Cargando conteo guardado desde localStorage:', conteoGuardado);
+          setConteo(conteoGuardado);
+        } else {
+          console.log('El conteo guardado ha expirado.');
+          localStorage.removeItem('conteoGuardado'); // Eliminar datos expirados
+        }
+      }
+    };
+
+    cargarConteoGuardado();
+  }, []);
+
   // Calcular faltantes y sobrantes
   const calcularDiferencias = (envio) => {
     const cantidadVerificada = (conteo || [])
@@ -104,6 +126,13 @@ const VerificacionPanel = () => {
   const handleGuardarConteo = (nuevoConteo) => {
     console.log('Nuevo conteo recibido desde el modal:', nuevoConteo); // Depuración
     setConteo(nuevoConteo); // Actualiza el estado de conteo
+
+    // Guardar el conteo en localStorage con una marca de tiempo
+    const data = {
+      conteo: nuevoConteo,
+      timestamp: new Date().getTime(), // Marca de tiempo actual
+    };
+    localStorage.setItem('conteoGuardado', JSON.stringify(data));
   };
 
   const closeModal = () => {

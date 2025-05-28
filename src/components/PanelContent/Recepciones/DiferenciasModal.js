@@ -27,14 +27,16 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
             </tr>
           </thead>
           <tbody>
-            {diferencias.map((diferencia, index) => (
-              <tr key={index}>
-                <td>{diferencia.cod}</td>
-                <td>{diferencia.cantidad}</td>
-                <td>{diferencia.descripcion}</td>
-                <td>{diferencia.diferencia}</td>
-              </tr>
-            ))}
+            {diferencias
+              .filter(diferencia => diferencia.diferencia !== 0) // Filtrar diferencias distintas de 0
+              .map((diferencia, index) => (
+                <tr key={index}>
+                  <td>{diferencia.cod}</td>
+                  <td>{diferencia.cantidad}</td>
+                  <td>{diferencia.descripcion}</td>
+                  <td>{diferencia.diferencia}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
         <button onClick={closeModal}>Cerrar</button>
