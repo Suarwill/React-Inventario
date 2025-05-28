@@ -10,12 +10,13 @@ import DiferenciasModal from './DiferenciasModal';
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
   const [conteo, setConteo] = useState([]);
-  const [selectedEnvio, setSelectedEnvio] = useState(null); // Estado inicializado
+  const [selectedEnvio, setSelectedEnvio] = useState(null);
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [enviosCalculados, setEnviosCalculados] = useState([]);
 
+  // Obtener envíos al cargar el componente
   useEffect(() => {
     const obtenerEnvios = async () => {
       try {
@@ -29,6 +30,7 @@ const VerificacionPanel = () => {
     obtenerEnvios();
   }, []);
 
+  // Recalcular envíos cuando cambie el conteo o los envíos
   useEffect(() => {
     const recalcularEnvios = envios.map((envio) => {
       const cantidadVerificada = (conteo || [])
@@ -82,6 +84,76 @@ const VerificacionPanel = () => {
     setEnviosCalculados(recalcularEnvios);
   }, [conteo, envios]);
 
+  // Timer para actualizar la tabla cada 5 segundos y recalcular valores
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const obtenerEnvios = async () => {
+        try {
+          const data = await fetchUltimosEnvios();
+          const groupedData = agruparEnviosPorNumero(data);
+          setEnvios(groupedData);
+
+          // Recalcular envíos después de actualizar los datos
+          const recalcularEnvios = groupedData.map((envio) => {
+            const cantidadVerificada = (conteo || [])
+              .filter(item => item.nro_envio === envio.nro)
+              .reduce((total, item) => total + item.cant, 0);
+
+            let faltantes = 0;
+            let sobrantes = 0;
+
+            if (cantidadVerificada === undefined || isNaN(cantidadVerificada)) {
+              faltantes = (envio.detalles || []).reduce((acc, item) => acc + item.cant, 0);
+              sobrantes = 0;
+            } else {
+              faltantes = Object.entries(
+                (envio.detalles || []).reduce((acc, item) => {
+                  acc[item.cod] = (acc[item.cod] || 0) + item.cant;
+                  return acc;
+                }, {})
+              ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
+                const cantidadConteo = (conteo || [])
+                  .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+                  .reduce((total, item) => total + item.cant, 0) || 0;
+
+                const diferencia = cantidadEnvio - cantidadConteo;
+                return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0);
+              }, 0);
+
+              sobrantes = Object.entries(
+                (envio.detalles || []).reduce((acc, item) => {
+                  acc[item.cod] = (acc[item.cod] || 0) + item.cant;
+                  return acc;
+                }, {})
+              ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
+                const cantidadConteo = (conteo || [])
+                  .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+                  .reduce((total, item) => total + item.cant, 0) || 0;
+
+                const diferencia = cantidadEnvio - cantidadConteo;
+                return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0);
+              }, 0);
+            }
+
+            return {
+              ...envio,
+              cantidadVerificada,
+              faltantes,
+              sobrantes,
+            };
+          });
+
+          setEnviosCalculados(recalcularEnvios);
+        } catch (err) {
+          console.error('Error al actualizar los envíos:', err);
+        }
+      };
+      obtenerEnvios();
+    }, 5000); // Actualiza cada 5 segundos
+
+    return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
+  }, [conteo]);
+
   const handleAgregarVerificacion = (envio) => {
     setSelectedEnvio(envio);
     setModalVisible(true);
@@ -92,7 +164,6 @@ const VerificacionPanel = () => {
     const tipo = 'VERIFICACION';
     const nro_envio = envio.nro;
 
-    //solicitar confirmar si envia verificación
     if (!window.confirm('¿Está seguro de que desea confirmar la verificación?')) {
       return;
     }
@@ -148,7 +219,7 @@ const VerificacionPanel = () => {
     ).map(([cod, { cantidadEnvio, descripcion }]) => {
       const cantidadConteo = (conteo || [])
         .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-        .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
+        .reduce((total, item) => total + item.cant, 0) || 0;
 
       const diferencia = cantidadEnvio - cantidadConteo;
 
@@ -158,20 +229,10 @@ const VerificacionPanel = () => {
         descripcion,
         diferencia,
       };
-    }).filter(diferencia => diferencia.diferencia !== 0); // Filtrar diferencias distintas de 0
+    }).filter(diferencia => diferencia.diferencia !== 0);
 
     setSelectedEnvio({ ...envio, diferencias });
     setModalVisible2(true);
-  };
-
-  const handleGuardar = () => {
-    const conteoFiltrado = conteo.filter(item => item.cod.trim() !== '' && item.cant > 0);
-    if (conteoFiltrado.length === 0) {
-      alert('Debe ingresar al menos un producto válido.');
-      return;
-    }
-    handleGuardarConteo(conteoFiltrado); // Actualiza el conteo en el componente principal
-    closeModal();
   };
 
   return (
