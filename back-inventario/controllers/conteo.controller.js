@@ -11,7 +11,7 @@ const addConteo = async (req, res) => {
                 return res.status(400).json({ error: 'Faltan datos requeridos' });
             }
             const { tipo, cant, cod, nro_envio, usuario } = verificacion;
-            const query = 'INSERT INTO conteo (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            const query = 'INSERT INTO conteos (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
             const values = [tipo, cant, cod, nro_envio, usuario];
 
             const result = await pool.query(query, values);
