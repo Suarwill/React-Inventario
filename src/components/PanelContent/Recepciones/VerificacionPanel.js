@@ -14,7 +14,7 @@ const VerificacionPanel = () => {
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-
+  const [enviosCalculados, setEnviosCalculados] = useState([]);
 
   useEffect(() => {
     const obtenerEnvios = async () => {
@@ -28,6 +28,59 @@ const VerificacionPanel = () => {
     };
     obtenerEnvios();
   }, []);
+
+  useEffect(() => {
+    const recalcularEnvios = envios.map((envio) => {
+      const cantidadVerificada = (conteo || [])
+        .filter(item => item.nro_envio === envio.nro)
+        .reduce((total, item) => total + item.cant, 0);
+
+      let faltantes = 0;
+      let sobrantes = 0;
+
+      if (cantidadVerificada === undefined || isNaN(cantidadVerificada)) {
+        faltantes = (envio.detalles || []).reduce((acc, item) => acc + item.cant, 0);
+        sobrantes = 0;
+      } else {
+        faltantes = Object.entries(
+          (envio.detalles || []).reduce((acc, item) => {
+            acc[item.cod] = (acc[item.cod] || 0) + item.cant;
+            return acc;
+          }, {})
+        ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
+          const cantidadConteo = (conteo || [])
+            .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+            .reduce((total, item) => total + item.cant, 0) || 0;
+
+          const diferencia = cantidadEnvio - cantidadConteo;
+          return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0);
+        }, 0);
+
+        sobrantes = Object.entries(
+          (envio.detalles || []).reduce((acc, item) => {
+            acc[item.cod] = (acc[item.cod] || 0) + item.cant;
+            return acc;
+          }, {})
+        ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
+          const cantidadConteo = (conteo || [])
+            .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+            .reduce((total, item) => total + item.cant, 0) || 0;
+
+          const diferencia = cantidadEnvio - cantidadConteo;
+          return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0);
+        }, 0);
+      }
+
+      return {
+        ...envio,
+        cantidadVerificada,
+        faltantes,
+        sobrantes,
+      };
+    });
+
+    setEnviosCalculados(recalcularEnvios);
+  }, [conteo, envios]);
 
   const handleAgregarVerificacion = (envio) => {
     setSelectedEnvio(envio);
@@ -129,56 +182,21 @@ const VerificacionPanel = () => {
           </tr>
         </thead>
         <tbody>
-          {envios.map((envio) => {
-            const cantidadVerificada = conteo
-              .filter(item => item.nro_envio === envio.nro) // Filtrar por el número de envío
-              .reduce((total, item) => total + item.cant, 0); // Sumar las cantidades
-
-            // Agrupar por código y calcular faltantes
-            const faltantes = Object.entries(
-              (envio.detalles || []).reduce((acc, item) => {
-                acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
-                return acc;
-              }, {})
-            ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
-              const cantidadConteo = (conteo || [])
-                .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-                .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
-
-              const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
-              return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0); // Sumar solo valores negativos como absolutos
-            }, 0);
-
-            const sobrantes = Object.entries(
-              (envio.detalles || []).reduce((acc, item) => {
-                acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
-                return acc;
-              }, {})
-            ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
-              const cantidadConteo = (conteo || [])
-                .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-                .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
-
-              const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
-              return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0); // Sumar solo valores positivos como absolutos
-            }, 0);
-
-            return (
-              <tr key={envio.nro}>
-                <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
-                <td>{envio.nro}</td>
-                <td>{envio.cantidadEnviada}</td>
-                <td>{cantidadVerificada}</td>
-                <td>{faltantes}</td>
-                <td>{sobrantes}</td>
-                <td>
-                  <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
-                  <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
-                  <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
-                </td>
-              </tr>
-            );
-          })}
+          {enviosCalculados.map((envio) => (
+            <tr key={envio.nro}>
+              <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
+              <td>{envio.nro}</td>
+              <td>{envio.cantidadEnviada}</td>
+              <td>{envio.cantidadVerificada}</td>
+              <td>{envio.faltantes}</td>
+              <td>{envio.sobrantes}</td>
+              <td>
+                <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
+                <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
+                <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
