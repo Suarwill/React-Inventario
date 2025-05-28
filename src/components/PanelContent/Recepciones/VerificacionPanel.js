@@ -123,8 +123,8 @@ const VerificacionPanel = () => {
     }
   };
 
-  const handleGuardarConteo = (conteo) => {
-    setConteo(conteo);
+  const handleGuardarConteo = (nuevoConteo) => {
+    setConteo(nuevoConteo); // Actualiza el estado de conteo
   };
 
   const closeModal = () => {
@@ -162,6 +162,16 @@ const VerificacionPanel = () => {
 
     setSelectedEnvio({ ...envio, diferencias });
     setModalVisible2(true);
+  };
+
+  const handleGuardar = () => {
+    const conteoFiltrado = conteo.filter(item => item.cod.trim() !== '' && item.cant > 0);
+    if (conteoFiltrado.length === 0) {
+      alert('Debe ingresar al menos un producto válido.');
+      return;
+    }
+    handleGuardarConteo(conteoFiltrado); // Actualiza el conteo en el componente principal
+    closeModal();
   };
 
   return (
