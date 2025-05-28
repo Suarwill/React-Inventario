@@ -64,19 +64,24 @@ export const agruparEnviosPorNumero = (data) => {
 };
 
 /**
- * Obtiene las verificaciones desde el backend para un número de envío específico.
- * @param {string} nroEnvio - Número de envío para filtrar las verificaciones.
- * @returns {Promise<Array>} - Promesa que resuelve con las verificaciones.
+ * Obtiene las verificaciones desde el backend para múltiples números de envío.
+ * @param {Array<string>} numerosEnvio - Array de números de envío para filtrar las verificaciones.
+ * @returns {Promise<Array>} - Promesa que resuelve con las verificaciones consolidadas.
  */
-export const obtenerVerificaciones = async (nroEnvio) => {
+export const obtenerVerificaciones = async (numerosEnvio) => {
   try {
-    if (!nroEnvio) {
-      throw new Error('El número de envío (nroEnvio) es requerido.');
+    if (!Array.isArray(numerosEnvio) || numerosEnvio.length === 0) {
+      throw new Error('Se requiere un array de números de envío.');
     }
 
-    const response = await axiosInstance.get(`/api/conteo/search/${nroEnvio}`);
+    // Realizar solicitudes para cada número de envío
+    const verificacionesPromises = numerosEnvio.map((nroEnvio) =>
+      axiosInstance.get(`/api/conteo/search`, { params: { nro_envio: nroEnvio } })
+    );
 
-    return response.data;
+    // Esperar todas las solicitudes y consolidar los resultados
+    const verificacionesData = await Promise.all(verificacionesPromises);
+    return verificacionesData.flatMap(response => response.data);
   } catch (error) {
     console.error('Error al obtener las verificaciones:', error);
     throw new Error('Error al obtener las verificaciones.');

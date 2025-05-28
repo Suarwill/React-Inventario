@@ -20,14 +20,11 @@ const VerificacionPanel = () => {
         const enviosData = await fetchUltimosEnvios();
         setEnvios(enviosData);
 
-        // Obtener verificaciones relacionadas con los números de envío
-        const verificacionesPromises = enviosData.map((envio) =>
-          obtenerVerificaciones(envio.nro)
-        );
-        const verificacionesData = await Promise.all(verificacionesPromises);
+        // Obtener los números de envío
+        const numerosEnvio = enviosData.map(envio => envio.nro);
 
-        // Consolidar todas las verificaciones en un solo array
-        const verificacionesConsolidadas = verificacionesData.flat();
+        // Obtener verificaciones relacionadas con los números de envío
+        const verificacionesConsolidadas = await obtenerVerificaciones(numerosEnvio);
         setVerificaciones(verificacionesConsolidadas);
       } catch (err) {
         setError(err.message);
