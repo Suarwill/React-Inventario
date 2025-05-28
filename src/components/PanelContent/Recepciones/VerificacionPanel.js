@@ -41,44 +41,46 @@ const VerificacionPanel = () => {
       let faltantes = 0;
       let sobrantes = 0;
 
-      if (cantidadVerificada === undefined || isNaN(cantidadVerificada)) {
-        faltantes = (envio.detalles || []).reduce((acc, item) => acc + item.cant, 0);
-        sobrantes = 0;
-      } else {
-        faltantes = Object.entries(
-          (envio.detalles || []).reduce((acc, item) => {
-            acc[item.cod] = (acc[item.cod] || 0) + item.cant;
-            return acc;
-          }, {})
-        ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
-          const cantidadConteo = (conteo || [])
-            .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-            .reduce((total, item) => total + item.cant, 0) || 0;
+      // Agrupar envíos y conteo por código y calcular faltantes y sobrantes
+      const agrupados = (envio.detalles || []).reduce((acc, item) => {
+        acc[item.cod] = {
+          cantidadEnvio: (acc[item.cod]?.cantidadEnvio || 0) + item.cant,
+        };
+        return acc;
+      }, {});
 
-          const diferencia = cantidadEnvio - cantidadConteo;
-          return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0);
-        }, 0);
+      (conteo || []).forEach((item) => {
+        if (item.nro_envio === envio.nro) {
+          agrupados[item.cod] = {
+            ...agrupados[item.cod],
+            cantidadConteo: (agrupados[item.cod]?.cantidadConteo || 0) + item.cant,
+          };
+        }
+      });
 
-        sobrantes = Object.entries(
-          (envio.detalles || []).reduce((acc, item) => {
-            acc[item.cod] = (acc[item.cod] || 0) + item.cant;
-            return acc;
-          }, {})
-        ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
-          const cantidadConteo = (conteo || [])
-            .filter(item => item.nro_envio === envio.nro && item.cod === cod)
-            .reduce((total, item) => total + item.cant, 0) || 0;
+      // Calcular faltantes y sobrantes
+      Object.entries(agrupados).forEach(([cod, { cantidadEnvio = 0, cantidadConteo = 0 }]) => {
+        const diferencia = cantidadEnvio - cantidadConteo;
 
-          const diferencia = cantidadEnvio - cantidadConteo;
-          return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0);
-        }, 0);
-      }
+        if (diferencia < 0) {
+          sobrantes += Math.abs(diferencia); // Diferencia positiva suma a sobrantes
+        } else if (diferencia > 0) {
+          faltantes += Math.abs(diferencia); // Diferencia negativa suma a faltantes
+        }
+      });
+
+      // Verificar códigos que están en conteo pero no en envíos
+      (conteo || [])
+        .filter(item => item.nro_envio === envio.nro && !agrupados[item.cod])
+        .forEach((item) => {
+          sobrantes += item.cant; // Todo lo que no está en envíos se considera sobrante
+        });
 
       return {
         ...envio,
         cantidadVerificada,
-        faltantes,
-        sobrantes,
+        faltantes: Math.abs(faltantes), // Retornar el absoluto de faltantes
+        sobrantes: Math.abs(sobrantes), // Retornar el absoluto de sobrantes
       };
     });
 
