@@ -4,6 +4,7 @@ import axiosInstance from '../../axiosConfig';
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
   const debounceTimeout = useRef(null); // Referencia para el temporizador
+  const inputRefs = useRef({}); // Referencias dinámicas para los inputs
 
   const handleCodigoChange = (index, codigo) => {
     if (!codigo.trim()) {
@@ -23,7 +24,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       return nuevoConteo;
     });
 
-    // Usar debounce para procesar el código completo después de 300 ms de inactividad
+    // Usar debounce para procesar el código completo después de 200 ms de inactividad
     debounceTimeout.current = setTimeout(async () => {
       try {
         // Verificar si el código tiene una longitud mínima esperada (por ejemplo, 5 caracteres)
@@ -43,13 +44,24 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
 
         // Agregar una nueva fila vacía si estamos en la última fila
         if (index === conteo.length - 1) {
-          setConteo((prevConteo) => [...prevConteo, { cod: '', cant: 1, descripcion: '' }]);
+          setConteo((prevConteo) => {
+            const nuevoConteo = [...prevConteo, { cod: '', cant: 1, descripcion: '' }];
+            return nuevoConteo;
+          });
+
+          // Esperar a que React actualice el DOM y luego enfocar el nuevo input
+          setTimeout(() => {
+            const nextInput = inputRefs.current[index + 1];
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }, 0);
         }
       } catch (error) {
         console.error('Error al buscar el código:', error);
         alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
       }
-    }, 300); // Reducir el tiempo de espera para mejorar la respuesta
+    }, 200); // Reducir el tiempo de espera para mejorar la respuesta
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
@@ -87,6 +99,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
                 <input
                   type="text"
                   value={item.cod}
+                  ref={(el) => (inputRefs.current[index] = el)} // Asignar referencia al input
                   onChange={(e) => handleCodigoChange(index, e.target.value)}
                 />
               </td>

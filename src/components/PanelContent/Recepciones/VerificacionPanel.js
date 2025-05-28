@@ -61,7 +61,7 @@ const VerificacionPanel = () => {
     setConteo(conteo);
   };
 
-  const handleCerrarModal = () => {
+  const closeModal = () => {
     setModalVisible(false);
   };
 
@@ -69,8 +69,6 @@ const VerificacionPanel = () => {
     setSelectedEnvio(envio);
     setModalVisible2(true);
   };
-
-
 
   return (
     <div>
@@ -118,7 +116,7 @@ const VerificacionPanel = () => {
         <VerificacionModal
           conteo={conteo}
           handleGuardarConteo={setConteo}
-          handleCerrarModal={handleCerrarModal}
+          closeModal={closeModal}
         />
       )}
     </div>
