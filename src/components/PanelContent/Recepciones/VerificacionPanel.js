@@ -93,7 +93,6 @@ const VerificacionPanel = () => {
   const handleConfirmarVerificacion = async (envio) => {
     const usuario = localStorage.getItem('usuario');
     const tipo = 'VERIFICACION';
-    const nro_envio = envio.nro;
 
     if (!window.confirm('¿Está seguro de que desea confirmar la verificación?')) {
       return;
@@ -114,7 +113,6 @@ const VerificacionPanel = () => {
             tipo,
             cant: item.cant,
             cod: item.cod,
-            nro_envio,
             usuario,
           })
         )

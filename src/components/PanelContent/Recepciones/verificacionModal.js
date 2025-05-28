@@ -84,6 +84,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       .map(item => ({
         ...item,
         cod: item.cod.toUpperCase(), // Convertir el código a mayúsculas
+        nro_envio: initialConteo[0]?.nro_envio || '', // Agregar el número de envío
       }));
 
     if (conteoFiltrado.length === 0) {
