@@ -9,10 +9,11 @@ import VerificacionModal from './verificacionModal';
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
   const [conteo, setConteo] = useState([]);
-  const [productos, setProductos] = useState([]); // Estado para almacenar productos
   const [selectedEnvio, setSelectedEnvio] = useState(null); // Estado inicializado
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+
 
   useEffect(() => {
     const obtenerEnvios = async () => {
@@ -55,11 +56,20 @@ const VerificacionPanel = () => {
     }
   };
 
-  const closeModal = () => {
-    setModalVisible(false);
-    setSelectedEnvio(null);
-    setConteo([]);
+  const handleGuardarConteo = (conteo) => {
+    setConteo(conteo);
   };
+
+  const handleCerrarModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleVerDiferencias = (envio) => {
+    setSelectedEnvio(envio);
+    setModalVisible2(true);
+  };
+
+
 
   return (
     <div>
@@ -73,7 +83,8 @@ const VerificacionPanel = () => {
             <th>Número de Envío</th>
             <th>Cantidad Enviada</th>
             <th>Cantidad Verificada</th>
-            <th>Diferencia</th>
+            <th>Faltantes</th>
+            <th>Sobrantes</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -88,9 +99,11 @@ const VerificacionPanel = () => {
                 <td>{envio.nro}</td>
                 <td>{envio.cantidadEnviada}</td>
                 <td>{cantidadVerificada}</td>
-                <td>{diferencia}</td>
+                <td>{faltantes}</td>
+                <td>{sobrantes}</td>
                 <td>
                   <button onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
+                  <button onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
                   <button onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
                 </td>
               </tr>
@@ -103,7 +116,7 @@ const VerificacionPanel = () => {
         <VerificacionModal
           conteo={conteo}
           handleGuardarConteo={setConteo}
-          closeModal={closeModal}
+          handleCerrarModal={handleCerrarModal}
         />
       )}
     </div>
