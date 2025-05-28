@@ -140,6 +140,9 @@ const VerificacionPanel = () => {
       return;
     }
 
+    console.log('Envios:', envio.detalles);
+    console.log('Conteo:', conteo);
+
     const diferencias = Object.entries(
       envio.detalles.reduce((acc, item) => {
         acc[item.cod] = {
