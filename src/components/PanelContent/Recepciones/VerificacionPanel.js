@@ -5,6 +5,7 @@ import {
   agruparEnviosPorNumero
 } from './verificacionService';
 import VerificacionModal from './verificacionModal';
+import DiferenciasModal from './diferenciasModal';
 
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
@@ -91,7 +92,8 @@ const VerificacionPanel = () => {
         <tbody>
           {envios.map((envio) => {
             const cantidadVerificada = 'en construccion';
-            const diferencia = 'en construccion';
+            const faltantes = 'en construccion';
+            const sobrantes = 'en construccion';
 
             return (
               <tr key={envio.nro}>

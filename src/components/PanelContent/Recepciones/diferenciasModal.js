@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../axiosConfig';
 
-const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
+const DiferenciasModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
 
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
 
@@ -93,4 +93,4 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
   );
 };
 
-export default VerificacionModal;
+export default DiferenciasModal;

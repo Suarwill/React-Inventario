@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
-
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
+  const debounceTimeout = useRef(null); // Referencia para el temporizador
 
-  const handleCodigoChange = async (index, codigo) => {
+  const handleCodigoChange = (index, codigo) => {
     if (!codigo.trim()) {
       alert('El código no puede estar vacío.');
       return;
     }
 
-    // Usar un temporizador para evitar múltiples solicitudes
-    clearTimeout(window.codigoTimeout); // Limpiar cualquier temporizador previo
-    window.codigoTimeout = setTimeout(async () => {
+    // Actualizar el código en el estado inmediatamente
+    setConteo((prevConteo) => {
+      const nuevoConteo = [...prevConteo];
+      nuevoConteo[index].cod = codigo;
+      return nuevoConteo;
+    });
+
+    // Reiniciar el temporizador de debounce
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(async () => {
       try {
         const response = await axiosInstance.get(`/api/product/search/${codigo}`);
         console.log('Respuesta del servidor:', response.data);
@@ -33,7 +43,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
         console.error('Error al buscar el código:', error);
         alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
       }
-    }, 500); // Esperar 500 ms para procesar el código completo
+    }, 500); // Esperar 500 ms después de que el usuario deje de escribir
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
