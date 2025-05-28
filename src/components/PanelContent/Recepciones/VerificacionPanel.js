@@ -5,7 +5,7 @@ import {
   agruparEnviosPorNumero
 } from './verificacionService';
 import VerificacionModal from './verificacionModal';
-import DiferenciasModal from './diferenciasModal';
+import DiferenciasModal from './DiferenciasModal';
 
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
@@ -79,7 +79,35 @@ const VerificacionPanel = () => {
   };
 
   const handleVerDiferencias = (envio) => {
-    setSelectedEnvio(envio);
+    if (!envio.detalles || envio.detalles.length === 0) {
+      alert('No hay detalles disponibles para este envío.');
+      return;
+    }
+
+    const diferencias = Object.entries(
+      envio.detalles.reduce((acc, item) => {
+        acc[item.cod] = {
+          cantidadEnvio: (acc[item.cod]?.cantidadEnvio || 0) + item.cant,
+          descripcion: item.descripcion || 'Sin descripción',
+        };
+        return acc;
+      }, {})
+    ).map(([cod, { cantidadEnvio, descripcion }]) => {
+      const cantidadConteo = conteo
+        .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+        .reduce((total, item) => total + item.cant, 0);
+
+      const diferencia = cantidadEnvio - cantidadConteo;
+
+      return {
+        cod,
+        cantidad: cantidadEnvio,
+        descripcion,
+        diferencia,
+      };
+    }).filter(diferencia => diferencia.diferencia !== 0); // Filtrar diferencias distintas de 0
+
+    setSelectedEnvio({ ...envio, diferencias });
     setModalVisible2(true);
   };
 
@@ -102,9 +130,38 @@ const VerificacionPanel = () => {
         </thead>
         <tbody>
           {envios.map((envio) => {
-            const cantidadVerificada = 'en construccion';
-            const faltantes = 'en construccion';
-            const sobrantes = 'en construccion';
+            const cantidadVerificada = conteo
+              .filter(item => item.nro_envio === envio.nro) // Filtrar por el número de envío
+              .reduce((total, item) => total + item.cant, 0); // Sumar las cantidades
+
+            // Agrupar por código y calcular faltantes
+            const faltantes = Object.entries(
+              envio.detalles.reduce((acc, item) => {
+                acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
+                return acc;
+              }, {})
+            ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
+              const cantidadConteo = conteo
+                .filter(item => item.nro_envio === envio.nro && item.cod === cod) // Filtrar por código y número de envío
+                .reduce((total, item) => total + item.cant, 0); // Sumar cantidades por código en conteo
+
+              const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
+              return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0); // Sumar solo valores negativos como absolutos
+            }, 0);
+
+            const sobrantes = Object.entries(
+              envio.detalles.reduce((acc, item) => {
+                acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
+                return acc;
+              }, {})
+            ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
+              const cantidadConteo = conteo
+                .filter(item => item.nro_envio === envio.nro && item.cod === cod) // Filtrar por código y número de envío
+                .reduce((total, item) => total + item.cant, 0); // Sumar cantidades por código en conteo
+
+              const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
+              return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0); // Sumar solo valores positivos como absolutos
+            }, 0);
 
             return (
               <tr key={envio.nro}>
@@ -130,6 +187,12 @@ const VerificacionPanel = () => {
           conteo={conteo}
           handleGuardarConteo={setConteo}
           closeModal={closeModal}
+        />
+      )}
+      {modalVisible2 && selectedEnvio && (
+        <DiferenciasModal
+          diferencias={selectedEnvio.diferencias}
+          closeModal={() => setModalVisible2(false)}
         />
       )}
     </div>
