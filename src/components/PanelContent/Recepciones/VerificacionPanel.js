@@ -106,8 +106,10 @@ const VerificacionPanel = () => {
       <table>
         <thead>
           <tr>
-            <th>Código</th>
+            <th>Fecha</th>
+            <th>Número de Envío</th>
             <th>Cantidad Enviada</th>
+            <th>Cantidad Verificada</th>
             <th>Faltantes</th>
             <th>Sobrantes</th>
             <th>Acciones</th>
@@ -116,10 +118,16 @@ const VerificacionPanel = () => {
         <tbody>
           {envios.map((envio, index) => {
             const { faltantes, sobrantes } = calcularDiferencias(envio);
+            const cantidadVerificada = (conteo || [])
+              .filter(item => item.nro_envio === envio.nro)
+              .reduce((total, item) => total + item.cant, 0);
+
             return (
               <tr key={index}>
-                <td>{envio.cod}</td>
+                <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
+                <td>{envio.nro}</td>
                 <td>{envio.cant}</td>
+                <td>{cantidadVerificada}</td>
                 <td>{faltantes}</td>
                 <td>{sobrantes}</td>
                 <td>
