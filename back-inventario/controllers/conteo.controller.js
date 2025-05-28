@@ -25,9 +25,13 @@ const addConteo = async (req, res) => {
 
 const getConteos = async (req, res) => {
     const { nro } = req.query;
-    console.log('Consulta de conteo con nro:', nro);
 
     try {
+        // Validar el parámetro nro
+        if (nro && isNaN(nro)) {
+            return res.status(400).json({ error: 'El parámetro nro debe ser un número válido' });
+        }
+
         let result;
         if (nro) {
             const query = 'SELECT * FROM conteo WHERE nro_envio = $1';
@@ -44,7 +48,13 @@ const getConteos = async (req, res) => {
         }
     } catch (error) {
         console.error('Error al obtener el conteo:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+
+        // Identificar si el error es de la base de datos
+        if (error.code === '42P01') { // Código de error para tabla inexistente en PostgreSQL
+            res.status(500).json({ error: 'La tabla conteo no existe en la base de datos' });
+        } else {
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
     }
 };
 
