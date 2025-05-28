@@ -1,21 +1,69 @@
 import React, { useState, useRef } from 'react';
+import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
-  const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 1, descripcion: '' }]);
+  const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 0, descripcion: '' }]);
   const inputRefs = useRef({});
+  const debounceTimeout = useRef(null); // Referencia para el temporizador de debounce
 
   const handleCodigoChange = (index, codigo) => {
     setConteo((prevConteo) => {
       const nuevoConteo = [...prevConteo];
       nuevoConteo[index].cod = codigo;
-
-      // Agregar una nueva fila si es la última fila
-      if (index === prevConteo.length - 1 && codigo.trim() !== '') {
-        nuevoConteo.push({ cod: '', cant: 1, descripcion: '' });
-      }
-
       return nuevoConteo;
     });
+
+    // Reiniciar el temporizador de debounce
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Usar debounce para procesar el código completo después de 200 ms de inactividad
+    debounceTimeout.current = setTimeout(async () => {
+      try {
+        // Verificar si el código tiene una longitud mínima esperada (por ejemplo, 5 caracteres)
+        if (codigo.length < 5) {
+          console.warn('El código es demasiado corto para procesar.');
+          return;
+        }
+
+        const response = await axiosInstance.get(`/api/product/search/${codigo}`);
+        const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
+
+        setConteo((prevConteo) => {
+          const nuevoConteo = [...prevConteo];
+          nuevoConteo[index] = { cod: codigo, cant: 1, descripcion }; // Cambiar cant a 1 al ingresar un código válido
+          return nuevoConteo;
+        });
+
+        // Mover el foco al siguiente input
+        setTimeout(() => {
+          const nextInput = inputRefs.current[index + 1];
+          if (nextInput) {
+            nextInput.focus();
+          }
+        }, 0);
+
+        // Agregar una nueva fila vacía si estamos en la última fila
+        if (index === conteo.length - 1) {
+          setConteo((prevConteo) => {
+            const nuevoConteo = [...prevConteo, { cod: '', cant: 0, descripcion: '' }]; // Nueva fila con cant en 0
+            return nuevoConteo;
+          });
+
+          // Esperar a que React actualice el DOM y luego enfocar el nuevo input
+          setTimeout(() => {
+            const nextInput = inputRefs.current[index + 1];
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }, 0);
+        }
+      } catch (error) {
+        console.error('Error al buscar el código:', error);
+        alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
+      }
+    }, 200); // Reducir el tiempo de espera para mejorar la respuesta
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
