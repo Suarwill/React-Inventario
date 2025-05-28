@@ -25,6 +25,7 @@ const addConteo = async (req, res) => {
 
 const getConteos = async (req, res) => {
     const { nro } = req.query;
+    console.log('Consulta de conteo con nro:', nro);
 
     try {
         let result;
