@@ -32,6 +32,7 @@ const VerificacionPanel = () => {
 
   // Recalcular envíos cuando cambie el conteo o los envíos
   useEffect(() => {
+    console.log('Estado de conteo actualizado:', conteo); // Depuración
     const recalcularEnvios = envios.map((envio) => {
       const cantidadVerificada = (conteo || [])
         .filter(item => item.nro_envio === envio.nro)
@@ -94,6 +95,7 @@ const VerificacionPanel = () => {
           setEnvios(groupedData);
 
           // Recalcular envíos después de actualizar los datos
+          console.log('Recalculando envíos con conteo:', conteo); // Depuración
           const recalcularEnvios = groupedData.map((envio) => {
             const cantidadVerificada = (conteo || [])
               .filter(item => item.nro_envio === envio.nro)
@@ -195,6 +197,7 @@ const VerificacionPanel = () => {
   };
 
   const handleGuardarConteo = (nuevoConteo) => {
+    console.log('Nuevo conteo recibido desde el modal:', nuevoConteo); // Depuración
     setConteo(nuevoConteo); // Actualiza el estado de conteo
   };
 
