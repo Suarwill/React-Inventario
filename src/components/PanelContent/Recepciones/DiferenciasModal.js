@@ -14,7 +14,7 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
   }
 
   return (
-    <div className="modal">
+    <div className="modal-overlay">
       <div className="modal-content">
         <h3>Diferencias</h3>
         <table>

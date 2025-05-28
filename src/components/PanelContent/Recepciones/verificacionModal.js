@@ -97,7 +97,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
   };
 
   return (
-    <div className="modal">
+    <div className="modal-overlay">
       <div className="modal-content">
         <h3>Agregar Verificación</h3>
         <table>
