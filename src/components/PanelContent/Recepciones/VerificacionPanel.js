@@ -6,6 +6,7 @@ import DiferenciasModal from './DiferenciasModal';
 const VerificacionPanel = () => {
   const [envios, setEnvios] = useState([]);
   const [conteo, setConteo] = useState([]);
+  const [enviosAgrupados, setEnviosAgrupados] = useState([]);
   const [selectedEnvio, setSelectedEnvio] = useState(null);
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,13 +25,36 @@ const VerificacionPanel = () => {
     obtenerEnvios();
   }, []);
 
+  // Agrupar envíos por número de envío
+  useEffect(() => {
+    const agruparPorNumeroEnvio = () => {
+      const agrupados = envios.reduce((acc, envio) => {
+        if (!acc[envio.nro]) {
+          acc[envio.nro] = {
+            nro: envio.nro,
+            fecha: envio.fecha,
+            detalles: [],
+          };
+        }
+        acc[envio.nro].detalles.push(envio);
+        return acc;
+      }, {});
+
+      setEnviosAgrupados(Object.values(agrupados));
+    };
+
+    agruparPorNumeroEnvio();
+  }, [envios]);
+
   // Calcular faltantes y sobrantes
   const calcularDiferencias = (envio) => {
-    const cantidadConteo = (conteo || [])
-      .filter(item => item.nro_envio === envio.nro && item.cod === envio.cod)
+    const cantidadVerificada = (conteo || [])
+      .filter(item => item.nro_envio === envio.nro)
       .reduce((total, item) => total + item.cant, 0);
 
-    const diferencia = envio.cant - cantidadConteo;
+    const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
+
+    const diferencia = cantidadEnviada - cantidadVerificada;
 
     return {
       faltantes: diferencia > 0 ? diferencia : 0,
@@ -102,7 +126,7 @@ const VerificacionPanel = () => {
     <div>
       <h2>Últimos Envíos</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {!error && envios.length === 0 && <p>No se encontraron envíos recientes.</p>}
+      {!error && enviosAgrupados.length === 0 && <p>No se encontraron envíos recientes.</p>}
       <table>
         <thead>
           <tr>
@@ -116,17 +140,19 @@ const VerificacionPanel = () => {
           </tr>
         </thead>
         <tbody>
-          {envios.map((envio, index) => {
+          {enviosAgrupados.map((envio, index) => {
             const { faltantes, sobrantes } = calcularDiferencias(envio);
             const cantidadVerificada = (conteo || [])
               .filter(item => item.nro_envio === envio.nro)
               .reduce((total, item) => total + item.cant, 0);
 
+            const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
+
             return (
               <tr key={index}>
                 <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
                 <td>{envio.nro}</td>
-                <td>{envio.cant}</td>
+                <td>{cantidadEnviada}</td>
                 <td>{cantidadVerificada}</td>
                 <td>{faltantes}</td>
                 <td>{sobrantes}</td>
