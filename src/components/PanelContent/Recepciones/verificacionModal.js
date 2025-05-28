@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axiosInstance from '../../axiosConfig';
 
-const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo }) => {
+const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo, nroEnvio }) => {
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 0, descripcion: '' }]);
   const inputRefs = useRef({});
   const debounceTimeout = useRef(null); // Referencia para el temporizador de debounce
@@ -84,7 +84,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       .map(item => ({
         ...item,
         cod: item.cod.toUpperCase(), // Convertir el código a mayúsculas
-        nro_envio: initialConteo[0]?.nro_envio || '', // Agregar el número de envío
+        nro_envio: nroEnvio, // Usar el número de envío pasado como propiedad
       }));
 
     if (conteoFiltrado.length === 0) {

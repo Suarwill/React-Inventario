@@ -86,7 +86,7 @@ const VerificacionPanel = () => {
   }, [conteo, envios]);
 
   const handleAgregarVerificacion = (envio) => {
-    setSelectedEnvio(envio);
+    setSelectedEnvio(envio); // Guardar el envío seleccionado
     setModalVisible(true);
   };
 
@@ -201,9 +201,10 @@ const VerificacionPanel = () => {
         </tbody>
       </table>
 
-      {modalVisible && (
+      {modalVisible && selectedEnvio && (
         <VerificacionModal
           conteo={conteo}
+          nroEnvio={selectedEnvio.nro} // Pasar el número de envío como propiedad
           handleGuardarConteo={setConteo}
           closeModal={closeModal}
         />
