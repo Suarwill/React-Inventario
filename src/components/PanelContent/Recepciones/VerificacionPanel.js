@@ -79,7 +79,7 @@ const VerificacionPanel = () => {
   };
 
   const handleVerDiferencias = (envio) => {
-    if (!envio.detalles || envio.detalles.length === 0) {
+    if (!Array.isArray(envio.detalles) || envio.detalles.length === 0) {
       alert('No hay detalles disponibles para este envío.');
       return;
     }
@@ -93,7 +93,7 @@ const VerificacionPanel = () => {
         return acc;
       }, {})
     ).map(([cod, { cantidadEnvio, descripcion }]) => {
-      const cantidadConteo = conteo
+      const cantidadConteo = (conteo || [])
         .filter(item => item.nro_envio === envio.nro && item.cod === cod)
         .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
 
@@ -136,28 +136,28 @@ const VerificacionPanel = () => {
 
             // Agrupar por código y calcular faltantes
             const faltantes = Object.entries(
-              envio.detalles.reduce((acc, item) => {
+              (envio.detalles || []).reduce((acc, item) => {
                 acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
                 return acc;
               }, {})
             ).reduce((totalFaltantes, [cod, cantidadEnvio]) => {
-              const cantidadConteo = conteo
-                .filter(item => item.nro_envio === envio.nro && item.cod === cod) // Filtrar por código y número de envío
-                .reduce((total, item) => total + item.cant, 0); // Sumar cantidades por código en conteo
+              const cantidadConteo = (conteo || [])
+                .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+                .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
 
               const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
               return totalFaltantes + (diferencia < 0 ? Math.abs(diferencia) : 0); // Sumar solo valores negativos como absolutos
             }, 0);
 
             const sobrantes = Object.entries(
-              envio.detalles.reduce((acc, item) => {
+              (envio.detalles || []).reduce((acc, item) => {
                 acc[item.cod] = (acc[item.cod] || 0) + item.cant; // Sumar cantidades por código en envio
                 return acc;
               }, {})
             ).reduce((totalSobrantes, [cod, cantidadEnvio]) => {
-              const cantidadConteo = conteo
-                .filter(item => item.nro_envio === envio.nro && item.cod === cod) // Filtrar por código y número de envío
-                .reduce((total, item) => total + item.cant, 0); // Sumar cantidades por código en conteo
+              const cantidadConteo = (conteo || [])
+                .filter(item => item.nro_envio === envio.nro && item.cod === cod)
+                .reduce((total, item) => total + item.cant, 0) || 0; // Devuelve 0 si no hay datos en conteo
 
               const diferencia = cantidadEnvio - cantidadConteo; // Calcular diferencia
               return totalSobrantes + (diferencia > 0 ? Math.abs(diferencia) : 0); // Sumar solo valores positivos como absolutos
