@@ -29,7 +29,7 @@ app.use('/conteo', conteoRoutes); // todas las rutas de conteo: /conteo/add, /co
 
 // Middleware para manejar errores, rutas no encontradas y errores de servidor
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'la ruta'+ req.path + ' no existe'});
+  res.status(404).json({ error: 'la ruta'+ req.path + ' no existe, favor verificar'});
 });
 
 app.listen(PORT, () => {
