@@ -26,6 +26,7 @@ if ! command -v pm2 &> /dev/null; then
 fi
 
 echo "🟢 Iniciando backend con PM2..."
+pm2 delete react-backend || true
 pm2 start index.js --name react-backend
 pm2 save
 
@@ -57,11 +58,11 @@ server {
     gzip_vary on; # Agregar encabezado Vary para proxies
     
     location / {
-        try_files $uri /index.html;
+        try_files \$uri /index.html;
     }
 
     location /api/ {
-        proxy_pass http://localhost:3000/;
+        proxy_pass http://localhost:3000/api/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -76,6 +77,7 @@ sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 
 echo "🔁 Reiniciando Nginx..."
+sudo nginx -t
 sudo systemctl restart nginx
 
 echo "🔥 Abriendo puerto 80 en el firewall..."

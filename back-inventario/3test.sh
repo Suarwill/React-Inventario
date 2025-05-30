@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # realizando prueba del backend
-echo "Realizando prueba de conexión al backend..."
 curl -X GET http://localhost:3000/
 
 # prueba de crear usuario
