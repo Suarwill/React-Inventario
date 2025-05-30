@@ -34,10 +34,10 @@ const getConteos = async (req, res) => {
 
         let result;
         if (nro) {
-            const query = 'SELECT * FROM conteo WHERE nro_envio = $1';
+            const query = 'SELECT * FROM conteos WHERE nro_envio = $1';
             result = await pool.query(query, [nro]);
         } else {
-            const query = 'SELECT * FROM conteo';
+            const query = 'SELECT * FROM conteos';
             result = await pool.query(query);
         }
 
