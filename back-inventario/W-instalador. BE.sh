@@ -37,6 +37,7 @@ echo "🌐 Configurando Nginx como proxy..."
 
 # Eliminar el archivo anterior
 sudo rm -f /etc/nginx/sites-available/default
+sudo rm -f /etc/nginx/sites-enabled/default
 
 # Crear el nuevo archivo
 sudo tee /etc/nginx/sites-available/default > /dev/null <<'NGINX_CONF'
@@ -60,7 +61,7 @@ server {
     }
 
     location /api/ {
-        proxy_pass http://localhost:3000/api;
+        proxy_pass http://localhost:3000/api/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -69,6 +70,10 @@ server {
     }
 }
 NGINX_CONF
+
+# Crear enlace simbólico en sites-enabled
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
 
 echo "🔁 Reiniciando Nginx..."
 sudo systemctl restart nginx
