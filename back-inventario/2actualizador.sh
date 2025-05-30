@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "Forzando git pull..."
+git fetch --all
+git reset --hard origin/main
 
 echo "actualizando el backend."
 git pull origin main
