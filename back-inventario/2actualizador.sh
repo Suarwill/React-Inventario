@@ -4,14 +4,13 @@ echo "actualizando el backend."
 git pull origin main
 
 echo "📦 Se procede a eliminar el backend y a crear uno nuevo..."
-# Reiniciando PostgreSQL
 sudo systemctl restart postgresql
 
-# Eliminando el backend
 pm2 delete react-backend
 
-# Creando el backend
-pm2 start index.js --name react-backend --env production
+# Iniciar el backend sin autorestart
+pm2 start index.js --name react-backend --env production --no-autorestart
+
 pm2 save
 
 sudo systemctl restart nginx
