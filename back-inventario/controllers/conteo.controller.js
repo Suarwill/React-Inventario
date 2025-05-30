@@ -3,19 +3,20 @@ const pool = require('../db/pool');
 const addConteo = async (req, res) => {
     const verificaciones = req.body;
 
-    console.log('Datos recibidos desde el cliente:', req.body.usuario);
+    console.log('Datos recibidos desde el cliente:', req.body);
 
     try {
-        for (const verificacion of verificaciones) {
+        const queries = verificaciones.map(verificacion => {
             if (!verificacion.tipo || !verificacion.cant || !verificacion.cod || !verificacion.nro_envio || !verificacion.usuario) {
-                return res.status(400).json({ error: 'Faltan datos requeridos' });
+                throw new Error('Faltan datos requeridos');
             }
             const { tipo, cant, cod, nro_envio, usuario } = verificacion;
             const query = 'INSERT INTO conteos (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
             const values = [tipo, cant, cod, nro_envio, usuario];
+            return pool.query(query, values);
+        });
 
-            const result = await pool.query(query, values);
-        };
+        await Promise.all(queries);
         res.status(200).json({ message: 'Se han agregado las verificaciones correctamente' });
     } catch (error) {
         console.error('Error al agregar el conteo:', error);
@@ -27,7 +28,8 @@ const getConteos = async (req, res) => {
     const { nro } = req.query;
 
     try {
-        // Validar el parámetro nro
+        console.log('Solicitud recibida en getConteos:', req.query);
+
         if (nro && isNaN(nro)) {
             return res.status(400).json({ error: 'El parámetro nro debe ser un número válido' });
         }
@@ -48,13 +50,7 @@ const getConteos = async (req, res) => {
         }
     } catch (error) {
         console.error('Error al obtener el conteo:', error);
-
-        // Identificar si el error es de la base de datos
-        if (error.code === '42P01') { // Código de error para tabla inexistente en PostgreSQL
-            res.status(500).json({ error: 'La tabla conteo no existe en la base de datos' });
-        } else {
-            res.status(500).json({ error: 'Error interno del servidor' });
-        }
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
