@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUltimosEnvios, enviarConteo, obtenerVerificaciones } from './verificacionService';
+import { fetchUltimosEnvios, enviarConteo } from './verificacionService';
 import VerificacionModal from './verificacionModal';
 import DiferenciasModal from './DiferenciasModal';
 
 const VerificacionPanel = () => {
-  const [envios, setEnvios] = useState([]);
-  const [conteo, setConteo] = useState([]);
-  const [verificaciones, setVerificaciones] = useState([]); // Nuevo estado para las verificaciones
   const [enviosAgrupados, setEnviosAgrupados] = useState([]);
+  const [conteo, setConteo] = useState([]);
   const [selectedEnvio, setSelectedEnvio] = useState(null);
   const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
 
-  // Obtener envíos y verificaciones al cargar el componente
+  // Obtener envíos al cargar el componente
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const enviosData = await fetchUltimosEnvios();
-        setEnvios(enviosData);
-
-        // Obtener los números de envío
-        const numerosEnvio = enviosData.map(envio => envio.nro);
-
-        // Obtener verificaciones relacionadas con los números de envío
-        const verificacionesConsolidadas = await obtenerVerificaciones(numerosEnvio);
-        setVerificaciones(verificacionesConsolidadas);
+        const agrupados = agruparEnvios(enviosData);
+        setEnviosAgrupados(agrupados);
       } catch (err) {
         setError(err.message);
       }
@@ -34,46 +26,34 @@ const VerificacionPanel = () => {
   }, []);
 
   // Agrupar envíos por número de envío
-  useEffect(() => {
-    const agruparPorNumeroEnvio = () => {
-      const agrupados = envios.reduce((acc, envio) => {
-        if (!acc[envio.nro]) {
-          acc[envio.nro] = {
-            nro: envio.nro,
-            fecha: envio.fecha,
-            detalles: [],
-          };
-        }
-        acc[envio.nro].detalles.push(envio);
-        return acc;
-      }, {});
+  const agruparEnvios = (envios) => {
+    const agrupados = envios.reduce((acc, envio) => {
+      if (!acc[envio.nro_envio]) {
+        acc[envio.nro_envio] = {
+          nro: envio.nro_envio,
+          fecha: envio.fecha,
+          enviados: 0,
+          recibidos: 0,
+          conteo: 0,
+          faltantes: 0,
+          sobrantes: 0,
+        };
+      }
 
-      setEnviosAgrupados(Object.values(agrupados));
-    };
+      acc[envio.nro_envio].enviados += envio.enviados || 0;
+      acc[envio.nro_envio].recibidos += envio.recibidos || 0;
 
-    agruparPorNumeroEnvio();
-  }, [envios]);
+      // Calcular faltantes y sobrantes por código
+      const faltantesPorCodigo = envio.enviados - envio.recibidos - envio.conteo;
+      const sobrantesPorCodigo = envio.recibidos + envio.conteo - envio.enviados;
 
-  // Calcular faltantes y sobrantes
-  const calcularDiferencias = (envio) => {
-    const cantidadVerificadaBackend = (verificaciones || [])
-      .filter(item => item.nro_envio === envio.nro)
-      .reduce((total, item) => total + item.cant, 0);
+      acc[envio.nro_envio].faltantes += faltantesPorCodigo > 0 ? faltantesPorCodigo : 0;
+      acc[envio.nro_envio].sobrantes += sobrantesPorCodigo > 0 ? sobrantesPorCodigo : 0;
 
-    const cantidadVerificadaLocal = (conteo || [])
-      .filter(item => item.nro_envio === envio.nro)
-      .reduce((total, item) => total + item.cant, 0);
+      return acc;
+    }, {});
 
-    const cantidadVerificada = cantidadVerificadaBackend + cantidadVerificadaLocal;
-
-    const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
-
-    const diferencia = cantidadEnviada - cantidadVerificada;
-
-    return {
-      faltantes: diferencia > 0 ? diferencia : 0,
-      sobrantes: diferencia < 0 ? Math.abs(diferencia) : 0,
-    };
+    return Object.values(agrupados);
   };
 
   const handleAgregarVerificacion = (envio) => {
@@ -98,7 +78,6 @@ const VerificacionPanel = () => {
     }
 
     try {
-      // Crear el array de conteos con los datos requeridos
       const conteos = conteo.map((item) => ({
         tipo,
         cant: item.cant,
@@ -125,27 +104,12 @@ const VerificacionPanel = () => {
   };
 
   const handleVerDiferencias = (envio) => {
-    if (!envio || !envio.detalles || envio.detalles.length === 0) {
+    if (!envio) {
       alert('No hay detalles disponibles para este envío.');
       return;
     }
 
-    const diferencias = envio.detalles.map((detalle) => {
-      const cantidadConteo = (conteo || [])
-        .filter(item => item.nro_envio === envio.nro && item.cod === detalle.cod)
-        .reduce((total, item) => total + item.cant, 0);
-
-      const diferencia = detalle.cant - cantidadConteo;
-
-      return {
-        cod: detalle.cod,
-        cantidad: detalle.cant,
-        descripcion: detalle.descripcion || 'Sin descripción',
-        diferencia,
-      };
-    });
-
-    setSelectedEnvio({ ...envio, diferencias });
+    setSelectedEnvio(envio);
     setModalVisible2(true);
   };
 
@@ -167,43 +131,28 @@ const VerificacionPanel = () => {
           </tr>
         </thead>
         <tbody>
-          {enviosAgrupados.map((envio, index) => {
-            const { faltantes, sobrantes } = calcularDiferencias(envio);
-            const cantidadVerificadaBackend = (verificaciones || [])
-              .filter(item => item.nro_envio === envio.nro)
-              .reduce((total, item) => total + item.cant, 0);
-
-            const cantidadVerificadaLocal = (conteo || [])
-              .filter(item => item.nro_envio === envio.nro)
-              .reduce((total, item) => total + item.cant, 0);
-
-            const cantidadVerificada = cantidadVerificadaBackend + cantidadVerificadaLocal;
-
-            const cantidadEnviada = envio.detalles.reduce((total, item) => total + item.cant, 0);
-
-            return (
-              <tr key={index}>
-                <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
-                <td>{envio.nro}</td>
-                <td>{cantidadEnviada}</td>
-                <td>{cantidadVerificada}</td>
-                <td>{faltantes}</td>
-                <td>{sobrantes}</td>
-                <td>
-                  <button className='main-button' onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
-                  <button className='main-button' onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
-                  <button className='main-button' onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
-                </td>
-              </tr>
-            );
-          })}
+          {enviosAgrupados.map((envio, index) => (
+            <tr key={index}>
+              <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
+              <td>{envio.nro}</td>
+              <td>{envio.enviados}</td>
+              <td>{envio.recibidos + envio.conteo}</td>
+              <td>{envio.faltantes}</td>
+              <td>{envio.sobrantes}</td>
+              <td>
+                <button className='main-button' onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
+                <button className='main-button' onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
+                <button className='main-button' onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
       {modalVisible && selectedEnvio && (
         <VerificacionModal
           conteo={conteo}
-          nroEnvio={selectedEnvio.nro} // Pasar el número de envío como propiedad
+          nroEnvio={selectedEnvio.nro}
           handleGuardarConteo={setConteo}
           closeModal={closeModal}
         />

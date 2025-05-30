@@ -151,40 +151,72 @@ const getUltimosEnvios = async (req, res) => {
   const origen = "BODEGA"; // Origen siempre será "BODEGA"
   const tipo = "PRODUCCION"; // Tipo siempre será "PRODUCCION"
 
+  console.log('>>> Obteniendo últimos envíos para el destino:', destino, 'con origen:', origen, 'y tipo:', tipo);
+
   try {
     // Subconsulta para obtener las 3 fechas más cercanas
-    const query = `
+    const queryFechas = `
       WITH fechas_cercanas AS (
-        SELECT fecha, ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) AS diferencia
+        SELECT fecha
         FROM movimientos
         WHERE origen = $1 
           AND destino = $2 
           AND tipo = $3
-        ORDER BY diferencia ASC
+        ORDER BY ABS(EXTRACT(EPOCH FROM (fecha - NOW()))) ASC
         LIMIT 3
       )
-      SELECT 
-        movimientos.fecha, 
-        movimientos.nro, 
-        movimientos.cant, 
-        movimientos.cod
-      FROM movimientos
-      WHERE movimientos.origen = $1 
-        AND movimientos.destino = $2 
-        AND movimientos.tipo = $3
-        AND movimientos.fecha IN (SELECT fecha FROM fechas_cercanas)
-      ORDER BY movimientos.fecha DESC, movimientos.nro ASC
+      SELECT fecha FROM fechas_cercanas
     `;
-    const params = [origen, destino, tipo];
+    const paramsFechas = [origen, destino, tipo];
+    const fechasResult = await pool.query(queryFechas, paramsFechas);
 
-    const result = await pool.query(query, params);
-
-    if (result.rows.length === 0) {
+    if (fechasResult.rows.length === 0) {
       return res.status(404).json({ error: 'No se encontraron envíos recientes' });
     }
 
-    console.log('>>> Últimos envíos encontrados para:', destino, ':', result.rows.length);
-    res.status(200).json(result.rows); // Devolver todas las filas relacionadas a las fechas más cercanas
+    const fechas = fechasResult.rows.map(row => row.fecha);
+
+    // Obtener movimientos.nro asociados a las fechas
+    const queryMovimientos = `
+      SELECT nro, fecha, cod, cant
+      FROM movimientos
+      WHERE origen = $1 
+        AND destino = $2 
+        AND tipo = $3
+        AND fecha = ANY($4::timestamp[])
+    `;
+    const paramsMovimientos = [origen, destino, tipo, fechas];
+    const movimientosResult = await pool.query(queryMovimientos, paramsMovimientos);
+
+    if (movimientosResult.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron movimientos asociados a las fechas' });
+    }
+
+    const movimientos = movimientosResult.rows;
+
+    // Juntar las tablas movimientos y conteos, agrupar por código y sumar cantidades
+    const queryConteos = `
+      SELECT 
+        m.fecha,
+        m.nro AS nro_envio,
+        COALESCE(m.cod, c.cod) AS codigo,
+        SUM(COALESCE(m.cant, 0)) AS enviados,
+        SUM(COALESCE(c.cant, 0)) AS recibidos
+      FROM movimientos m
+      FULL OUTER JOIN conteos c ON m.nro = c.nro_envio AND m.cod = c.cod
+      WHERE m.nro = ANY($1::int[])
+      GROUP BY m.fecha, m.nro, COALESCE(m.cod, c.cod)
+      ORDER BY m.fecha DESC, m.nro ASC
+    `;
+    const paramsConteos = [movimientos.map(mov => mov.nro)];
+    const conteosResult = await pool.query(queryConteos, paramsConteos);
+
+    if (conteosResult.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron conteos asociados a los movimientos' });
+    }
+
+    console.log('>>> Últimos envíos encontrados para:', destino, ':', conteosResult.rows.length);
+    res.status(200).json(conteosResult.rows); // Devolver todas las filas encontradas
   } catch (error) {
     console.error('Error al obtener los últimos envíos:', error);
     res.status(500).json({ error: 'Error al obtener los últimos envíos' });

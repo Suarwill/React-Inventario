@@ -26,7 +26,7 @@ const addConteo = async (req, res) => {
 
 const getConteos = async (req, res) => {
     const { nro } = req.query;
-
+/*
     try {
         console.log('Solicitud recibida en getConteos:', req.query);
 
@@ -52,6 +52,8 @@ const getConteos = async (req, res) => {
         console.error('Error al obtener el conteo:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
+*/
+    res.status(501).json({ message: 'Funcionalidad no implementada' });
 };
 
 const updateConteo = async (req, res) => {
