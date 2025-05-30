@@ -12,11 +12,11 @@ npm install express cors dotenv pg bcrypt jsonwebtoken express-validator multer 
 echo "🔐 Creando archivo .env..."
 cat > .env <<'EOF'
 PORT=3000
-DB_USER=nOmBrE
-DB_PASSWORD=cOnTrAsEnA
+DB_USER=servidor
+DB_PASSWORD=ServerSQL
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=nombreTABLA
+DB_NAME=inventario
 JWT_SECRET=jwtservidorclave
 EOF
 
@@ -35,7 +35,11 @@ eval "$STARTUP_CMD"
 
 echo "🌐 Configurando Nginx como proxy..."
 
-sudo tee /etc/nginx/sites-enable/default > /dev/null <<'NGINX_CONF'
+# Eliminar el archivo anterior
+sudo rm -f /etc/nginx/sites-available/default
+
+# Crear el nuevo archivo
+sudo tee /etc/nginx/sites-available/default > /dev/null <<'NGINX_CONF'
 server {
     listen 80;
     server_name _;
@@ -51,29 +55,6 @@ server {
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; # Tipos de contenido a comprimir
     gzip_vary on; # Agregar encabezado Vary para proxies
     
-    location / {
-        try_files $uri /index.html;
-    }
-
-    location /api/ {
-        proxy_pass http://localhost:3000/api;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-NGINX_CONF
-
-sudo tee /etc/nginx/sites-available/default > /dev/null <<'NGINX_CONF'
-server {
-    listen 80;
-    server_name _;
-
-    root /var/www/html;
-    index index.html;
-
     location / {
         try_files $uri /index.html;
     }

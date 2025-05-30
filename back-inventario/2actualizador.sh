@@ -9,7 +9,7 @@ sudo systemctl restart postgresql
 pm2 delete react-backend
 
 # Iniciar el backend sin autorestart
-pm2 start index.js --name react-backend --env production --no-autorestart
+pm2 start index.js --name react-backend --env production
 
 pm2 save
 
