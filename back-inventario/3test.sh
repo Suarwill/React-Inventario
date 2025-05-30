@@ -1,11 +1,22 @@
 #!/bin/bash
 
 # prueba de crear usuario
-echo "Realizando prueba de login de usuario..."
+echo "Realizando prueba de login de usuario... sin /api/"
 curl -X POST http://localhost:3000/user/login \
     -H "Content-Type: application/json" \
     -d '{"username":"admin", "password":"1234"}'
 
+echo "Realizando prueba de login de usuario... con /api/"
+curl -X POST http://localhost:3000/api/user/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"admin", "password":"1234"}'
+
+echo "Realizando prueba de login de usuario... con /api/api/"
+
+curl -X POST http://localhost:3000/api/api/user/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"admin", "password":"1234"}'
+    
 # prueba de busqueda
 echo "Realizando prueba de búsqueda de usuario..."
 curl -X GET http://localhost:3000/user/search?username=admin \
