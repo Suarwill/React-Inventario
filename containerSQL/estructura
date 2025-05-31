@@ -1,0 +1,70 @@
+CREATE TABLE sectores (
+    id SERIAL PRIMARY KEY,
+    sector VARCHAR(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE zonas (
+    id SERIAL PRIMARY KEY,
+    zona VARCHAR(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE estatus (
+    id SERIAL PRIMARY KEY,
+    estatus VARCHAR(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE productos (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT NOT NULL,
+    categoria VARCHAR(50),
+    estatus VARCHAR(20) REFERENCES estatus(estatus)
+);
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    sector VARCHAR(20) REFERENCES sectores(sector),
+    zona VARCHAR(20) REFERENCES zonas(zona)
+);
+
+CREATE TABLE depositos (
+    id SERIAL PRIMARY KEY,
+    usuario INT REFERENCES usuarios(id),
+    fecha TIMESTAMP NOT NULL,
+    voucher VARCHAR(50),
+    monto NUMERIC(10, 2),
+    comentario TEXT
+);
+
+CREATE TABLE movimientos (
+    id SERIAL PRIMARY KEY,
+    nro INT NOT NULL,
+    fecha TIMESTAMP NOT NULL,
+    origen VARCHAR(50),
+    destino VARCHAR(50) REFERENCES sectores(sector),
+    tipo VARCHAR(50),
+    cant INT NOT NULL,
+    cod VARCHAR(50) REFERENCES productos(codigo)
+);
+
+CREATE TABLE conteos (
+    id SERIAL PRIMARY KEY,
+    tipo VARCHAR(50),
+    cant INT NOT NULL,
+    cod VARCHAR(50) REFERENCES productos(codigo),
+    nro_envio INT,
+    usuario INT REFERENCES usuarios(id)
+);
+
+-- Tabla diferencia_inventario
+CREATE TABLE diferencias (
+    id SERIAL PRIMARY KEY,
+    tipo_dif VARCHAR(50),
+    usuario INT REFERENCES usuarios(id),
+    fecha TIMESTAMP NOT NULL,
+    codigo VARCHAR(50) REFERENCES productos(codigo),
+    stock INT,
+    fisico INT
+);

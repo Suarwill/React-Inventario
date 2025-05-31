@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
 
   const { username, password, sector, zona } = req.body; // Agregar sector y zona
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 15);
     const result = await pool.query(
       'INSERT INTO usuarios (username, password, sector, zona) VALUES ($1, $2, $3, $4) RETURNING *',
       [username, hashedPassword, sector, zona] // Incluir sector y zona en la consulta
