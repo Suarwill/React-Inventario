@@ -68,3 +68,29 @@ CREATE TABLE diferencias (
     stock INT,
     fisico INT
 );
+
+-- Insertar zonas
+INSERT INTO zonas (zona) VALUES
+  ('ADM'),
+  ('Z0'),
+  ('ZII'),
+  ('ZIV'),
+  ('ZV'),
+  ('ZS1'),
+  ('ZS2'),
+  ('ZVIII'),
+  ('ZX');
+
+-- Insertar sectores
+INSERT INTO sectores (sector) VALUES
+  ('ADMINISTRACION'),
+  ('INVENTARIOS'),
+  ('SOPORTE'),
+  ('ZONALES');
+
+-- Insertar estatus
+INSERT INTO estatus (estatus) VALUES
+  ('ANTIGUO'),
+  ('VIGENTE'),
+  ('ELIMINADO'),
+  ('NUEVO');
