@@ -2,19 +2,33 @@ const pool = require('../db/pool');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Registrar usuario
 const registerUser = async (req, res) => {
   const { validationResult } = require('express-validator');
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty()) 
+    return res.status(400).json({ errors: errors.array() });
 
-  const { username, password, sector, zona } = req.body; // Agregar sector y zona
+  const { username, password, sector, zona } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 15);
+    const hashedPassword = await bcrypt.hash(password, 15); // Aumentar el costo de hashing a 15 para mayor seguridad
+    
+    // Verificar si el usuario ya existe
+    const existingUser = await pool.query(
+      'SELECT * FROM usuarios WHERE username = $1', [username]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'El usuario ya existe' });
+    }
+    // Insertar el nuevo usuario
     const result = await pool.query(
       'INSERT INTO usuarios (username, password, sector, zona) VALUES ($1, $2, $3, $4) RETURNING *',
       [username, hashedPassword, sector, zona] // Incluir sector y zona en la consulta
     );
+    // Verificar si se insertó correctamente
+    if (result.rows.length === 0) {
+      return res.status(400).json({ error: 'Error al registrar usuario' });
+    }
+    // Log para verificar el registro
+    console.log("Usuario registrado:", username);
     res.status(201).json({ message: 'Usuario registrado', user: result.rows[0] });
   } catch (err) {
     console.error("Register error:", err);
@@ -37,6 +51,7 @@ const loginUser = async (req, res) => {
 
     const usuario = result.rows[0];
     const valid = await bcrypt.compare(password, usuario.password);
+    console.log('Usuario intentando ingresar:', result.rows[0])
     if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
     // Crear el token JWT
@@ -63,7 +78,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Buscar usuarios
 const searchUsers = async (req, res) => {
   const { username } = req.query;
   if (!username) return res.status(400).json({ error: 'Falta el username' });
@@ -77,7 +91,6 @@ const searchUsers = async (req, res) => {
   }
 };
 
-// Editar usuario
 const updateUser = async (req, res) => {
   const { username } = req.params;
   const { newUsername, newPassword, newSector, newZona } = req.body; // Agregar sector y zona
@@ -128,7 +141,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Eliminar usuario
 const deleteUser = async (req, res) => {
   const { username } = req.params;
   try {

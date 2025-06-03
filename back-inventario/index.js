@@ -32,14 +32,11 @@ app.use((req, res, next) => {
   res.status(404).json({ error: 'la ruta'+ req.path + ' no existe, favor verificar'});
 });
 
-app.listen(PORT, () => {
+try {
+  app.listen(PORT , '127.0.0.1' , () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  /*
-  console.log('Database connection details:');
-  console.log(`  Host: ${process.env.DB_HOST}`);
-  console.log(`  Port: ${process.env.DB_PORT}`);
-  console.log(`  User: ${process.env.DB_USER}`);
-  console.log(`  Database: ${process.env.DB_NAME}`);
-  console.log(`  Password Used: ${process.env.PGPASSWORD || process.env.DB_PASSWORD ? 'Yes (from env)' : 'No'}`); // Check common env vars
-  */
   });
+}
+catch (error) {
+  console.error('Error al iniciar el servidor:', error);
+}

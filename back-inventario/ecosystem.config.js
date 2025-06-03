@@ -4,7 +4,7 @@ module.exports = {
       name: 'react-backend',
       script: 'index.js',
       watch: false,
-      autorestart: false, // Desactivar autorestart explícitamente
+      autorestart: true, // Desactivar autorestart explícitamente
       env: {
         NODE_ENV: 'production',
       },
