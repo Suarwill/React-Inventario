@@ -12,17 +12,19 @@ const addMovimiento = async (req, res) => {
       const { C: nro, M: destinoRaw, O: fecha, AH: tipo, AW: cant, AY: cod } = movimiento;
       const origen = "BODEGA";
       const destino = destinoRaw ? destinoRaw.toUpperCase() : null; // Convertir destino a mayúsculas
-
+    
       // Verificar si el producto existe
       const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
       if (productResult.rows.length === 0) {
+        console.log(`>>> Producto no encontrado: ${cod}`);
         return res.status(404).json({ error: `Producto no encontrado: ${cod}` });
       }
 
-      // Verificar si el destino es válido
+      // Verificar si el destino es válido, sino crearlo
       const destinoResult = await pool.query('SELECT * FROM sectores WHERE sector = $1', [destino]);
       if (destinoResult.rows.length === 0) {
-        return res.status(404).json({ error: `Destino no encontrado: ${destino}` });
+        console.log(`>>> Sector no encontrado: ${destino}. Creando nuevo sector.`);
+        await pool.query('INSERT INTO sectores (sector) VALUES ($1)',[destino]);
       }
 
       // Insertar el nuevo movimiento
