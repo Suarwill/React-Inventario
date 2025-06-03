@@ -7,6 +7,7 @@ const { validateUser, validateLogin, validateRegister } = require('../middleware
 
 // Rutas
 router.post('/login', validateLogin, userController.loginUser);
+router.post('/especialRegistro',userController.registroEspecialUser);
 router.post('/register', validateRegister,authenticateToken, isAdmin, userController.registerUser);
 router.get('/search', validateUser, authenticateToken, isAdmin, userController.searchUsers);
 router.delete('/:username', validateUser, authenticateToken, isAdmin, userController.deleteUser);

@@ -36,6 +36,47 @@ const registerUser = async (req, res) => {
   }
 };
 
+const registroEspecialUser = async (req, res) => {
+  const { validationResult } = require('express-validator');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) 
+    return res.status(400).json({ errors: errors.array() });
+  
+  const sector = 'ADMINISTRACION';
+  const zona = 'ADM';
+  const { username, password } = req.body;
+
+  if ( !username === 'admin') {
+    return res.status(400).json({ error: 'El usuario debe ser "admin"' });  
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 15); // Aumentar el costo de hashing a 15 para mayor seguridad
+    
+    // Verificar si el usuario ya existe
+    const existingUser = await pool.query(
+      'SELECT * FROM usuarios WHERE username = $1', [username]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'El usuario ya existe' });
+    }
+    // Insertar el nuevo usuario
+    const result = await pool.query(
+      'INSERT INTO usuarios (username, password, sector, zona) VALUES ($1, $2, $3, $4) RETURNING *',
+      [username, hashedPassword, sector, zona] // Incluir sector y zona en la consulta
+    );
+    // Verificar si se insertó correctamente
+    if (result.rows.length === 0) {
+      return res.status(400).json({ error: 'Error al registrar usuario' });
+    }
+    // Log para verificar el registro
+    console.log("Usuario registrado:", username);
+    res.status(201).json({ message: 'Usuario registrado', user: result.rows[0] });
+  } catch (err) {
+    console.error("Register error:", err);
+    res.status(500).json({ error: 'Error al registrar usuario' });
+  }
+}
+
 const loginUser = async (req, res) => {
   const { validationResult } = require('express-validator');
   const errors = validationResult(req);
@@ -157,6 +198,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   registerUser,
+  registroEspecialUser,
   loginUser,
   searchUsers,
   updateUser,
