@@ -62,7 +62,7 @@ server {
     }
 
     location /api/ {
-        proxy_pass http://localhost:3000/api/;
+        proxy_pass http://localhost:3000/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -79,10 +79,6 @@ sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 echo "🔁 Reiniciando Nginx..."
 sudo nginx -t
 sudo systemctl restart nginx
-
-echo "🔥 Abriendo puerto 80 en el firewall..."
-sudo firewall-cmd --permanent --add-port=80/tcp
-sudo firewall-cmd --reload
 
 # 🔐 En sistemas con SELinux (como Rocky Linux), habilitar conexión de red para Nginx
 # sudo setsebool -P httpd_can_network_connect 1

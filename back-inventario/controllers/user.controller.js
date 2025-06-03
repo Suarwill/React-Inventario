@@ -93,7 +93,7 @@ const loginUser = async (req, res) => {
 
     const usuario = result.rows[0];
     const valid = await bcrypt.compare(password, usuario.password);
-    console.log('Usuario intentando ingresar:', result.rows[0])
+    console.log('Usuario intentando ingresar:', username);
     if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
     // Crear el token JWT

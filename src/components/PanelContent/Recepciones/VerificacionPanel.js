@@ -95,6 +95,7 @@ const VerificacionPanel = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleGuardarConteo = (nuevoConteo) => {
     setConteo(nuevoConteo); // Actualiza el estado de conteo
   };

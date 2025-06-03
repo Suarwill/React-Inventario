@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { fetchUltimaFecha, handleUploadFile } from './inventarioFunctions';
 import './inventario.css';
 
