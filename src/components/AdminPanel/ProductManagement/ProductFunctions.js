@@ -11,6 +11,17 @@ export const handleUploadCsv = async (event, file, showMessage, setModal) => {
   formData.append('file', file);
 
   try {
+    // Leer el contenido del archivo CSV
+    const fileContent = await file.text();
+    const rows = fileContent.split('\n').filter(row => row.trim() !== '');
+    
+    // Validar que el archivo no tenga cabeceras y que use el separador ;
+    const isValidCsv = rows.every(row => row.includes(';'));
+    if (!isValidCsv) {
+      return showMessage('El archivo CSV debe usar ";" como separador y no tener cabeceras.', 'error');
+    }
+
+    // Enviar el archivo al backend
     const response = await axiosInstance.post('/api/product/upload-csv', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

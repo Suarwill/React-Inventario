@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-export const UploadCsvModal = ({ file, setFile, handleUploadCsv, setModal }) => (
+export const UploadCsvModal = ({ file, setFile, handleUploadCsv, setModal, showMessage }) => (
   <div className="modal">
     <h3>Cargar Productos (CSV)</h3>
     <p>Seleccione un archivo CSV para cargar productos.</p>
     <p>Formato esperado: código, descripción, categoría (sin encabezados).</p>
-    <form onSubmit={(e) => handleUploadCsv(e, file)}>
+    <form onSubmit={(e) => handleUploadCsv(e, file, showMessage, setModal)}>
       <input
         type="file"
         accept=".csv"

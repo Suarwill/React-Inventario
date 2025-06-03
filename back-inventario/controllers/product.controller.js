@@ -87,10 +87,10 @@ const uploadCsv = async (req, res) => {
   try {
     // Leer y procesar el archivo CSV sin encabezados
     fs.createReadStream(filePath)
-      .pipe(csv({ headers: false })) // No se usan encabezados
+      .pipe(csv({ separator: ';', headers: false })) // Especificar el separador como ";"
       .on('data', (row) => {
-        const codigo = row[0]?.trim(); // Primera columna: codigo
-        const descripcion = row[1]?.trim(); // Segunda columna: descripcion
+        const codigo = row[0]?.trim().toString().toUpperCase(); // Primera columna: codigo
+        const descripcion = row[1]?.trim().toUpperCase(); // Segunda columna: descripcion
         const categoria = row[2]?.trim().toUpperCase(); // Tercera columna: categoria en mayúsculas
 
         // Validaciones
