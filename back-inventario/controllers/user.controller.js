@@ -8,11 +8,17 @@ const registerUser = async (req, res) => {
   if (!errors.isEmpty()) 
     return res.status(400).json({ errors: errors.array() });
 
-  const { username, password, sector, zona } = req.body;
+  let { username, password, sector, zona } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 15); // Aumentar el costo de hashing a 15 para mayor seguridad
     
     // Verificar si el usuario ya existe
+    let newUsername = username.toUpperCase();
+    let newSector = sector.toUpperCase();
+    let newZona = zona.toUpperCase();
+    username = newUsername;
+    sector = newSector;
+    zona = newZona;
     const existingUser = await pool.query(
       'SELECT * FROM usuarios WHERE username = $1', [username]);
     if (existingUser.rows.length > 0) {
@@ -44,9 +50,12 @@ const registroEspecialUser = async (req, res) => {
   
   const sector = 'ADMINISTRACION';
   const zona = 'ADM';
-  const { username, password } = req.body;
+  let { username, password } = req.body;
 
-  if ( !username === 'admin') {
+  let newUsername = username.toUpperCase();
+  username = newUsername;
+
+  if ( !username === 'ADMIN') {
     return res.status(400).json({ error: 'El usuario debe ser "admin"' });  
   }
 
@@ -83,8 +92,10 @@ const loginUser = async (req, res) => {
   if (!errors.isEmpty()) 
     return res.status(400).json({ errors: errors.array() });
   
-  const { username, password } = req.body;
+  let { username, password } = req.body;
   try {
+    let newUsername = username.toUpperCase();
+    username = newUsername;
     const result = await pool.query(
       'SELECT id, username, password, sector, zona FROM usuarios WHERE username = $1',
       [username]
@@ -121,10 +132,12 @@ const loginUser = async (req, res) => {
 };
 
 const searchUsers = async (req, res) => {
-  const { username } = req.query;
+  let { username } = req.query;
   if (!username) return res.status(400).json({ error: 'Falta el username' });
 
   try {
+    let newUsername = username.toUpperCase();
+    username = newUsername;
     const result = await pool.query('SELECT id, username FROM usuarios WHERE username ILIKE $1', [`%${username}%`]);
     res.json(result.rows);
   } catch (err) {
@@ -134,10 +147,20 @@ const searchUsers = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { username } = req.params;
-  const { newUsername, newPassword, newSector, newZona } = req.body; // Agregar sector y zona
+  let { username } = req.params;
+  let newUser = username.toUpperCase();
+  username = newUser;
+
+  let { newUsername, newPassword, newSector, newZona } = req.body; // Agregar sector y zona
+  let upperUsername = newUsername.toUpperCase();
+  let upperSector = newSector.toUpperCase();
+  let upperZona = newZona.toUpperCase();
+  newUsername = upperUsername;
+  newSector = upperSector;
+  newZona = upperZona;
 
   try {
+
     const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado.' });
@@ -184,7 +207,10 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { username } = req.params;
+  let { username } = req.params;
+  let upperUsername = username.toUpperCase();
+  username = upperUsername;
+
   try {
     const result = await pool.query('DELETE FROM usuarios WHERE username = $1 RETURNING id', [username]);
     if (result.rowCount === 0) return res.status(404).json({ error: 'Usuario no encontrado' });

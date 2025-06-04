@@ -17,7 +17,9 @@ const addMovimiento = async (req, res) => {
       const productResult = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
       if (productResult.rows.length === 0) {
         console.log(`>>> Producto no encontrado: ${cod}`);
-        return res.status(404).json({ error: `Producto no encontrado: ${cod}` });
+        let nuevoDescripcion = '->-<- Producto nuevo: Agregar descripcion';
+        await pool.query('INSERT INTO productos (codigo, descripcion) VALUES ($1, $2)', [cod, nuevoDescripcion]);
+        console.log(`>>> Producto no encontrado en sistema, y se ha agregado: ${cod}`);
       }
 
       // Verificar si el destino es válido, sino crearlo

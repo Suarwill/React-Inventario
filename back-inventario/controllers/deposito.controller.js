@@ -11,22 +11,12 @@ const addDeposito = async (req, res) => {
       return res.status(400).json({ error: 'El ID debe ser un número válido' });
     }
 
-    // Obtener username y sector del usuario
-    const { rows: userResult } = await pool.query(
-      'SELECT username, sector FROM usuarios WHERE id = $1',
-      [idInt]
-    );
-    if (userResult.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    const username = userResult[0].username;
-
     // Insertar el nuevo depósito
     const result = await pool.query(
       'INSERT INTO depositos (usuario, fecha, voucher, monto, comentario) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [username, fecha, voucher, monto, comentario]
+      [idInt, fecha, voucher, monto, comentario]
     );
+    console.log('Depósito agregado:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error al agregar el depósito:', error);
@@ -35,7 +25,7 @@ const addDeposito = async (req, res) => {
 };
 
 const getDeposito = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.query; // ID del usuario
 
   try {
     if (!id) {
@@ -47,44 +37,40 @@ const getDeposito = async (req, res) => {
       return res.status(400).json({ error: 'El ID debe ser un número válido' });
     }
 
-    // Obtener username y sector del usuario
-    const { rows: userData } = await pool.query(
-      'SELECT username, sector FROM usuarios WHERE id = $1',
+    // Obtener sector del usuario
+    const { rows: userResult } = await pool.query(
+      'SELECT sector FROM usuarios WHERE id = $1',
       [idInt]
     );
-
-    if (userData.length === 0) {
+    if (userResult.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const { username, sector } = userData[0];
+    const sector = userResult[0].sector;
 
-    // Buscar depósitos por username (VARCHAR) en tabla depositos
-    const { rows: userDeposits } = await pool.query(
-      'SELECT * FROM depositos WHERE usuario = $1 ORDER BY fecha DESC LIMIT 20',
-      [username]
+    // Obtener todos los usuarios del mismo sector
+    const { rows: sectorUsers } = await pool.query(
+      'SELECT id FROM usuarios WHERE sector = $1',
+      [sector]
     );
 
-    if (userDeposits.length > 0) {
-      return res.status(200).json(userDeposits);
+    if (sectorUsers.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron usuarios en este sector' });
     }
 
-    // Si no tiene depósitos, buscar en el sector (excluyendo al usuario actual)
+    // Extraer los IDs de los usuarios del sector
+    const userIds = sectorUsers.map(user => user.id);
+
+    // Obtener depósitos de todos los usuarios del sector, ordenados por fecha descendente, límite 14
     const { rows: sectorDeposits } = await pool.query(
-      `SELECT * FROM depositos 
-       WHERE usuario IN (
-         SELECT username FROM usuarios 
-         WHERE sector = $1 AND id != $2
-       )
-       ORDER BY fecha DESC
-       LIMIT 20`,
-      [sector, idInt]
+      `SELECT * FROM depositos WHERE usuario = ANY($1::int[]) ORDER BY fecha DESC LIMIT 14`,
+      [userIds]
     );
 
     res.status(200).json(sectorDeposits);
   } catch (error) {
-    console.error('Error al obtener el depósito:', error);
-    res.status(500).json({ error: 'Error al obtener el depósito' });
+    console.error('Error al obtener los depósitos:', error);
+    res.status(500).json({ error: 'Error al obtener los depósitos' });
   }
 };
 
