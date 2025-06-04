@@ -7,12 +7,12 @@ const addConteo = async (req, res) => {
 
     try {
         const queries = verificaciones.map(verificacion => {
-            if (!verificacion.tipo || !verificacion.cant || !verificacion.cod || !verificacion.nro_envio || !verificacion.usuario) {
+            if (!verificacion.tipo || !verificacion.cant || !verificacion.cod || !verificacion.nro_envio || !verificacion.IdUsuario) {
                 throw new Error('Faltan datos requeridos');
             }
-            const { tipo, cant, cod, nro_envio, usuario } = verificacion;
+            const { tipo, cant, cod, nro_envio, IdUsuario } = verificacion;
             const query = 'INSERT INTO conteos (tipo, cant, cod, nro_envio, usuario) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-            const values = [tipo, cant, cod, nro_envio, usuario];
+            const values = [tipo, cant, cod, nro_envio, IdUsuario];
             return pool.query(query, values);
         });
 

@@ -5,8 +5,10 @@
   border-radius: 12px;
   color: #0D1B2A;
   width: 80%;
+  max-height: 350px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   font-family: 'Segoe UI', sans-serif;
+  font-size: small;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,9 +18,16 @@
   margin: 20px 0;
 }
 
+.table-container {
+  width: 100%;
+  overflow-y: auto; /* Habilitar scroll vertical dentro de la tabla */
+  margin-bottom: 20px;
+}
+
 .recepciones-table {
   border-collapse: collapse;
   width: 100%;
+  overflow-y: auto;
 }
 
 .recepciones-table th,
@@ -35,4 +44,10 @@
 
 .recepciones-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.highlight-orange {
+  background-color: orange;
+  color: white; /* Opcional: para mejorar la legibilidad */
+  font-weight: bold; /* Opcional: para resaltar el texto */
 }

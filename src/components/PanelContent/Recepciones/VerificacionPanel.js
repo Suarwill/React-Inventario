@@ -16,43 +16,52 @@ const VerificacionPanel = () => {
     const cargarDatos = async () => {
       try {
         const enviosData = await fetchUltimosEnvios();
-        const agrupados = agruparEnvios(enviosData);
+        const agrupados = agruparEnvios(enviosData, conteo);
         setEnviosAgrupados(agrupados);
       } catch (err) {
         setError(err.message);
       }
     };
     cargarDatos();
-  }, []);
+  }, [conteo]); // Recalcular cuando cambie el conteo
 
   // Agrupar envíos por número de envío
-  const agruparEnvios = (envios) => {
+  const agruparEnvios = (envios, conteo) => {
     const agrupados = envios.reduce((acc, envio) => {
-      if (!acc[envio.nro_envio]) {
-        acc[envio.nro_envio] = {
-          nro: envio.nro_envio,
+      if (!acc[envio.fecha]) {
+        acc[envio.fecha] = {
           fecha: envio.fecha,
           enviados: 0,
           recibidos: 0,
-          conteo: 0,
           faltantes: 0,
           sobrantes: 0,
         };
       }
 
-      acc[envio.nro_envio].enviados += envio.enviados || 0;
-      acc[envio.nro_envio].recibidos += envio.recibidos || 0;
+      // Sumar enviados
+      acc[envio.fecha].enviados += Number(envio.enviados) || 0;
 
-      // Calcular faltantes y sobrantes por código
-      const faltantesPorCodigo = envio.enviados - envio.recibidos - envio.conteo;
-      const sobrantesPorCodigo = envio.recibidos + envio.conteo - envio.enviados;
+      // Sumar recibidos
+      acc[envio.fecha].recibidos += Number(envio.recibidos) || 0;
 
-      acc[envio.nro_envio].faltantes += faltantesPorCodigo > 0 ? faltantesPorCodigo : 0;
-      acc[envio.nro_envio].sobrantes += sobrantesPorCodigo > 0 ? sobrantesPorCodigo : 0;
+      // Filtrar conteos relacionados con el código del envío
+      const conteoRelacionado = conteo.filter((item) => item.cod === envio.codigo);
+
+      // Sumar las cantidades del conteo relacionado
+      const sumaConteo = conteoRelacionado.reduce((total, item) => total + Number(item.cant), 0);
+
+      // Calcular faltantes y sobrantes
+      const diferencia = Number(envio.enviados) - (Number(envio.recibidos) + sumaConteo);
+      if (diferencia > 0) {
+        acc[envio.fecha].faltantes += diferencia; // Sumar a faltantes si es positivo
+      } else {
+        acc[envio.fecha].sobrantes += Math.abs(diferencia); // Sumar a sobrantes si es negativo
+      }
 
       return acc;
     }, {});
 
+    // Convertir el objeto agrupado en un array
     return Object.values(agrupados);
   };
 
@@ -62,7 +71,7 @@ const VerificacionPanel = () => {
   };
 
   const handleConfirmarVerificacion = async (envio) => {
-    const usuario = localStorage.getItem('username');
+    const IdUsuario = localStorage.getItem('id');
     const tipo = 'VERIFICACION';
 
     if (!window.confirm('¿Está seguro de que desea confirmar la verificación?')) {
@@ -79,11 +88,11 @@ const VerificacionPanel = () => {
 
     try {
       const conteos = conteo.map((item) => ({
-        tipo,
+        tipo: tipo,
         cant: item.cant,
         cod: item.cod,
         nro_envio: envio.nro,
-        usuario,
+        IdUsuario: IdUsuario,
       }));
 
       await enviarConteo(conteos);
@@ -95,9 +104,23 @@ const VerificacionPanel = () => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleGuardarConteo = (nuevoConteo) => {
     setConteo(nuevoConteo); // Actualiza el estado de conteo
+
+    // Actualizar la cantidad verificada en el estado enviosAgrupados
+    setEnviosAgrupados((prevEnvios) =>
+      prevEnvios.map((envio) =>
+        envio.nro === selectedEnvio.nro
+          ? {
+              ...envio,
+              conteo: nuevoConteo.reduce((total, item) => total + item.cant, 0), // Sumar las cantidades del conteo
+              recibidos: envio.recibidos, // Mantener los valores existentes
+            }
+          : envio
+      )
+    );
+
+    closeModal(); // Cerrar el modal
   };
 
   const closeModal = () => {
@@ -123,7 +146,6 @@ const VerificacionPanel = () => {
         <thead>
           <tr>
             <th>Fecha</th>
-            <th>Número de Envío</th>
             <th>Cantidad Enviada</th>
             <th>Cantidad Verificada</th>
             <th>Faltantes</th>
@@ -135,15 +157,20 @@ const VerificacionPanel = () => {
           {enviosAgrupados.map((envio, index) => (
             <tr key={index}>
               <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
-              <td>{envio.nro}</td>
               <td>{envio.enviados}</td>
-              <td>{envio.recibidos + envio.conteo}</td>
+              <td>{envio.recibidos}</td>
               <td>{envio.faltantes}</td>
               <td>{envio.sobrantes}</td>
               <td>
-                <button className='main-button' onClick={() => handleAgregarVerificacion(envio)}>Agregar Verificación</button>
-                <button className='main-button' onClick={() => handleVerDiferencias(envio)}>Ver Diferencias</button>
-                <button className='main-button' onClick={() => handleConfirmarVerificacion(envio)}>Confirmar Verificación</button>
+                <button className="main-button" onClick={() => handleAgregarVerificacion(envio)}>
+                  Agregar Verificación
+                </button>
+                <button className="main-button" onClick={() => handleVerDiferencias(envio)}>
+                  Ver Diferencias
+                </button>
+                <button className="main-button" onClick={() => handleConfirmarVerificacion(envio)}>
+                  Confirmar Verificación
+                </button>
               </td>
             </tr>
           ))}
@@ -154,7 +181,7 @@ const VerificacionPanel = () => {
         <VerificacionModal
           conteo={conteo}
           nroEnvio={selectedEnvio.nro}
-          handleGuardarConteo={setConteo}
+          handleGuardarConteo={handleGuardarConteo}
           closeModal={closeModal}
         />
       )}

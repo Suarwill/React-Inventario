@@ -3,21 +3,37 @@ import { getRecepciones } from './recepcionService';
 import './RecepcionPanel.css';
 
 const RecepcionPanel = () => {
-  const [recepciones, setRecepciones] = useState([]);
-  const [ultimoEnvio, setUltimoEnvio] = useState(null);
+  const [recepcionesCercanas, setRecepcionesCercanas] = useState([]);
 
   const handleLoadRecepciones = async () => {
     try {
       console.log('Cargando recepciones...');
       const data = await getRecepciones();
       if (Array.isArray(data) && data.length > 0) {
-        // Ordenar por fecha descendente y tomar el más reciente
-        const movimientoMasReciente = data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
-        setUltimoEnvio(movimientoMasReciente); // Guardar el último envío
-        setRecepciones(data); // Cargar todas las filas
+        // Encontrar la fecha más cercana a la fecha actual
+        const fechaActual = new Date();
+        const recepcionMasCercana = data.reduce((masCercana, recepcion) => {
+          const fechaRecepcion = new Date(recepcion.fecha);
+          const diferenciaActual = Math.abs(fechaRecepcion - fechaActual);
+          const diferenciaMasCercana = masCercana
+            ? Math.abs(new Date(masCercana.fecha) - fechaActual)
+            : Infinity;
+
+          return diferenciaActual < diferenciaMasCercana ? recepcion : masCercana;
+        }, null);
+
+        // Filtrar todas las recepciones que coincidan con la fecha más cercana
+        const fechaCercana = new Date(recepcionMasCercana.fecha).toISOString().split('T')[0];
+        const recepcionesFiltradas = data.filter(
+          (recepcion) => new Date(recepcion.fecha).toISOString().split('T')[0] === fechaCercana
+        );
+
+        // Ordenar las recepciones filtradas por el código (A-Z)
+        recepcionesFiltradas.sort((a, b) => a.cod.localeCompare(b.cod));
+
+        setRecepcionesCercanas(recepcionesFiltradas);
       } else {
-        setUltimoEnvio(null); // No hay último envío
-        setRecepciones([]); // No hay recepciones disponibles
+        setRecepcionesCercanas([]); // No hay recepciones disponibles
       }
     } catch (error) {
       console.error('Error al cargar recepciones:', error);
@@ -31,48 +47,43 @@ const RecepcionPanel = () => {
   return (
     <div className="panel-overlay">
       <h2>Recepciones</h2>
-      <table className="tabla-titular">
-        <thead>
-          {/* Fila superior con la fecha y número del último envío */}
-          {ultimoEnvio && (
+
+      <div className="table-container">
+        <table className="recepciones-table">
+          <thead>
             <tr>
-              <th colSpan="3">Último Envío</th>
+              <th>Código</th>
+              <th>Cantidad</th>
+              <th>Descripción</th>
+              <th>Fecha</th>
             </tr>
-          )}
-          {ultimoEnvio && (
-            <tr>
-              <td colSpan="1">Fecha: {ultimoEnvio.fecha}</td>
-              <td colSpan="2">Número: {ultimoEnvio.nro}</td>
-            </tr>
-          )}
-        </thead>
-      </table>
-    
-      <table className="tabla-contenido">
-        <thead>
-          {/* Cabeceras para las filas de recepciones */}
-          <tr>
-            <th>Código</th>
-            <th>Cantidad</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recepciones.length === 0 ? (
-            <tr>
-              <td colSpan="3">No hay recepciones disponibles</td>
-            </tr>
-          ) : (
-            recepciones.map((recepcion, index) => (
-              <tr key={index}>
-                <td>{recepcion.cod}</td>
-                <td>{recepcion.cant}</td>
-                <td>{recepcion.descripcion}</td>
+          </thead>
+          <tbody>
+            {recepcionesCercanas.length === 0 ? (
+              <tr>
+                <td colSpan="4">No hay recepciones disponibles</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              recepcionesCercanas.map((recepcion, index) => (
+                <tr key={index}>
+                  <td>{recepcion.cod}</td>
+                  <td>{recepcion.cant}</td>
+                  <td
+                    className={
+                      recepcion.descripcion === "->-<- Producto nuevo: Agregar descripcion"
+                        ? "highlight-orange"
+                        : ""
+                    }
+                  >
+                    {recepcion.descripcion}
+                  </td>
+                  <td>{recepcion.fecha}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

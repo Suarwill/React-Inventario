@@ -61,30 +61,33 @@ const EnviosPanel = () => {
         Ingresar Nuevo Envío
       </button>
 
-      <table className="envios-table">
-        <thead>
-          <tr>
-            <th>Destino</th>
-            <th>Comentario</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {envios.length === 0 ? (
-            <tr><td colSpan="3">No hay envíos disponibles</td></tr>
-          ) : (
-            envios.map((envio, index) => (
-              <tr key={index}>
-                <td>{envio.destino}</td>
-                <td>{envio.comentario}</td>
-                <td>
-                  <button className="main-button" onClick={() => handleEliminarEnvio(envio.id)}>Eliminar</button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      {/* Contenedor para limitar la altura de la tabla y habilitar scroll */}
+      <div className="table-container">
+        <table className="envios-table">
+          <thead>
+            <tr>
+              <th>Destino</th>
+              <th>Comentario</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {envios.length === 0 ? (
+              <tr><td colSpan="3">No hay envíos disponibles</td></tr>
+            ) : (
+              envios.map((envio, index) => (
+                <tr key={index}>
+                  <td>{envio.destino}</td>
+                  <td>{envio.comentario}</td>
+                  <td>
+                    <button className="main-button" onClick={() => handleEliminarEnvio(envio.id)}>Eliminar</button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {showModal && (
         <div className="modal-overlay">
