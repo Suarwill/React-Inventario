@@ -2,14 +2,18 @@ import React, { useState, useRef } from 'react';
 import axiosInstance from '../../axiosConfig';
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo, nroEnvio }) => {
-  const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ cod: '', cant: 0, descripcion: '' }]);
+  const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ codigo: '', cant: 0, descripcion: '' }]);
   const inputRefs = useRef({});
   const debounceTimeout = useRef(null); // Referencia para el temporizador de debounce
 
   const handleCodigoChange = (index, codigo) => {
+    // Convertir el código a mayúsculas inmediatamente
+    const codigoUpperCase = codigo.trim().toUpperCase();
+
+    // Actualizar el estado del conteo con el nuevo código en mayúsculas
     setConteo((prevConteo) => {
       const nuevoConteo = [...prevConteo];
-      nuevoConteo[index].cod = codigo;
+      nuevoConteo[index] = { ...nuevoConteo[index], codigo: codigoUpperCase }; // Actualizar solo el campo 'codigo'
       return nuevoConteo;
     });
 
@@ -18,52 +22,40 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
       clearTimeout(debounceTimeout.current);
     }
 
-    // Usar debounce para procesar el código completo después de 200 ms de inactividad
+    // Usar debounce para procesar el código después de x00 ms de inactividad
     debounceTimeout.current = setTimeout(async () => {
       try {
-        // Verificar si el código tiene una longitud mínima esperada (por ejemplo, 5 caracteres)
-        if (codigo.length < 5) {
+        if (codigoUpperCase.length < 5) {
           console.warn('El código es demasiado corto para procesar.');
           return;
         }
 
-        const response = await axiosInstance.get(`/api/product/search/${codigo}`);
+        const response = await axiosInstance.get(`/api/product/search/${codigoUpperCase}`);
         const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
 
         setConteo((prevConteo) => {
           const nuevoConteo = [...prevConteo];
-          nuevoConteo[index] = { cod: codigo, cant: 1, descripcion }; // Cambiar cant a 1 al ingresar un código válido
+          nuevoConteo[index] = { ...nuevoConteo[index], descripcion, cant: 1 }; // Actualizar descripción y cantidad
+
+          // Agregar una nueva fila vacía al final
+          nuevoConteo.push({ codigo: '', cant: 0, descripcion: '' });
           return nuevoConteo;
         });
 
-        // Mover el foco al siguiente input
+        // Enfocar automáticamente el campo de código de la nueva fila
         setTimeout(() => {
-          const nextInput = inputRefs.current[index + 1];
-          if (nextInput) {
-            nextInput.focus();
-          }
-        }, 0);
-
-        // Agregar una nueva fila vacía si estamos en la última fila
-        if (index === conteo.length - 1) {
-          setConteo((prevConteo) => {
-            const nuevoConteo = [...prevConteo, { cod: '', cant: 0, descripcion: '' }]; // Nueva fila con cant en 0
-            return nuevoConteo;
-          });
-
-          // Esperar a que React actualice el DOM y luego enfocar el nuevo input
+          const nuevaFilaIndex = index + 1;
           setTimeout(() => {
-            const nextInput = inputRefs.current[index + 1];
-            if (nextInput) {
-              nextInput.focus();
+            if (inputRefs.current[nuevaFilaIndex]) {
+              inputRefs.current[nuevaFilaIndex].focus();
             }
-          }, 0);
-        }
+          }, 50); // Asegurar que React haya renderizado la nueva fila
+        }, 0);
       } catch (error) {
         console.error('Error al buscar el código:', error);
         alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
       }
-    }, 200); // Reducir el tiempo de espera para mejorar la respuesta
+    }, 500); // Reducir el tiempo de espera para mejorar la respuesta
   };
 
   const handleCantidadChange = (index, nuevaCantidad) => {
@@ -80,10 +72,10 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
 
   const handleGuardar = () => {
     const conteoFiltrado = conteo
-      .filter(item => item.cod.trim() !== '' && item.cant > 0)
+      .filter(item => item.codigo.trim() !== '' && item.cant > 0) // Cambiar item.cod a item.codigo
       .map(item => ({
         ...item,
-        cod: item.cod.toUpperCase(), // Convertir el código a mayúsculas
+        codigo: item.codigo.toUpperCase(), // Cambiar item.cod a item.codigo
         nro_envio: nroEnvio, // Usar el número de envío pasado como propiedad
       }));
 
@@ -114,7 +106,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
                 <td>
                   <input
                     type="text"
-                    value={item.cod}
+                    value={item.codigo}
                     ref={(el) => (inputRefs.current[index] = el)}
                     onChange={(e) => handleCodigoChange(index, e.target.value)}
                   />

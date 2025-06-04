@@ -16,7 +16,27 @@ const VerificacionPanel = () => {
     const cargarDatos = async () => {
       try {
         const enviosData = await fetchUltimosEnvios();
-        const agrupados = agruparEnvios(enviosData, conteo);
+
+        // Verificar los códigos de conteo y alinearlos con los envíos
+        const conteoVerificado = conteo.map((item) => {
+          const envioRelacionado = enviosData.find(
+            (envio) => envio.codigo.trim().toUpperCase() === item.codigo.trim().toUpperCase()
+          );
+
+          if (envioRelacionado) {
+            return {
+              ...item,
+              fecha: envioRelacionado.fecha,
+              nro_envio: envioRelacionado.nro,
+            };
+          } else {
+            // Si no hay un envío relacionado, mantener el item sin cambios
+            return item;
+          }
+        });
+
+        // Agrupar envíos y realizar los cálculos
+        const agrupados = agruparEnvios(enviosData, conteoVerificado);
         setEnviosAgrupados(agrupados);
       } catch (err) {
         setError(err.message);
@@ -45,7 +65,9 @@ const VerificacionPanel = () => {
       acc[envio.fecha].recibidos += Number(envio.recibidos) || 0;
 
       // Filtrar conteos relacionados con el código del envío
-      const conteoRelacionado = conteo.filter((item) => item.cod === envio.codigo);
+      const conteoRelacionado = conteo.filter(
+        (item) => item.codigo.trim().toUpperCase() === envio.codigo.trim().toUpperCase()
+      );
 
       // Sumar las cantidades del conteo relacionado
       const sumaConteo = conteoRelacionado.reduce((total, item) => total + Number(item.cant), 0);
@@ -58,8 +80,39 @@ const VerificacionPanel = () => {
         acc[envio.fecha].sobrantes += Math.abs(diferencia); // Sumar a sobrantes si es negativo
       }
 
+      // Agregar calculoRecibidos al envío
+      envio.calculoRecibidos = Number(envio.recibidos) + sumaConteo;
+
       return acc;
     }, {});
+
+    // Verificar si hay códigos en conteo que no están en los envíos
+    conteo.forEach((item) => {
+      const codigoExiste = envios.some(
+        (envio) => envio.codigo.trim().toUpperCase() === item.codigo.trim().toUpperCase()
+      );
+
+      if (!codigoExiste) {
+        // Buscar el envío seleccionado para usar su fecha y número
+        const envioSeleccionado = envios.find(
+          (envio) => envio.nro === item.nro_envio
+        );
+
+        const fechaValida = envioSeleccionado ? envioSeleccionado.fecha : "Sin Fecha";
+
+        if (!agrupados[fechaValida]) {
+          agrupados[fechaValida] = {
+            fecha: fechaValida,
+            enviados: 0,
+            recibidos: 0,
+            faltantes: 0,
+            sobrantes: 0,
+          };
+        }
+
+        agrupados[fechaValida].sobrantes += Number(item.cant) || 0;
+      }
+    });
 
     // Convertir el objeto agrupado en un array
     return Object.values(agrupados);
@@ -81,7 +134,7 @@ const VerificacionPanel = () => {
       alert('Debe ingresar al menos un conteo antes de confirmar la verificación.');
       return;
     }
-    if (conteo.some(item => !item.cod || item.cant <= 0)) {
+    if (conteo.some(item => !item.codigo || item.cant <= 0)) {
       alert('Todos los conteos deben tener un código válido y una cantidad mayor a cero.');
       return;
     }
@@ -90,7 +143,7 @@ const VerificacionPanel = () => {
       const conteos = conteo.map((item) => ({
         tipo: tipo,
         cant: item.cant,
-        cod: item.cod,
+        cod: item.codigo,
         nro_envio: envio.nro,
         IdUsuario: IdUsuario,
       }));
@@ -115,6 +168,7 @@ const VerificacionPanel = () => {
               ...envio,
               conteo: nuevoConteo.reduce((total, item) => total + item.cant, 0), // Sumar las cantidades del conteo
               recibidos: envio.recibidos, // Mantener los valores existentes
+              calculoRecibidos: envio.calculoRecibidos + nuevoConteo.reduce((total, item) => total + item.cant, 0), // Actualizar calculoRecibidos
             }
           : envio
       )
@@ -158,7 +212,7 @@ const VerificacionPanel = () => {
             <tr key={index}>
               <td>{new Date(envio.fecha).toLocaleDateString('es-ES')}</td>
               <td>{envio.enviados}</td>
-              <td>{envio.recibidos}</td>
+              <td>{envio.enviados - envio.faltantes + envio.sobrantes}</td>
               <td>{envio.faltantes}</td>
               <td>{envio.sobrantes}</td>
               <td>
