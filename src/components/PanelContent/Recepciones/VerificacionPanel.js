@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchUltimosEnvios, enviarConteo } from './verificacionService';
 import VerificacionModal from './verificacionModal';
 import DiferenciasModal from './DiferenciasModal';
+import './RecepcionPanel.css';
 
 const VerificacionPanel = () => {
   const [enviosAgrupados, setEnviosAgrupados] = useState([]);
@@ -55,6 +56,7 @@ const VerificacionPanel = () => {
           recibidos: 0,
           faltantes: 0,
           sobrantes: 0,
+          detalles: [], // Inicializar detalles como un array vacío
         };
       }
 
@@ -83,6 +85,15 @@ const VerificacionPanel = () => {
       // Agregar calculoRecibidos al envío
       envio.calculoRecibidos = Number(envio.recibidos) + sumaConteo;
 
+      // Agregar detalles al envío agrupado
+      acc[envio.fecha].detalles.push({
+        codigo: envio.codigo,
+        enviados: envio.enviados,
+        recibidos: envio.recibidos,
+        descripcion: envio.descripcion || 'Sin descripción',
+        calculoRecibidos: envio.calculoRecibidos,
+      });
+
       return acc;
     }, {});
 
@@ -107,10 +118,20 @@ const VerificacionPanel = () => {
             recibidos: 0,
             faltantes: 0,
             sobrantes: 0,
+            detalles: [], // Inicializar detalles como un array vacío
           };
         }
 
         agrupados[fechaValida].sobrantes += Number(item.cant) || 0;
+
+        // Agregar el detalle faltante
+        agrupados[fechaValida].detalles.push({
+          codigo: item.codigo,
+          enviados: 0,
+          recibidos: 0,
+          descripcion: item.descripcion || 'Sin descripción',
+          calculoRecibidos: Number(item.cant),
+        });
       }
     });
 
@@ -169,6 +190,16 @@ const VerificacionPanel = () => {
               conteo: nuevoConteo.reduce((total, item) => total + item.cant, 0), // Sumar las cantidades del conteo
               recibidos: envio.recibidos, // Mantener los valores existentes
               calculoRecibidos: envio.calculoRecibidos + nuevoConteo.reduce((total, item) => total + item.cant, 0), // Actualizar calculoRecibidos
+              detalles: [
+                ...envio.detalles, // Mantener los detalles existentes
+                ...nuevoConteo.map((item) => ({
+                  codigo: item.codigo,
+                  enviados: 0, // En este caso, enviados no cambia
+                  recibidos: item.cant, // Agregar la cantidad recibida del conteo
+                  descripcion: item.descripcion || 'Sin descripción', // Asegurar que haya una descripción
+                  calculoRecibidos: item.cant, // Actualizar calculoRecibidos
+                })),
+              ],
             }
           : envio
       )
@@ -187,12 +218,26 @@ const VerificacionPanel = () => {
       return;
     }
 
-    // Calcular diferencias para el envío seleccionado
-    const diferencias = enviosAgrupados.map((envio) => {
-      const diferencia = Number(envio.enviados) - Number(envio.calculoRecibidos || 0);
+    // Buscar el envío actualizado en enviosAgrupados
+    const envioActualizado = enviosAgrupados.find((e) => e.nro === envio.nro);
+
+    if (!envioActualizado) {
+      alert('No se encontraron datos actualizados para este envío.');
+      return;
+    }
+
+    // Verificar si el envío tiene detalles
+    if (!envioActualizado.detalles || !Array.isArray(envioActualizado.detalles)) {
+      alert('El envío no contiene detalles válidos.');
+      return;
+    }
+
+    // Calcular diferencias para los detalles del envío actualizado
+    const diferencias = envioActualizado.detalles.map((detalle) => {
+      const diferencia = Number(detalle.enviados) - Number(detalle.calculoRecibidos || 0); // Usar calculoRecibidos
       return {
-        cod: envio.codigo,
-        descripcion: envio.descripcion || 'Sin descripción', // Asegurar que haya una descripción
+        cod: detalle.codigo,
+        descripcion: detalle.descripcion || 'Sin descripción', // Asegurar que haya una descripción
         diferencia: diferencia,
       };
     });
@@ -202,8 +247,13 @@ const VerificacionPanel = () => {
       (diferencia) => diferencia.diferencia !== 0
     );
 
+    if (diferenciasFiltradas.length === 0) {
+      alert('No hay diferencias para mostrar.');
+      return;
+    }
+
     // Asignar las diferencias al envío seleccionado
-    setSelectedEnvio({ ...envio, diferencias: diferenciasFiltradas });
+    setSelectedEnvio({ ...envioActualizado, diferencias: diferenciasFiltradas });
     setModalVisible2(true);
   };
 

@@ -45,7 +45,6 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
           <thead>
             <tr>
               <th>Código</th>
-              <th>Cantidad</th>
               <th>Descripción</th>
               <th>Faltante</th>
               <th>Sobrante</th>
@@ -55,7 +54,6 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
             {diferenciasFiltradas.map((diferencia, index) => (
               <tr key={index}>
                 <td>{diferencia.cod}</td>
-                <td>{diferencia.cantidad}</td>
                 <td>{diferencia.descripcion}</td>
                 <td>{diferencia.faltante}</td>
                 <td>{diferencia.sobrante}</td>
