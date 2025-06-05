@@ -187,7 +187,23 @@ const VerificacionPanel = () => {
       return;
     }
 
-    setSelectedEnvio(envio);
+    // Calcular diferencias para el envío seleccionado
+    const diferencias = enviosAgrupados.map((envio) => {
+      const diferencia = Number(envio.enviados) - Number(envio.calculoRecibidos || 0);
+      return {
+        cod: envio.codigo,
+        descripcion: envio.descripcion || 'Sin descripción', // Asegurar que haya una descripción
+        diferencia: diferencia,
+      };
+    });
+
+    // Filtrar diferencias relevantes (faltante o sobrante distinto de 0)
+    const diferenciasFiltradas = diferencias.filter(
+      (diferencia) => diferencia.diferencia !== 0
+    );
+
+    // Asignar las diferencias al envío seleccionado
+    setSelectedEnvio({ ...envio, diferencias: diferenciasFiltradas });
     setModalVisible2(true);
   };
 

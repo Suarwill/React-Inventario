@@ -13,6 +13,30 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
     );
   }
 
+  // Calcular faltantes y sobrantes
+  const diferenciasCalculadas = diferencias.map(diferencia => {
+    const faltante = diferencia.diferencia < 0 ? Math.abs(diferencia.diferencia) : 0;
+    const sobrante = diferencia.diferencia > 0 ? diferencia.diferencia : 0;
+    return { ...diferencia, faltante, sobrante };
+  });
+
+  // Filtrar códigos con faltante o sobrante distinto de 0
+  const diferenciasFiltradas = diferenciasCalculadas.filter(
+    diferencia => diferencia.faltante !== 0 || diferencia.sobrante !== 0
+  );
+
+  if (diferenciasFiltradas.length === 0) {
+    return (
+      <div className="modal">
+        <div className="modal-content">
+          <h3>Diferencias</h3>
+          <p>No hay diferencias para mostrar.</p>
+          <button onClick={closeModal}>Cerrar</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -23,20 +47,20 @@ const DiferenciasModal = ({ diferencias, closeModal }) => {
               <th>Código</th>
               <th>Cantidad</th>
               <th>Descripción</th>
-              <th>Diferencia</th>
+              <th>Faltante</th>
+              <th>Sobrante</th>
             </tr>
           </thead>
           <tbody>
-            {diferencias
-              .filter(diferencia => diferencia.diferencia !== 0) // Filtrar diferencias distintas de 0
-              .map((diferencia, index) => (
-                <tr key={index}>
-                  <td>{diferencia.cod}</td>
-                  <td>{diferencia.cantidad}</td>
-                  <td>{diferencia.descripcion}</td>
-                  <td>{diferencia.diferencia}</td>
-                </tr>
-              ))}
+            {diferenciasFiltradas.map((diferencia, index) => (
+              <tr key={index}>
+                <td>{diferencia.cod}</td>
+                <td>{diferencia.cantidad}</td>
+                <td>{diferencia.descripcion}</td>
+                <td>{diferencia.faltante}</td>
+                <td>{diferencia.sobrante}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
         <button onClick={closeModal}>Cerrar</button>
