@@ -7,13 +7,17 @@ echo "📦 Inicializando proyecto Node.js..."
 npm init -y
 
 echo "📚 Instalando dependencias..."
-npm install express cors dotenv pg bcrypt jsonwebtoken express-validator multer csv-parser xlsx
+npm install express cors dotenv pg bcrypt jsonwebtoken express-validator multer csv-parser xlsx express-rate-limit
+
+# Solicitar la contraseña al usuario
+read -sp "Introduce la contraseña para el usuario PostgreSQL: " DB_PASSWORD
+echo
 
 echo "🔐 Creando archivo .env..."
-cat > .env <<'EOF'
+cat > .env <<EOF
 PORT=3000
 DB_USER=servidor
-DB_PASSWORD=ServerSQL
+DB_PASSWORD=$DB_PASSWORD
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=inventario
