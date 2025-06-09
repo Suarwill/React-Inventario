@@ -6,7 +6,7 @@ sudo apt install -y nginx
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
-NGINX_CONF="/etc/nginx/conf.d/react_frontend.conf"
+NGINX_CONF="/etc/nginx/sites-available/default"
 
 echo "🛠️ Configurando NGINX..."
 sudo tee $NGINX_CONF > /dev/null <<EOF

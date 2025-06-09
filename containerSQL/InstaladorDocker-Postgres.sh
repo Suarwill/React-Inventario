@@ -3,12 +3,15 @@
 # Variables de entorno
 CONTAINER_NAME=postgres_inventario
 DB_USER=servidor
-DB_PASSWORD=ServerSQL
 DB_NAME=inventario
 DB_PORT=5432
 VOLUME_NAME=databaseInventario
 
-# Instalar Docker si no está presente
+# Solicitar la contraseña al usuario
+read -sp "Introduce la contraseña para el usuario PostgreSQL ($DB_USER): " DB_PASSWORD
+echo
+
+# Verificar si Docker está instalado
 if ! command -v docker &> /dev/null; then
     echo "Docker no está instalado. Instalando..."
 

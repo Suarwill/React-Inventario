@@ -86,7 +86,18 @@ INSERT INTO sectores (sector) VALUES
   ('ADMINISTRACION'),
   ('INVENTARIOS'),
   ('SOPORTE'),
-  ('ZONALES');
+  ('ZONALES'),
+  ('ALAMEDA 2'),
+  ('ANTOFAGASTA 1'),
+  ('ANTOFAGASTA 2'),
+  ('ANTOFAGASTA 3'),
+  ('ANTOFAGASTA 4'),
+  ('ANTOFAGASTA 5'),
+  ('ANTOFAGASTA 6'),
+  ('ANTOFAGASTA 7'),
+  ('ANTOFAGASTA 8'),
+  ('CASTRO 1'),
+  ('CASTRO 2');
 
 -- Insertar estatus
 INSERT INTO estatus (estatus) VALUES
