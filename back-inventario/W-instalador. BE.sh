@@ -62,7 +62,7 @@ server {
     gzip_vary on; # Agregar encabezado Vary para proxies
     
     location / {
-        try_files \$uri /index.html;
+        try_files $uri $uri/ /index.html;
     }
 
     location /api/ {
