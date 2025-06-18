@@ -182,7 +182,7 @@ function actualizar_backend() {
 
 function actualizar_frontend() {
     SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    FRONTEND_BUILD="$SCRIPT_DIR/../frontend/build"
+    FRONTEND_BUILD="$SCRIPT_DIR/../build"
 
     echo "📦 Actualizando el frontend..."
     git pull origin main
