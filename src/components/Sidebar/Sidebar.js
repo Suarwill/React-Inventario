@@ -27,8 +27,8 @@ const Sidebar = ({ onSelect }) => {
         </button>
         {active.envio && (
           <div className="submenu">
-            <button className="sub-button" onClick={() => handleSelect('Mermas - NC - Eliminados')}>Mermas - NC - Eliminados</button>
-            <button className="sub-button" onClick={() => handleSelect('Sobrestock')}>Sobrestock</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Mermas - NC - Eliminados')}>Mermas - NC - Eliminados</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Sobrestock')}>Sobrestock</button>
           </div>
         )}
       </div>
@@ -39,8 +39,8 @@ const Sidebar = ({ onSelect }) => {
         </button>
         {active.recepcion && (
           <div className="submenu">
-            <button className="sub-button" onClick={() => handleSelect('Envío desde Matriz')}>Envío desde Matriz</button>
-            <button className="sub-button" onClick={() => handleSelect('Verificación')}>Verificación</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Envío desde Matriz')}>Envío desde Matriz</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Verificación')}>Verificación</button>
           </div>
         )}
       </div>
@@ -51,8 +51,8 @@ const Sidebar = ({ onSelect }) => {
         </button>
         {active.inventario && (
           <div className="submenu">
-            <button className="sub-button" onClick={() => handleSelect('Diferencia en AV')}>Diferencia en AV</button>
-            <button className="sub-button" onClick={() => handleSelect('Diferencia en Categoría')}>Diferencia en Categoría</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Diferencia en AV')}>Diferencia en AV</button>
+            <button className="sub-button-side" onClick={() => handleSelect('Diferencia en Categoría')}>Diferencia en Categoría</button>
           </div>
         )}
       </div>

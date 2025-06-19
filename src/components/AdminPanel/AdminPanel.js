@@ -6,11 +6,11 @@ import { RegisterUserModal, EditUserModal, SearchUserModal, DeleteUserModal } fr
 import { UploadCsvModal, EditProductModal } from './ProductManagement/ProductModals';
 import { handleUploadReposicion, handleDeleteReposicion } from './MovementManagement/MovFuntions';
 import { UploadReposicion, DeleteReposicion } from './MovementManagement/MovModals';
+import Navbar from '../Navbar/Navbar';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const usuario = localStorage.getItem('username');
   const [modal, setModal] = useState(null);
   const [csvFile, setCsvFile] = useState(null);
   const [message, setMessage] = useState('');
@@ -27,6 +27,7 @@ const AdminPanel = () => {
   useEffect(() => {
     if (!promptShownRef.current) {
       const username = localStorage.getItem('username');
+      
       if (username === 'admin') {
         setIsAuthorized(true);
       } else {
@@ -36,6 +37,8 @@ const AdminPanel = () => {
       promptShownRef.current = true;
     }
   }, [navigate]);
+
+  const sector = localStorage.getItem('sector') || 'sector';
 
   // Si no está autorizado, no renderiza el panel
   if (!isAuthorized) {
@@ -48,9 +51,9 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="admin-panel">
-      <h2>Panel de {usuario}</h2>
 
+    <div className="admin-panel">
+      <Navbar sector={sector} />
       <div className="grid-container">
         <h3>Manejo de Usuarios</h3>
         <div className="botones">

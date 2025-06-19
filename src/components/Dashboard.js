@@ -17,11 +17,12 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  const username = localStorage.getItem('username') || 'Usuario';
+  const sector = localStorage.getItem('sector') || 'Sector';
+
 
   return (
     <div className="dashboard-wrapper">
-      <Navbar username={username} />
+      <Navbar sector={sector} />
       <div className="dashboard-container">
         <Sidebar onSelect={setSelectedOption} />
         <PanelContent

@@ -29,8 +29,8 @@
     margin-left: 15px;
   }
   
-  .sub-button {
-    background: linear-gradient(to right, #4a90e2, #bd4fbb);
+  .sub-button-side {
+    background: linear-gradient(to right, #0569d5, #756af2);
     color: black;
     border: none;
     padding: 8px 12px;
@@ -41,7 +41,7 @@
     transition: background 0.3s ease;
   }
   
-  .sub-button:hover {
+  .sub-button-side:hover {
     background: linear-gradient(to right, #5fa8ec, #c167cb);
     font-weight: 1000;
   }

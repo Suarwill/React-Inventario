@@ -2,7 +2,7 @@ import React from 'react';
 import './Navbar.css';
 
 const Navbar = () => {
-  const username = localStorage.getItem('username');
+  const sector = localStorage.getItem('sector');
 
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -11,7 +11,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <h1>Panel de {username}</h1>
+      <h1>Panel de {sector}</h1>
       <button className="logout-button" onClick={handleLogout}>Cerrar Sesión</button>
     </nav>
   );
