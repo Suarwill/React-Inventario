@@ -25,7 +25,27 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
 
       setMensaje('Login exitoso');
-      navigate('/dashboard');
+      console.log(response.data.user.sector);
+      
+      switch (response.data.user.sector) {
+        case 'ADMINISTRACION':
+          navigate('/admin');
+          break;
+          
+        case 'ZONAL Z0':
+        case 'ZONAL ZII':
+        case 'ZONAL ZIV':
+        case 'ZONAL ZV':
+        case 'ZONAL ZS1':
+        case 'ZONAL ZS2':
+        case 'ZONAL ZVIII':
+        case 'ZONAL ZX':
+          navigate('/zonal');
+          break;
+          
+        default:
+          navigate('/dashboard');
+      }
     } catch (error) {
       console.error('Error en login:', error.response?.data || error); // Agregado para depuración
       setMensaje(error.response?.data?.error || 'Error al iniciar sesión');

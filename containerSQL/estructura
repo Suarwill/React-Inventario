@@ -79,14 +79,24 @@ INSERT INTO zonas (zona) VALUES
   ('ZS1'),
   ('ZS2'),
   ('ZVIII'),
-  ('ZX');
+  ('ZX')
+  ;
 
 -- Insertar sectores
 INSERT INTO sectores (sector) VALUES
   ('ADMINISTRACION'),
+  ('GERENCIA')
   ('INVENTARIOS'),
   ('SOPORTE'),
-  ('ZONALES'),
+  ('ZONAL Z0'),
+  ('ZONAL ZII'),
+  ('ZONAL ZIV'),
+  ('ZONAL ZV'),
+  ('ZONAL ZS1'),
+  ('ZONAL ZS2'),
+  ('ZONAL ZVIII'),
+  ('ZONAL ZX'),
+  ('BODEGA'),
   ('ALAMEDA 2'),
   ('ANTOFAGASTA 1'),
   ('ANTOFAGASTA 2'),
@@ -97,11 +107,13 @@ INSERT INTO sectores (sector) VALUES
   ('ANTOFAGASTA 7'),
   ('ANTOFAGASTA 8'),
   ('CASTRO 1'),
-  ('CASTRO 2');
+  ('CASTRO 2')
+  ;
 
 -- Insertar estatus
 INSERT INTO estatus (estatus) VALUES
   ('ANTIGUO'),
   ('VIGENTE'),
   ('ELIMINADO'),
-  ('NUEVO');
+  ('NUEVO')
+  ;
