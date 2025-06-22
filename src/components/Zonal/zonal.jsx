@@ -71,31 +71,77 @@ const Zonal = () => {
       <Navbar sector={sector}/>  
       <div className="zonal-header">
         <button className="main-button-z"> Verificaciones </button>
-        <button className="main-button-z"> Inventarios </button>
         <button className="main-button-z"> Depósitos </button>
+        <button className="main-button-z"> Inventarios </button>
         <button className="main-button-z"> Tareas Pendientes </button>
       </div>
 
       <div className="zonal-content">
         <div className='display-izq'>
           <h3> Cumplimiento de Verificaciones </h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Módulo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Egaña 1</td>
+                <td>100 %</td>
+              </tr>
+              <tr>
+                <td>Egaña 2</td>
+                <td>100 %</td>
+              </tr>
+              <tr>
+                <td>Egaña 3</td>
+                <td>Con diferencias</td>
+              </tr>
+              <tr>
+                <td>Egaña 4</td>
+                <td>Aún no realiza</td>
+              </tr>
+            </tbody>
+          </table>
+
         </div>
 
         <div className='display-central'>
+
           <div className='box-central-superior'>
             <div className='box-finance'>
               <h3> Depósitos </h3>
               <div className="finance-table">
-                <thead>
-                  <tr>
-                    <th>Ultimos 7 días</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>$ 2.230.500</td>
-                  </tr>
-                </tbody>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Ultimos 7 días</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>$ 2.230.500</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Ayer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>$ 308.000</td>
+                    </tr>
+                  </tbody>
+                </table>
+
               </div>
             </div>
 
@@ -103,9 +149,9 @@ const Zonal = () => {
               <h3> Inventarios </h3>
               <div className="inventory-chart">
                 {renderPieChart([
-                  { value: 15, color: 'steelblue', label: 'No Realizado' },
-                  { value: 25, color: 'firebrick', label: 'En Proceso' },
-                  { value: 60, color: 'green', label: 'Realizado' },
+                  { value: 15, color: 'red', label: 'No Realizado' },
+                  { value: 25, color: 'yellow', label: 'En Proceso' },
+                  { value: 60, color: 'limegreen', label: 'Realizado' },
                 ])}
               </div>
             </div>
@@ -118,6 +164,9 @@ const Zonal = () => {
 
         <div className='display-der'>
           <h3> Mapa de módulos </h3>
+          <div className="map-chart"> 
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Comunas_de_Santiago_%282005%29.svg/500px-Comunas_de_Santiago_%282005%29.svg.png" alt="Mapa de módulos" />
+          </div>
         </div>
       </div>
     </div>
