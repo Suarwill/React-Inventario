@@ -159,6 +159,32 @@ const Zonal = () => {
 
           <div className='box-tareas'>
             <h3> Tareas Pendientes </h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tarea</th>
+                    <th>Fecha Inicial</th>
+                    <th width="20%">Feedback</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Inventario Reprogramado de Carcasas</td>
+                    <td>01/08/2025</td>
+                    <td><button className="button-tarea"> Completar </button></td>
+                  </tr>
+                  <tr>
+                    <td>Inventario Reprogramado de Láminas</td>
+                    <td>12/08/2025</td>
+                    <td><button className="button-tarea"> Completar </button></td>
+                  </tr>
+                  <tr>
+                    <td>Control de Ventas</td>
+                    <td>13/07/2025</td>
+                    <td><button className="button-tarea"> Completar </button></td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
         </div>
 
