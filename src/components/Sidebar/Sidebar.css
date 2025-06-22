@@ -5,7 +5,9 @@
   }
   
   .main-button-side {
-    background: linear-gradient(to right, #000000, #2c2c54);
+    background: linear-gradient(to right, black, darkslateblue);
+    background-color: white;
+    box-shadow: inset 2px 2px 2px whitesmoke, inset -2px -2px 3px black, 4px 4px 14px rgba(0,0,0,.1);
     color: white;
     border: none;
     margin: 5px;
@@ -18,7 +20,7 @@
     transition: background 0.3s ease;
   }
   
-  .main-button:hover {
+  .main-button-side:hover {
     background: linear-gradient(to right, #1e1e2f, #4a4a75);
   }
   
@@ -30,7 +32,9 @@
   }
   
   .sub-button-side {
-    background: linear-gradient(to right, #0569d5, #756af2);
+    background: linear-gradient(to right, darkslategrey , darkslateblue);
+    background-color: white;
+    box-shadow: inset 2px 2px 2px whitesmoke, inset -2px -2px 3px black, 4px 4px 14px rgba(0,0,0,.1);
     color: black;
     border: none;
     padding: 8px 12px;
@@ -42,6 +46,6 @@
   }
   
   .sub-button-side:hover {
-    background: linear-gradient(to right, #5fa8ec, #c167cb);
+    background: linear-gradient(to right,yellow,white);
     font-weight: 1000;
   }

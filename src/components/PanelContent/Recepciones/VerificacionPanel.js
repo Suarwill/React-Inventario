@@ -258,11 +258,11 @@ const VerificacionPanel = () => {
   };
 
   return (
-    <div>
+    <div className="panel-overlay">
       <h2>Últimos Envíos</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {!error && enviosAgrupados.length === 0 && <p>No se encontraron envíos recientes.</p>}
-      <table>
+      <table className='recepciones-table'>
         <thead>
           <tr>
             <th>Fecha</th>
@@ -270,7 +270,7 @@ const VerificacionPanel = () => {
             <th>Cantidad Verificada</th>
             <th>Faltantes</th>
             <th>Sobrantes</th>
-            <th>Acciones</th>
+            <th width="300px">Acciones</th>
           </tr>
         </thead>
         <tbody>
