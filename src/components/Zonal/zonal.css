@@ -3,7 +3,7 @@
     width: 100%;
     flex-direction: column;
     height: 100vh;
-    background-image: url('../Misc/bg.jpg');
+    background-image: url('../Misc/bg2.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -53,11 +53,14 @@
 
 .box-finance, .box-inventory, .box-tareas, .display-izq, .display-der  {
     align-items: center;   
-    background-color: aquamarine;
+    background: linear-gradient(217deg, grey, white, grey);
+    background-color: white;
     box-shadow: inset 5px 5px 5px whitesmoke, inset -4px -4px 5px black, 4px 4px 14px rgba(0,0,0,.1);
     border-radius: 15px;
     padding: 5px 20px;
-    text-align: center; 
+    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
 .display-izq, .display-der {
@@ -70,9 +73,36 @@
 
 .box-finance, .box-inventory {
     width: 50%;
-    height: 100px;
+    height: 250px;
 }
 
+.finance-table {
+    width: 100%;
+    margin-top: 10px;
+}
+  
+.finance-table table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* <-- esto alinea todo el texto al centro */
+}
+.finance-table th, .finance-table td {
+  padding: 8px;
+  font-size: 16px;
+}
+
+/* Estilo de grafico semicircular */
+.inventory-chart {
+    width: 200px;
+    height: 200px;
+    margin: 5px auto;
+    text-align: center;
+}
+.pie-chart {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
 .box-tareas {
     grid-column: 1 / -1;
