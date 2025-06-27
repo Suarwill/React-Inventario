@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from '../../../../components/axiosConfig';
 import './RecepcionPanel.css'; 
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo, nroEnvio }) => {

@@ -1,6 +1,6 @@
 // filepath: /home/krisis/PROYECTOS/React-Inventario/src/components/PanelContent/Inventarios/InventariosPanel.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../../components/axiosConfig';
 import * as XLSX from 'xlsx';
 import './InventariosPanel.css'; // Asegúrate de crear este archivo para estilos
 

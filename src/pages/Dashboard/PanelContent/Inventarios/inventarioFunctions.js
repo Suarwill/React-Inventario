@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from '../../../../components/axiosConfig';
 
 export const fetchUltimaFecha = async (tipo, sector) => {
   try {

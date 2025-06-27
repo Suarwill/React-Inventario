@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import PanelContent from '../../components/PanelContent/PanelContent';
+import PanelContent from './PanelContent/PanelContent';
 import Navbar from '../../components/Navbar/Navbar';
 import './Dashboard.css';
 

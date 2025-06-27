@@ -1,4 +1,4 @@
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from '../../../../components/axiosConfig';
 const API_URL = '/api/movimiento';
 
 export const fetchUltimosEnvios = async () => {
