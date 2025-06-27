@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axiosInstance from '../../axiosConfig';
+import './RecepcionPanel.css'; 
 
 const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialConteo, nroEnvio }) => {
   const [conteo, setConteo] = useState(initialConteo?.length > 0 ? initialConteo : [{ codigo: '', cant: 0, descripcion: '' }]);
@@ -95,7 +96,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
         <table>
           <thead>
             <tr>
-              <th>Código</th>
+              <th >Código</th>
               <th>Cantidad</th>
               <th>Descripción</th>
             </tr>
@@ -111,7 +112,7 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
                     onChange={(e) => handleCodigoChange(index, e.target.value)}
                   />
                 </td>
-                <td>
+                <td width="10%">
                   <input
                     type="number"
                     value={item.cant}
@@ -119,13 +120,15 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
                     onChange={(e) => handleCantidadChange(index, parseInt(e.target.value, 10))}
                   />
                 </td>
-                <td>{item.descripcion || 'Sin descripción'}</td>
+                <td width="70%">{item.descripcion || 'Sin descripción'}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button onClick={handleGuardar}>Guardar</button>
-        <button onClick={closeModal}>Cerrar</button>
+        <div className="modal-buttons">
+          <button className='main-button' onClick={handleGuardar}>Guardar</button>
+          <button className='main-button' onClick={closeModal}>Cerrar</button>
+        </div>
       </div>
     </div>
   );
