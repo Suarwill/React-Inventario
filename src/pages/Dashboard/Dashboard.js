@@ -12,13 +12,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     const username = localStorage.getItem('username') || 'Usuario';
-    if (username === 'admin') {
-      navigate('/admin'); // Redirige al panel de administración si el usuario es admin
+    if (username === 'ADMIN') {
+      navigate('/admin');
     }
   }, [navigate]);
 
   const sector = localStorage.getItem('sector') || 'Sector';
-
 
   return (
     <div className="dashboard-wrapper">
