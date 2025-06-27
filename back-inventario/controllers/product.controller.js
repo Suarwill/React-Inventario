@@ -1,6 +1,5 @@
-const csv = require('csv-parser');
-const fs = require('fs');
 const pool = require('../db/pool');
+const { buscarProducto ,actualizarConCSV } = require('../services/product.service');
 
 const addProducto = async (req, res) => {
   const { codigo, descripcion, categoria } = req.body;
@@ -15,30 +14,25 @@ const addProducto = async (req, res) => {
 }
 
 const getProducto = async (req, res) => {
-    let { cod } = req.params; // Cambiar "const" por "let"
-    if (cod) {
-        cod = cod.toString().trim().toUpperCase();
-    } else {
-        return res.status(400).json({ error: 'Código de producto no proporcionado' });
+  const { cod } = req.params;
+  if (!cod) {
+    return res.status(400).json({ error: 'Código de producto no proporcionado' });
+  }
+  try {
+    const result = await buscarProducto(cod);
+    if (result.length === 0) {
+    return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    try {
-        let result;
-        if (cod) {
-            // Obtener un producto por código
-            result = await pool.query('SELECT * FROM productos WHERE codigo = $1', [cod]);
-        } else {
-            return res.status(404).json({ error: 'Producto no encontrado' });
-        }
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error('Error al obtener el producto:', error);
-        res.status(500).json({ error: 'Error al obtener el producto' });
-    }
+    res.status(200).json(result[0]);
+  } catch (error) {
+    console.error('Error al obtener el producto:', error);
+    res.status(500).json({ error: 'Error al obtener el producto' });
+  }
 }
 
 const updateProducto = async (req, res) => {
   const { id } = req.params;
-  const { codigo, descripcion, categoria } = req.body;
+  const { codigo, descripcion, categoria, estatus } = req.body;
   try {
     // Verificar si el producto existe
     const result = await pool.query('SELECT * FROM productos WHERE id = $1', [id]);
@@ -81,44 +75,10 @@ const uploadCsv = async (req, res) => {
     return res.status(400).json({ error: 'No se proporcionó un archivo.' });
   }
 
-  const productos = [];
   const filePath = req.file.path;
-
   try {
-    // Leer y procesar el archivo CSV sin encabezados
-    fs.createReadStream(filePath)
-      .pipe(csv({ separator: ';', headers: false })) // Especificar el separador como ";"
-      .on('data', (row) => {
-        const codigo = row[0]?.trim().toString().toUpperCase(); // Primera columna: codigo
-        const descripcion = row[1]?.trim().toUpperCase(); // Segunda columna: descripcion
-        const categoria = row[2]?.trim().toUpperCase(); // Tercera columna: categoria en mayúsculas
-
-        // Validaciones
-        if (codigo && codigo.length <= 10 && descripcion && categoria) {
-          productos.push([codigo, descripcion, categoria]);
-        } else {
-          console.warn('Fila ignorada por datos inválidos:', row);
-        }
-      })
-      .on('end', async () => {
-        console.log('Total de productos procesados:', productos.length); // Log para verificar el total
-        try {
-          const query = `
-            INSERT INTO productos (codigo, descripcion, categoria)
-            VALUES ($1, $2, $3)
-            ON CONFLICT (codigo) DO NOTHING
-          `;
-          for (const producto of productos) {
-            await pool.query(query, producto);
-          }
-          res.status(201).json({ message: 'Productos cargados con éxito.' });
-        } catch (error) {
-          console.error('Error al insertar productos:', error);
-          res.status(500).json({ error: 'Error al cargar los productos.' });
-        } finally {
-          fs.unlinkSync(filePath); // Eliminar el archivo temporal
-        }
-      });
+    const result = await actualizarConCSV(filePath);
+    return res.status(200).json(result);
   } catch (error) {
     console.error('Error al procesar el archivo CSV:', error);
     res.status(500).json({ error: 'Error al procesar el archivo CSV.' });

@@ -4,7 +4,7 @@ export const UploadCsvModal = ({ file, setFile, handleUploadCsv, setModal, showM
   <div className="modal">
     <h3>Cargar Productos (CSV)</h3>
     <p>Seleccione un archivo CSV para cargar productos.</p>
-    <p>Formato esperado: código, descripción, categoría (sin encabezados).</p>
+    <p>Formato esperado: código, descripción, categoría, estatus (sin encabezados).</p>
     <form onSubmit={(e) => handleUploadCsv(e, file, showMessage, setModal)}>
       <input
         type="file"
