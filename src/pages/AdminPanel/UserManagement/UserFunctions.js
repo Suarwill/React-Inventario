@@ -1,4 +1,4 @@
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from "../../../components/axiosConfig";
 
 export const handleRegister = async (data, showMessage, setModal) => {
   const { username, password, sector, zona } = data;

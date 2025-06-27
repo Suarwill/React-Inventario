@@ -1,4 +1,4 @@
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from "../../../components/axiosConfig";
 
 export const handleUploadCsv = async (event, file, showMessage, setModal) => {
   event.preventDefault();

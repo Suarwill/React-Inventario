@@ -1,4 +1,4 @@
-import axiosInstance from "../../axiosConfig";
+import axiosInstance from "../../../components/axiosConfig";
 import * as XLSX from 'xlsx';
 
 export const handleUploadReposicion = (file, showMessage, setModal) => {

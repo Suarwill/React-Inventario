@@ -6,7 +6,7 @@ import { RegisterUserModal, EditUserModal, SearchUserModal, DeleteUserModal } fr
 import { UploadCsvModal, EditProductModal } from './ProductManagement/ProductModals';
 import { handleUploadReposicion, handleDeleteReposicion } from './MovementManagement/MovFuntions';
 import { UploadReposicion, DeleteReposicion } from './MovementManagement/MovModals';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '../../components/Navbar/Navbar';
 import './AdminPanel.css';
 
 const AdminPanel = () => {

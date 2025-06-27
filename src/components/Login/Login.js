@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig'; // Importa el axios configurado
+import axiosInstance from '../axiosConfig';
 import './Login.css';
 
 const Login = () => {
@@ -47,7 +47,7 @@ const Login = () => {
           navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Error en login:', error.response?.data || error); // Agregado para depuración
+      console.error('Error en login:', error.response?.data || error);
       setMensaje(error.response?.data?.error || 'Error al iniciar sesión');
     }
   };

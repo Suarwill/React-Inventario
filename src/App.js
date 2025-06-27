@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/Login/Login'; // Actualización de la ruta
-import Dashboard from './components/Dashboard';
-import AdminPanel from './components/AdminPanel/AdminPanel';
-import Zonal from './components/Zonal/zonal';
+import Login from './components/Login/Login'; // Ruta permanece igual
+import Dashboard from './pages/Dashboard/Dashboard'; // Actualización de la ruta
+import AdminPanel from './pages/AdminPanel/AdminPanel'; // Actualización de la ruta
+import Zonal from './pages/Zonal/zonal'; // Actualización de la ruta
 
 
 const App = () => {
