@@ -32,7 +32,9 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
         }
 
         const response = await axiosInstance.get(`/api/product/search/${codigoUpperCase}`);
-        const descripcion = response.data[0]?.descripcion || 'Descripción no encontrada';
+        
+        // Verificar si la respuesta contiene datos válidos
+        const descripcion = response.data.descripcion || 'Descripción no encontrada';
 
         setConteo((prevConteo) => {
           const nuevoConteo = [...prevConteo];
@@ -41,17 +43,18 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
           // Agregar una nueva fila vacía al final
           nuevoConteo.push({ codigo: '', cant: 0, descripcion: '' });
           return nuevoConteo;
-        });
+          });
 
-        // Enfocar automáticamente el campo de código de la nueva fila
-        setTimeout(() => {
-          const nuevaFilaIndex = index + 1;
+          // Enfocar automáticamente el campo de código de la nueva fila
           setTimeout(() => {
-            if (inputRefs.current[nuevaFilaIndex]) {
-              inputRefs.current[nuevaFilaIndex].focus();
-            }
-          }, 50); // Asegurar que React haya renderizado la nueva fila
-        }, 0);
+            const nuevaFilaIndex = index + 1;
+            setTimeout(() => {
+              if (inputRefs.current[nuevaFilaIndex]) {
+                inputRefs.current[nuevaFilaIndex].focus();
+              }
+            }, 50); // Asegurar que React haya renderizado la nueva fila
+          }, 0);
+        
       } catch (error) {
         console.error('Error al buscar el código:', error);
         alert('Error al buscar el código. Verifique la conexión o el código ingresado.');
@@ -104,6 +107,20 @@ const VerificacionModal = ({ handleGuardarConteo, closeModal, conteo: initialCon
           <tbody>
             {conteo.map((item, index) => (
               <tr key={index}>
+                <td>
+                  <button
+                    className="delete-button"
+                    onClick={() => {
+                      setConteo((prevConteo) => {
+                        const nuevoConteo = [...prevConteo];
+                        nuevoConteo.splice(index, 1); // Eliminar la fila en el índice actual
+                        return nuevoConteo;
+                      });
+                    }}
+                  >
+                    -
+                  </button>
+                </td>
                 <td>
                   <input
                     type="text"

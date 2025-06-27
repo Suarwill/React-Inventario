@@ -40,3 +40,49 @@
 .envios-table tr:hover {
     background-color: #f1f1f1;
 }
+
+/* ======= BOTONES ======= */
+.add-button {
+    margin: 20px;
+    background: linear-gradient(to right, #000000, #2c2c54);
+    color: white;
+    width: 200px;
+    font-size: small;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.submit-button{
+    margin: 5px 20px;
+    background: linear-gradient(to right, #000000, green);
+    color: white;
+    width: 200px;
+    font-size: small;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.add-row-button, .remove-row-button, .cancel-button {
+    margin: 5px 20px;
+    padding: 0px 10px;
+    background: rgb(5, 5, 106);
+    color: white;
+    min-width: 30px;
+    height: 30px;
+    font-size: small;
+    border-radius: 5px;
+}
+
+.add-button:hover {
+    background: darkslateblue;
+}
+
+.cancel-button:hover, .remove-row-button:hover {
+    background: red;
+}
+
+.submit-button:hover, .add-row-button:hover {
+    background: limegreen;
+}

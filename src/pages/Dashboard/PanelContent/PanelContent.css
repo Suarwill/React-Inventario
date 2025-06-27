@@ -2,11 +2,12 @@
   background: linear-gradient(217deg, grey, white, grey);
   background-color: white;
   box-shadow: inset 5px 5px 5px whitesmoke, inset -4px -4px 5px black, 4px 4px 14px rgba(0,0,0,.1);
-  padding: 40px;
+  padding: 30px;
   margin: 20px; /* Centrar horizontalmente */
   border-radius: 12px;
   color: #0D1B2A;
-  width: 80%; /* Ajustar el ancho del contenedor */
+  width: 80%;
+  max-height: 90vh;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   font-family: 'Segoe UI', sans-serif;
   display: flex;
