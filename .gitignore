@@ -15,8 +15,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
-/backend-inventario/.env.local
-/backend-inventario/.env
+/back-inventario/.env.local
+/back-inventario/.env
 
 npm-debug.log*
 yarn-debug.log*
