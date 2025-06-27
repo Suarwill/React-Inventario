@@ -1,5 +1,5 @@
 const pool = require('../db/pool');
-const { buscarProducto ,actualizarConCSV } = require('../services/product.service');
+const { buscarProducto , eliminarProducto, actualizarConCSV } = require('../services/product.service');
 
 const addProducto = async (req, res) => {
   const { codigo, descripcion, categoria } = req.body;
@@ -53,16 +53,16 @@ const updateProducto = async (req, res) => {
 };
 
 const deleteProducto = async (req, res) => {
-  const { id } = req.params;
+  const { cod } = req.params;
+  if (!cod) {
+    return res.status(400).json({ error: 'Código de producto no proporcionado' });
+  }
   try {
-    // Verificar si el producto existe
-    const result = await pool.query('SELECT * FROM productos WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
+    const borrar = await eliminarProducto(cod);
+    if (borrar.length === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    // Eliminar el producto
-    await pool.query('DELETE FROM productos WHERE id = $1', [id]);
-    res.status(200).json({ message: 'Producto eliminado correctamente' });
+    res.status(204).send();
   } catch (error) {
     console.error('Error al eliminar el producto:', error);
     res.status(500).json({ error: 'Error al eliminar el producto' });

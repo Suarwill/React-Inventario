@@ -32,7 +32,7 @@ const AdminPanel = () => {
         setIsAuthorized(true);
       } else {
         alert('No Autorizado. Redirigiendo al dashboard.');
-        navigate('/admin');
+        navigate('/dashboard');
       }
       promptShownRef.current = true;
     }

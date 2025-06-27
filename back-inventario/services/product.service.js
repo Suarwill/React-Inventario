@@ -9,6 +9,13 @@ const buscarProducto = async (cod) => {
     return result.rows;
 };
 
+const eliminarProducto = async (cod) => {
+    upperCod = cod.toUpperCase();
+    result = await pool.query(
+        'DELETE FROM productos WHERE codigo = $1', [upperCod]);
+    return result.rows;
+}
+
 const actualizarConCSV = (filePath) => new Promise((resolve, reject) => {
     const productos = [];
     fs.createReadStream(filePath)
@@ -73,5 +80,6 @@ const actualizarConCSV = (filePath) => new Promise((resolve, reject) => {
 
 module.exports = {
     buscarProducto,
+    eliminarProducto,
     actualizarConCSV
 };
