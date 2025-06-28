@@ -1,4 +1,4 @@
-const { cargarMermas } = require('../services/envioMermas.service');
+const { cargarMermas } = require('../services/envio.service');
 
 const cargarMerma = async (req, res) => {
   const mermas = req.body;

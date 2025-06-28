@@ -21,9 +21,15 @@
     margin-bottom: 20px;
 }
 
-.envios-table {
+.table {
     border-collapse: collapse;
     width: 100%;
+}
+
+input {
+    width: 80px;
+    padding: 5px; 
+    font-size: 12px;
 }
 
 .envios-table th, .envios-table td {
@@ -85,4 +91,19 @@
 
 .submit-button:hover, .add-row-button:hover {
     background: limegreen;
+}
+
+.estatus-grey {
+    background-color: grey;
+    color: white;
+}
+
+.estatus-green {
+    background-color: green;
+    color: white;
+}
+
+.estatus-blue {
+    background-color: blue;
+    color: white;
 }

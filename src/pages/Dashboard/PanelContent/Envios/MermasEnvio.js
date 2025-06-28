@@ -5,9 +5,9 @@ import './Envios.css';
 const MermasEnvio = () => {
     const [visibleTables, setVisibleTables] = useState([]);
     const [tableData, setTableData] = useState({
-        mermas: [{ codigo: '', cant: 0, descripcion: '' }],
-        nc: [{ codigo: '', cant: 0, descripcion: '' }],
-        eliminados: [{ codigo: '', cant: 0, descripcion: '' }],
+        mermas:     [{ codigo: '', cant: 1, descripcion: '' }],
+        nc:         [{ codigo: '', cant: 1, descripcion: '' }],
+        eliminados: [{ codigo: '', cant: 1, descripcion: '' }],
     });
     const inputRefs = useRef({});
 
@@ -80,7 +80,7 @@ const MermasEnvio = () => {
         ];
 
         try {
-            const response = await axiosInstance.post('/api/envio/cargar', combinedData);
+            const response = await axiosInstance.post('/api/movimiento/envio/cargar', combinedData);
             alert('Datos enviados correctamente');
         } catch (error) {
             console.error('Error al enviar los datos:', error);
