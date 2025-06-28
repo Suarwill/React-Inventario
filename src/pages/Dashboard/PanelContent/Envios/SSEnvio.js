@@ -68,7 +68,7 @@ const SSEnvio = () => {
         });
 
         setTableData(updatedTableData);
-        setRows([{ codigo: '', cantidad: 1, descripcion: '', estatus: '' }]); // Resetear filas
+        setRows(rows.filter(row => row.estatus === 'Sin estatus'));
     };
 
     const getEstatusClass = (estatus) => {
