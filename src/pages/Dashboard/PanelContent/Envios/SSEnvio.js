@@ -210,6 +210,9 @@ const SSEnvio = () => {
                     </div>
                 )}
             </div>
+            <div>   
+            <button className="submit-button" >Enviar</button>
+            </div>
         </div>
     );
 };

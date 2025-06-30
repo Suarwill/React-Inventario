@@ -1,12 +1,42 @@
-# Servidor React-Express-PostgreSQL
+# React-Inventario
 
-## Preparando el EC2 (Rocky 9 - Linux)
-Con solo puerto 22 SSH y 80 Http
+## 📦 Descripción del Proyecto
 
-sudo dnf update -y
-curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
-sudo dnf install -y nodejs git
-node -v
-npm -v
+**React-Inventario** es una aplicación Full Stack diseñada para la **gestión de inventarios**. Incluye un frontend desarrollado en **React** y un backend en **Node.js con Express**, conectados a una base de datos **PostgreSQL**.  
+Permite realizar operaciones como:
 
-git clone HTTPS:// este repositorio
+- Clasificación de productos
+- Gestión de usuarios
+- Envíos y recepciones
+- Mermas de inventario
+
+---
+
+## 🚀 Características Principales
+
+### 🖥️ Frontend (React)
+
+- **Interfaz dinámica y modular**
+- **Componentes destacados**:
+  - **Navbar y Sidebar**: Navegación intuitiva
+  - **Dashboard**: Panel principal con módulos
+  - **Clasificación de Sobrestock**: Categorías como `Antiguos`, `Vigente` y `Nuevo`
+  - **Recepciones**: Verificación de envíos y cálculo de diferencias
+  - **Mermas**: Registro de productos dañados o dados de baja
+
+### 🛠️ Backend (Node.js + Express)
+
+- API REST estructurada y escalable
+- **Base de datos PostgreSQL** para:
+  - Usuarios
+  - Productos
+  - Movimientos
+  - Envíos
+- **Servicios separados**:
+  - `user.service.js`, `product.service.js`, `envio.service.js`
+- **Autenticación JWT** para sesiones seguras
+- **Controladores por entidad**:
+  - `user.controller.js`, `envio.controller.js`, etc.
+
+---
+
