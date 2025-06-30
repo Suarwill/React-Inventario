@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const pool = require('../db/pool');
 
 const searchUser = async (username) => {
@@ -46,8 +47,45 @@ const registroEspecialUser = async (username, password) => {
     return result.rows[0];
 };
 
+const loginUserService = async (username, password) => {
+    const result = await pool.query(
+        'SELECT id, username, password, sector, zona FROM usuarios WHERE username = $1',
+        [username.toUpperCase()]
+    );
+
+    if (result.rows.length === 0) {
+        throw new Error('Usuario no encontrado');
+    }
+
+    const usuario = result.rows[0];
+    const valid = await bcrypt.compare(password, usuario.password);
+
+    if (!valid) {
+        throw new Error('Contraseña incorrecta');
+    }
+
+    // Crear el token JWT
+    const token = jwt.sign(
+        { userId: usuario.id, username: usuario.username, sector: usuario.sector, zona: usuario.zona },
+        process.env.JWT_SECRET,
+        { expiresIn: '8h' }
+    );
+
+    return {
+        message: 'Login exitoso',
+        token,
+        user: {
+            id: usuario.id,
+            username: usuario.username,
+            sector: usuario.sector,
+            zona: usuario.zona
+        }
+    };
+};
+
 module.exports = { 
     searchUser,
     deleteUser,
-    registroEspecialUser
+    registroEspecialUser,
+    loginUserService // Exportar la nueva función
 };

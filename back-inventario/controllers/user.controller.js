@@ -1,7 +1,7 @@
 const pool = require('../db/pool');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { searchUser, deleteUser, registroEspecialUser } = require('../services/user.service');
+const { loginUserService, searchUser, deleteUser, registroEspecialUser } = require('../services/user.service');
 
 const registerUser = async (req, res) => {
   const { validationResult } = require('express-validator');
@@ -61,46 +61,15 @@ const registroEspecialUserController = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+    const { username, password } = req.body;
 
-  try {
-    const result = await pool.query(
-      'SELECT id, username, password, sector, zona FROM usuarios WHERE username = $1',
-      [username.toUpperCase()]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Usuario no encontrado' });
+    try {
+        const loginResponse = await loginUserService(username, password);
+        res.json(loginResponse);
+    } catch (err) {
+        console.error("Login error:", err.message);
+        res.status(500).json({ error: err.message });
     }
-
-    const usuario = result.rows[0];
-    const valid = await bcrypt.compare(password, usuario.password);
-
-    if (!valid) {
-      return res.status(401).json({ error: 'Contraseña incorrecta' });
-    }
-
-    // Crear el token JWT
-    const token = jwt.sign(
-      { userId: usuario.id, username: usuario.username, sector: usuario.sector, zona: usuario.zona },
-      process.env.JWT_SECRET,
-      { expiresIn: '8h' }
-    );
-
-    res.json({
-      message: 'Login exitoso',
-      token,
-      user: {
-        id: usuario.id,
-        username: usuario.username,
-        sector: usuario.sector,
-        zona: usuario.zona
-      }
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
 };
 
 const buscarUsuario = async (req, res) => {
