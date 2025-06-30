@@ -108,7 +108,7 @@ const SSEnvio = () => {
                                     />
                                 </td>
                                 <td>
-                                    <input
+                                    <input className="cantidad-input"
                                         type="number"
                                         value={row.cantidad}
                                         min="1"
