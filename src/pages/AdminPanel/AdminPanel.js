@@ -28,7 +28,7 @@ const AdminPanel = () => {
     if (!promptShownRef.current) {
       const username = localStorage.getItem('username');
       
-      if (username === 'admin') {
+      if (username === 'ADMIN') {
         setIsAuthorized(true);
       } else {
         alert('No Autorizado. Redirigiendo al dashboard.');
