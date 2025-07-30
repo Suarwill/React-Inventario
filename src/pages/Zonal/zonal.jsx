@@ -124,7 +124,7 @@ const Zonal = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>$ 2.230.500</td>
+                      <td>En proceso</td>
                     </tr>
                   </tbody>
                 </table>
@@ -137,7 +137,7 @@ const Zonal = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>$ 308.000</td>
+                      <td>En proceso</td>
                     </tr>
                   </tbody>
                 </table>
